@@ -1,18 +1,21 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Home, Search, ArrowLeft } from "lucide-react" // Import Lucide icons
 
 const PageNotFound = () => {
-// State for theme, assuming it might be controlled externally or from local storage
+  const navigate = useNavigate();
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // This useEffect is just to simulate theme changes if needed,
   // or to read a default theme from local storage/context if available.
   // For now, it defaults to false (light mode).
   useEffect(() => {
     // You might want to read the theme from a global context or local storage here
-    // For example: const savedTheme = localStorage.getItem('theme');
-    // if (savedTheme === 'dark') setIsDarkMode(true);
+    const savedTheme = localStorage.getItem('darkMode');
+    if (savedTheme) {
+      setIsDarkMode(JSON.parse(savedTheme));
+    }
   }, [])
 
   return (
@@ -135,7 +138,7 @@ const PageNotFound = () => {
             </Link>
             {/* Go Back Button */}
             <button
-              onClick={() => window.history.back()}
+              onClick={() => navigate(-1)}
               className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:shadow-md active:translate-y-[1px] active:scale-[0.98]
                 ${
                   isDarkMode

@@ -244,7 +244,7 @@ const CreateFaculty = () => {
             
             {/* Go Back Button */}
             <button
-              onClick={() => window.history.back()}
+              onClick={() => navigate(-1)}
               className="mt-4 flex items-center justify-center w-full h-12 bg-gray-700 hover:bg-gray-600 rounded-md font-medium text-white transition-all duration-200"
             >
               <svg

@@ -294,7 +294,7 @@ export class PDFReportController {
 
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-').replace('T', '_').substring(0, 19);
       const filename = `institutional_report_${department}_Sem${semester}_${academicYear.replace('-', '_')}_${timestamp}.pdf`;
-      const outputPath = path.join(__dirname, '../../uploads/reports', filename);
+      const outputPath = path.join(__dirname, '../uploads/reports', filename);
 
       const reportsDir = path.dirname(outputPath);
       if (!fs.existsSync(reportsDir)) {
@@ -370,7 +370,7 @@ export class PDFReportController {
 
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const filename = `semester_report_${semester}_${timestamp}.pdf`;
-      const outputPath = path.join(__dirname, '../../uploads/reports', filename);
+      const outputPath = path.join(__dirname, '../uploads/reports', filename);
 
       const reportsDir = path.dirname(outputPath);
       if (!fs.existsSync(reportsDir)) {

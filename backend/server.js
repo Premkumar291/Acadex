@@ -3,13 +3,14 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { connectDb } from './dataBase/connectDb.js';
-import authRoutes from './routes/auth.route.js';
+import { initGridFS } from './utils/gridfsConfig.js';
+import { startFileCleanupScheduler } from './utils/fileCleanup.js';
 import adminRoutes from './routes/admin.route.js';
 import protectedRoutes from './routes/protected.route.js';
 import gridFSPdfRoutes from './routes/gridFSPdfSplit.route.js';
 import pdfCoAnalysisRoutes from './routes/pdfCoAnalysis.route.js';
 import pdfReportRoutes from './routes/pdfReport.route.js';
-import { scheduleCleanup } from './utils/cleanupExpiredPDFs.js';
+import authRoutes from './routes/auth.route.js';
 import studentRoutes from './routes/student.route.js';
 import subjectRoutes from './routes/subject.route.js';
 import facultyRoutes from './routes/faculty.route.js';
@@ -53,6 +54,6 @@ app.listen(PORT, async () => {
   await connectDb();
   console.log(`Server is running on http://localhost:${PORT}`);
   
-  // Schedule cleanup of expired PDFs (run every 30 minutes)
-  scheduleCleanup(30);
+  // Start file cleanup scheduler for uploads folder (12-hour intervals)
+  startFileCleanupScheduler();
 });
