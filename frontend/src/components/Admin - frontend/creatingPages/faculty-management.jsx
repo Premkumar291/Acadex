@@ -1,29 +1,8 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { Plus, Search, Edit3, Trash2, Users, X, GraduationCap, Filter } from "lucide-react"
-// import { facultyAPI, DEGREE_OPTIONS, TITLE_OPTIONS, DEPARTMENT_OPTIONS } from "../../../api/faculty"
-import toast from "react-hot-toast"
-
-const DEGREE_OPTIONS = ["PhD", "M.Tech", "M.Sc", "B.Tech", "B.Sc", "MBA", "MA", "BA"]
-const TITLE_OPTIONS = ["Dr.", "Prof.", "Mr.", "Ms.", "Mrs."]
-const DEPARTMENT_OPTIONS = [
-  "Computer Science",
-  "Electronics",
-  "Mechanical",
-  "Civil",
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-]
-
-const facultyAPI = {
-  getFaculty: async (params) => ({ data: [] }),
-  createFaculty: async (data) => ({ success: true }),
-  updateFaculty: async (id, data) => ({ success: true }),
-  deleteFaculty: async (id) => ({ success: true }),
-}
+import { facultyAPI, DEGREE_OPTIONS, TITLE_OPTIONS, DEPARTMENT_OPTIONS } from "../../../api/faculty";
+import toast from "react-hot-toast";
 
 const FacultyManagement = () => {
   const [faculty, setFaculty] = useState([])

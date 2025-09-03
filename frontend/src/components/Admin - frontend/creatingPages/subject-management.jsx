@@ -5,25 +5,10 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Plus, Search, Edit3, Trash2, BookOpen, X, Filter } from "lucide-react"
 import toast from "react-hot-toast"
 
-const DEPARTMENT_OPTIONS = [
-  "Computer Science",
-  "Electronics",
-  "Mechanical",
-  "Civil",
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-]
+import { subjectAPI, DEPARTMENT_OPTIONS } from "../../../api/subjects";
 
 const SEMESTER_OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8"]
 const SUBJECT_TYPE_OPTIONS = ["Theory", "Practical", "Project"]
-
-const subjectAPI = {
-  getSubjects: async (params) => ({ data: [] }),
-  createSubject: async (data) => ({ success: true }),
-  updateSubject: async (id, data) => ({ success: true }),
-  deleteSubject: async (id) => ({ success: true }),
-}
 
 const SubjectManagement = () => {
   const [subjects, setSubjects] = useState([])
@@ -49,7 +34,7 @@ const SubjectManagement = () => {
         search: searchTerm,
         department: departmentFilter,
       })
-      setSubjects(response.data || [])
+      setSubjects(response.data)
     } catch (error) {
       toast.error("Failed to fetch subjects")
     } finally {
