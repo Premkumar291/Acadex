@@ -1,4 +1,4 @@
-"use client"
+
 import { useState, useEffect, useRef } from "react"
 import { useNavigate, Link } from "react-router-dom" // Import Link
 import { logout, checkAuth } from "@/api/auth"
@@ -43,7 +43,7 @@ const Dashboard = () => {
       name: "Add Student",
       icon: UserPlus,
       description: "Enroll new students",
-      url: "/admin/createFaculty/add-student", // URL for the Add Student page
+      url: "/admin/createFaculty/add-student", 
     },
     {
       name: "Subject Management",
