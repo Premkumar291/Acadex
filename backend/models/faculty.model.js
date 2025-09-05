@@ -133,4 +133,44 @@ facultySchema.statics.searchFaculty = function(searchTerm) {
     });
 };
 
+// Static method to get faculty visible to an admin
+facultySchema.statics.getVisibleFaculty = async function(adminId) {
+    const User = mongoose.model('User');
+    
+    // Get all users visible to this admin
+    const visibleUsers = await User.getVisibleUsers(adminId);
+    const visibleUserIds = visibleUsers.map(user => user._id);
+    
+    // Return faculty created by visible users
+    return this.find({
+        createdBy: { $in: visibleUserIds },
+        isActive: true
+    }).populate('createdBy', 'name email role adminLevel');
+};
+
+// Static method to check if admin can see specific faculty
+facultySchema.statics.canAdminSeeFaculty = async function(adminId, facultyId) {
+    const faculty = await this.findById(facultyId).populate('createdBy');
+    if (!faculty) return false;
+    
+    const User = mongoose.model('User');
+    const admin = await User.findById(adminId);
+    
+    if (!admin || admin.role !== 'admin') return false;
+    
+    // Can see faculty they created
+    if (faculty.createdBy && faculty.createdBy._id.equals(adminId)) {
+        return true;
+    }
+    
+    // Can see faculty created by users in their visibility scope
+    if (faculty.createdBy) {
+        const visibleUsers = await User.getVisibleUsers(adminId);
+        const visibleUserIds = visibleUsers.map(user => user._id.toString());
+        return visibleUserIds.includes(faculty.createdBy._id.toString());
+    }
+    
+    return false;
+};
+
 export const Faculty = mongoose.model('Faculty', facultySchema);

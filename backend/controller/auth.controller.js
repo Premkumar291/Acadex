@@ -54,20 +54,8 @@ export const signup = async (req, res) => {
         await newUser.save();
         console.log('User created successfully:', newUser._id);
 
-        // Send verification email
-        try {
-            await sendEmail(
-                newUser.email,
-                "Verify your account",
-                `Your verification code is: ${newUser.verificationToken}`
-            );
-            console.log('Verification email sent to:', newUser.email);
-        } catch (emailError) {
-            console.error('Failed to send verification email:', emailError);
-            // Continue anyway, user can request resend
-        }
-
-        
+        // Don't send verification email during signup
+        // Email will be sent when user tries to login with unverified account
 
         // JWT authentication
         try {
@@ -82,7 +70,7 @@ export const signup = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: "User created successfully. Verification email sent.",
+            message: "User created successfully. Please login to verify your email.",
             user: {
                 _id: newUser._id,
                 email: newUser.email,
@@ -233,12 +221,33 @@ export const login = async (req,res) => {
             });
         }
 
-        // Check if user is verified - allow login but indicate verification needed
+        // Check if user is verified - send verification email if needed
         if (!user.isVerified) {
             console.log('Unverified user attempt to login:', email);
+            
+            // Generate new verification code if expired or doesn't exist
+            if (!user.verificationToken || user.verificationTokenExpiresAt < Date.now()) {
+                const newVerificationToken = generateVerificationCode();
+                user.verificationToken = newVerificationToken;
+                user.verificationTokenExpiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+                await user.save();
+                
+                // Send verification email
+                try {
+                    await sendEmail(
+                        user.email,
+                        "Verify your account",
+                        `Your verification code is: ${newVerificationToken}. It is valid for 10 minutes.`
+                    );
+                    console.log('Verification email sent to:', user.email);
+                } catch (emailError) {
+                    console.error('Failed to send verification email:', emailError);
+                }
+            }
+            
             return res.status(200).json({ 
                 success: false, 
-                message: "Please verify your email before logging in",
+                message: "Please verify your email before logging in. A verification code has been sent to your email.",
                 needsVerification: true,
                 user: {
                     _id: user._id,

@@ -15,12 +15,13 @@ import AddStudentPage from "./components/Admin - frontend/creatingPages/add-stud
 import CreateFaculty from "./components/Admin - frontend/creatingPages/create-faculty";
 import SubjectManagement from "./components/Admin - frontend/creatingPages/subject-management";
 import FacultyManagement from "./components/Admin - frontend/creatingPages/faculty-management";
+import AdminHierarchyPage from "./components/AdminHierarchyPage";
 
 
 // Layout wrapper component that applies different styles based on route
 function AppLayout({ children }) {
   const location = useLocation();
-  const isFullWidthPage = location.pathname === '/faculty-dashboard' || location.pathname === '/admin-dashboard' || location.pathname.includes('/result-analysis') || location.pathname.includes('/add-student') || location.pathname.includes('/generate-report') || location.pathname.includes('/subject-management') || location.pathname.includes('/faculty-management');
+  const isFullWidthPage = location.pathname === '/faculty-dashboard' || location.pathname === '/admin-dashboard' || location.pathname.includes('/result-analysis') || location.pathname.includes('/add-student') || location.pathname.includes('/generate-report') || location.pathname.includes('/subject-management') || location.pathname.includes('/faculty-management') || location.pathname.includes('/admin-hierarchy');
   
   if (isFullWidthPage) {
     // Full-width layout for dashboard and result analysis pages
@@ -56,6 +57,7 @@ function AppLayout({ children }) {
           <Route path="/admin/createFaculty/create-faculty" element={<CreateFaculty />} />
           <Route path="/admin/subject-management" element={<SubjectManagement />} />
           <Route path="/admin/faculty-management" element={<FacultyManagement />} />
+          <Route path="/admin/admin-hierarchy" element={<AdminHierarchyPage />} />
           
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

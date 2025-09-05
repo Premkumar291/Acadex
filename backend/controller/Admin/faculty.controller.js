@@ -14,7 +14,7 @@ export const createFaculty = async (req, res) => {
             phoneNumber,
             dateOfJoining
         } = req.body;
-        const userId = req.user.id;
+        const userId = req.user.userId;
 
         // Validate required fields
         if (!title || !name || !initials || !department) {
@@ -86,7 +86,7 @@ export const createFaculty = async (req, res) => {
     }
 };
 
-// Get all faculty with pagination and filters
+// Get all faculty with pagination and filters (hierarchy-aware)
 export const getFaculty = async (req, res) => {
     try {
         const { 
@@ -95,8 +95,16 @@ export const getFaculty = async (req, res) => {
             department, 
             search 
         } = req.query;
+        const adminId = req.user.userId;
 
-        let filter = { isActive: true };
+        // Get faculty visible to this admin using hierarchy rules
+        const visibleFaculty = await Faculty.getVisibleFaculty(adminId);
+        const visibleFacultyIds = visibleFaculty.map(f => f._id);
+
+        let filter = { 
+            isActive: true,
+            _id: { $in: visibleFacultyIds }
+        };
 
         // Add department filter
         if (department) {
@@ -117,7 +125,7 @@ export const getFaculty = async (req, res) => {
         const skip = (parseInt(page) - 1) * parseInt(limit);
 
         const faculty = await Faculty.find(filter)
-            .populate('createdBy', 'name email')
+            .populate('createdBy', 'name email role adminLevel')
             .skip(skip)
             .limit(parseInt(limit))
             .sort({ name: 1 })
@@ -126,7 +134,7 @@ export const getFaculty = async (req, res) => {
         const totalFaculty = await Faculty.countDocuments(filter);
         const totalPages = Math.ceil(totalFaculty / parseInt(limit));
 
-        console.log(`Found ${faculty.length} faculty members`);
+        console.log(`Found ${faculty.length} faculty members visible to admin ${adminId}`);
         res.status(200).json({
             success: true,
             data: faculty,

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { logout, checkAuth } from "@/api/auth"
 import { motion } from "framer-motion"
-import { ChevronLeft, ChevronRight, LogOut, Bell, Users, UserPlus } from "lucide-react"
+import { ChevronLeft, ChevronRight, LogOut, Bell, Users, UserPlus, BookOpen, LinkIcon, Sitemap } from "lucide-react"
 
 const AdminLayout = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -39,6 +39,24 @@ const AdminLayout = ({ children }) => {
       icon: UserPlus,
       description: "Enroll new students",
       url: "/admin/createFaculty/add-student",
+    },
+    {
+      name: "Subject Management",
+      icon: BookOpen,
+      description: "Manage academic subjects",
+      url: "/admin/subject-management",
+    },
+    {
+      name: "Faculty Management",
+      icon: Users,
+      description: "Manage faculty profiles",
+      url: "/admin/faculty-management",
+    },
+    {
+      name: "Admin Hierarchy",
+      icon: Sitemap,
+      description: "Manage admin hierarchy",
+      url: "/admin/admin-hierarchy",
     },
   ]
 
@@ -126,6 +144,7 @@ const AdminLayout = ({ children }) => {
 
           {/* Navigation Links */}
           <nav className="flex-grow px-2 py-4">
+            {console.log('Rendering sidebar items:', mainNavItems)}
             {mainNavItems.map((item) => (
               <Link
                 key={item.name}

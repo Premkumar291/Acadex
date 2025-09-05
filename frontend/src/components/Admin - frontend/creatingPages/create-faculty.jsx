@@ -1,8 +1,12 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { signup } from "../../../api/auth"
+import { createSubAdmin, getHierarchy, deleteSubAdmin } from "../../../api/adminHierarchy"
 
 // Icons from reference UI
+
+
+
 const UserIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -95,33 +99,114 @@ const CreateFaculty = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [activeTab, setActiveTab] = useState('create') // 'create' or 'manage'
+  const [adminHierarchy, setAdminHierarchy] = useState([])
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     department: "",
-    role: "faculty" // Default to faculty
+    role: "faculty", // Default to faculty
+    hierarchyLevel: "department_admin", // For admin roles
+    permissions: {
+      canCreateFaculty: false,
+      canManageStudents: false,
+      canGenerateReports: false,
+      canManageSubjects: false,
+      canViewAllDepartments: false
+    }
   })
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    })
+    const { name, value, type, checked } = e.target
+    
+    if (name.startsWith('permissions.')) {
+      const permissionKey = name.split('.')[1]
+      setForm({
+        ...form,
+        permissions: {
+          ...form.permissions,
+          [permissionKey]: checked
+        }
+      })
+    } else {
+      setForm({
+        ...form,
+        [name]: type === 'checkbox' ? checked : value
+      })
+    }
   }
+
+  const fetchAdminHierarchy = async () => {
+    try {
+      const response = await getHierarchy()
+      if (response.success) {
+        setAdminHierarchy(response.data)
+      }
+    } catch (error) {
+      console.error('Error fetching admin hierarchy:', error)
+    }
+  }
+
+  const handleDeleteAdmin = async (adminId) => {
+    if (window.confirm('Are you sure you want to delete this admin?')) {
+      try {
+        const response = await deleteSubAdmin(adminId)
+        if (response.success) {
+          fetchAdminHierarchy() // Refresh the list
+        }
+      } catch (error) {
+        console.error('Error deleting admin:', error)
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (activeTab === 'manage') {
+      fetchAdminHierarchy()
+    }
+  }, [activeTab])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      const response = await signup(form)
+      let response;
+      if (form.role === 'admin') {
+        // Use sub-admin creation API for admin role
+        response = await createSubAdmin(form)
+      } else {
+        // Use regular signup for faculty role
+        response = await signup(form)
+      }
+      
       if (response.success) {
-        // Redirect to faculty management or show success message
-        navigate("/admin/dashboard")
+        // Reset form and refresh hierarchy if needed
+        setForm({
+          name: "",
+          email: "",
+          password: "",
+          department: "",
+          role: "faculty",
+          hierarchyLevel: "department_admin",
+          permissions: {
+            canCreateFaculty: false,
+            canManageStudents: false,
+            canGenerateReports: false,
+            canManageSubjects: false,
+            canViewAllDepartments: false
+          }
+        })
+        if (form.role === 'admin') {
+          fetchAdminHierarchy()
+        }
+        // Show success message or redirect
+        alert(`${form.role === 'admin' ? 'Sub-Admin' : 'Faculty'} created successfully!`)
       }
     } catch (error) {
-      console.error("Error creating faculty:", error)
+      console.error(`Error creating ${form.role}:`, error)
+      alert(`Error creating ${form.role}. Please try again.`)
     } finally {
       setLoading(false)
     }
@@ -129,11 +214,46 @@ const CreateFaculty = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-md mx-auto">
-          <h1 className="text-3xl font-bold text-center mb-8">Create New Faculty Account</h1>
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-bold text-center mb-8">
+            Faculty & Admin Management
+          </h1>
           
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Tab Navigation */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-gray-800 rounded-lg p-1">
+              <button
+                onClick={() => setActiveTab('create')}
+                className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
+                  activeTab === 'create'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Create New User
+              </button>
+              <button
+                onClick={() => setActiveTab('manage')}
+                className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
+                  activeTab === 'manage'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Manage Admin Hierarchy
+              </button>
+            </div>
+          </div>
+          
+          {/* Create New User Tab */}
+          {activeTab === 'create' && (
+            <div className="max-w-md mx-auto">
+              <h2 className="text-2xl font-bold text-center mb-6">
+                {form.role === 'admin' ? 'Create New Sub-Admin Account' : 'Create New Faculty Account'}
+              </h2>
+              
+              <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Input */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
@@ -199,6 +319,89 @@ const CreateFaculty = () => {
               </select>
             </div>
 
+            {/* Admin Hierarchy Level (only for admin role) */}
+            {form.role === 'admin' && (
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M8 6L21 6L19 12L21 18L8 18L10 12L8 6Z"></path>
+                    <path d="M3 6L3 18"></path>
+                    <path d="M3 12L8 12"></path>
+                  </svg>
+                </div>
+                <select
+                  name="hierarchyLevel"
+                  value={form.hierarchyLevel}
+                  onChange={handleChange}
+                  required
+                  className="w-full h-12 pl-12 pr-4 bg-gray-800/60 border border-gray-600/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                >
+                  <option value="department_admin">Department Admin</option>
+                  <option value="academic_admin">Academic Admin</option>
+                  <option value="system_admin">System Admin</option>
+                </select>
+              </div>
+            )}
+
+            {/* Admin Permissions (only for admin role) */}
+            {form.role === 'admin' && (
+              <div className="bg-gray-800/30 rounded-lg p-4">
+                <h3 className="text-lg font-medium mb-4">Admin Permissions</h3>
+                <div className="space-y-3">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="permissions.canCreateFaculty"
+                      checked={form.permissions.canCreateFaculty}
+                      onChange={handleChange}
+                      className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span>Can Create Faculty</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="permissions.canManageStudents"
+                      checked={form.permissions.canManageStudents}
+                      onChange={handleChange}
+                      className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span>Can Manage Students</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="permissions.canGenerateReports"
+                      checked={form.permissions.canGenerateReports}
+                      onChange={handleChange}
+                      className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span>Can Generate Reports</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="permissions.canManageSubjects"
+                      checked={form.permissions.canManageSubjects}
+                      onChange={handleChange}
+                      className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span>Can Manage Subjects</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="permissions.canViewAllDepartments"
+                      checked={form.permissions.canViewAllDepartments}
+                      onChange={handleChange}
+                      className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span>Can View All Departments</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
             {/* Password Input */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
@@ -231,39 +434,114 @@ const CreateFaculty = () => {
               </button>
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full h-12 bg-blue-600 rounded-md font-medium text-white transition-all duration-200 ${
-                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
-              }`}
-            >
-              {loading ? "Creating Account..." : "Create Faculty Account"}
-            </button>
-            
-            {/* Go Back Button */}
-            <button
-              onClick={() => navigate(-1)}
-              className="mt-4 flex items-center justify-center w-full h-12 bg-gray-700 hover:bg-gray-600 rounded-md font-medium text-white transition-all duration-200"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-2"
-              >
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-              </svg>
-              Go Back
-            </button>
-          </form>
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`w-full h-12 bg-blue-600 rounded-md font-medium text-white transition-all duration-200 ${
+                    loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+                  }`}
+                >
+                  {loading ? "Creating Account..." : `Create ${form.role === 'admin' ? 'Sub-Admin' : 'Faculty'} Account`}
+                </button>
+                
+                {/* Go Back Button */}
+                <button
+                  type="button"
+                  onClick={() => navigate(-1)}
+                  className="mt-4 flex items-center justify-center w-full h-12 bg-gray-700 hover:bg-gray-600 rounded-md font-medium text-white transition-all duration-200"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2"
+                  >
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                  </svg>
+                  Go Back
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Manage Admin Hierarchy Tab */}
+          {activeTab === 'manage' && (
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-2xl font-bold text-center mb-6">Admin Hierarchy Management</h2>
+              
+              {adminHierarchy.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 mb-4">
+                    <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-300 mb-2">No Sub-Admins Found</h3>
+                  <p className="text-gray-400">Create your first sub-admin using the "Create New User" tab.</p>
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {adminHierarchy.map((admin) => (
+                    <div key={admin._id} className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-white">{admin.name}</h3>
+                          <p className="text-sm text-gray-400">{admin.email}</p>
+                        </div>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          admin.hierarchyLevel === 'system_admin' ? 'bg-red-900/50 text-red-300' :
+                          admin.hierarchyLevel === 'academic_admin' ? 'bg-blue-900/50 text-blue-300' :
+                          'bg-green-900/50 text-green-300'
+                        }`}>
+                          {admin.hierarchyLevel?.replace('_', ' ').toUpperCase()}
+                        </span>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <p className="text-sm text-gray-300 mb-2">
+                          <span className="font-medium">Department:</span> {admin.department}
+                        </p>
+                        <p className="text-sm text-gray-300">
+                          <span className="font-medium">Created:</span> {new Date(admin.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+
+                      {admin.permissions && (
+                        <div className="mb-4">
+                          <h4 className="text-sm font-medium text-gray-300 mb-2">Permissions:</h4>
+                          <div className="space-y-1">
+                            {Object.entries(admin.permissions).map(([key, value]) => (
+                              value && (
+                                <span key={key} className="inline-block bg-blue-900/30 text-blue-300 text-xs px-2 py-1 rounded mr-1 mb-1">
+                                  {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                                </span>
+                              )
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleDeleteAdmin(admin._id)}
+                          className="flex-1 bg-red-600 hover:bg-red-700 text-white text-sm py-2 px-3 rounded-md transition-colors duration-200"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

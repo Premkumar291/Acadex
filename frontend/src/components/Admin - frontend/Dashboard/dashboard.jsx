@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom" // Import Link
 import { logout, checkAuth } from "@/api/auth"
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion"
-import { ChevronLeft, ChevronRight, LogOut, Bell, Users, UserPlus, BookOpen, Link as LinkIcon } from "lucide-react"
+import { ChevronLeft, ChevronRight, LogOut, Bell, Users, UserPlus, BookOpen, Link as LinkIcon, Network } from "lucide-react"
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -36,7 +36,7 @@ const Dashboard = () => {
     {
       name: "Faculty Creation",
       icon: Users,
-      description: "Create new faculty accounts",
+      description: "Create faculty & sub-admin accounts",
       url: "/admin/createFaculty/create-faculty",
     },
     {
