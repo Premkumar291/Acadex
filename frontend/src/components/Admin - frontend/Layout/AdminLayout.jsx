@@ -11,7 +11,7 @@ const AdminLayout = ({ children }) => {
   const [userLoading, setUserLoading] = useState(true)
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('darkMode')
-    return savedTheme !== null ? JSON.parse(savedTheme) : false
+    return savedTheme !== null ? JSON.parse(savedTheme) : false  
   })
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const savedState = localStorage.getItem('sidebarCollapsed')
