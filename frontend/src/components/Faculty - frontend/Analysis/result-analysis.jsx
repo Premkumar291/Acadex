@@ -158,8 +158,7 @@ export default function ResultAnalysis() {
       // Show success message
       toast.success('Analysis refreshed with enhanced PDF.co processing');
       
-    } catch (error) {
-      console.error('Error refreshing analysis:', error);
+    } catch {
       toast.error(`Failed to refresh analysis. Please try again.`);
     } finally {
       setPdfCoLoading(false);
@@ -197,9 +196,8 @@ export default function ResultAnalysis() {
         setSubjectCodes(data.subjectCodes);
         setShowModal(true);
         setLoading(false);
-      } catch (error) {
+      } catch {
         // Handle errors
-        console.error('Error fetching analysis data:', error);
         toast.error('Failed to analyze PDF. Please try again.');
         setLoading(false);
         navigate('/dashboard');
@@ -212,12 +210,9 @@ export default function ResultAnalysis() {
   }, [pdfId, semester, navigate, searchParams]); // Re-run if these dependencies change
   
   const handleSelectStudent = (startIndex) => {
-    console.log('handleSelectStudent called with startIndex:', startIndex);
-    console.log('Current students array:', students);
     
     // Input validation to prevent processing with invalid indices
     if (startIndex === undefined || startIndex === null || startIndex < 0 || startIndex >= students.length) {
-      console.error('Invalid startIndex:', startIndex);
       toast.error('Invalid student selection. Please try again.');
       return;
     }
@@ -301,13 +296,10 @@ export default function ResultAnalysis() {
 
 
   const handleCloseModal = () => {
-    console.log('handleCloseModal called, selectedStartIndex:', selectedStartIndex);
     if (selectedStartIndex === null) {
       // If no student was selected, default to the first student
-      console.log('No student selected, defaulting to first student');
       handleSelectStudent(0);
     } else {
-      console.log('Student already selected, just closing modal');
       setShowModal(false);
     }
   };
@@ -380,12 +372,7 @@ export default function ResultAnalysis() {
                   resultData
                 };
                 
-                console.log('Saving report data to sessionStorage:', reportData);
                 sessionStorage.setItem('reportGenerationData', JSON.stringify(reportData));
-                
-                // Verify data was saved
-                const saved = sessionStorage.getItem('reportGenerationData');
-                console.log('Verified saved data:', saved ? 'Data saved successfully' : 'Failed to save data');
               }}
               className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors shadow-sm"
             >

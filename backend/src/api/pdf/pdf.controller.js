@@ -89,7 +89,6 @@ export const uploadAndSplitPDF = async (req, res) => {
         try {
           await gridFSBucket.delete(metadata.fileId);
         } catch (err) {
-          console.log(`Could not delete file ${metadata.fileId}: ${err.message}`);
           // Continue with other deletions
         }
       }
@@ -97,10 +96,8 @@ export const uploadAndSplitPDF = async (req, res) => {
       // Delete all metadata records
       const result = await GridFSSemesterPDF.deleteMany({ uploadName: uniqueUploadName });
       if (result.deletedCount > 0) {
-        console.log(`Deleted ${result.deletedCount} existing PDFs for ${uniqueUploadName}`);
       }
     } catch (deleteErr) {
-      console.error(`Error deleting existing PDFs: ${deleteErr.message}`);
       // Continue with upload even if deletion fails
     }
     
@@ -113,16 +110,9 @@ export const uploadAndSplitPDF = async (req, res) => {
     
     // Log page contents in debug mode
     if (debugMode) {
-      console.log("PDF Page Contents (Full):");
-      pageTexts.forEach((text, index) => {
-        console.log(`Page ${index + 1} Full Text: ${text}`);
-      });
     }
     
     // Log first 100 characters of each page
-    pageTexts.forEach((text, index) => {
-      console.log(`Page ${index + 1}: ${text.substring(0, 100)}...`);
-    });
     
     // Define a function to check if a page contains the semester header pattern
     const containsSemesterHeader = (text, pageIndex) => {
@@ -159,7 +149,6 @@ export const uploadAndSplitPDF = async (req, res) => {
           semester: headerCheck.semester,
           confidence: headerCheck.confidence || 'high'
         });
-        console.log(`Found semester ${headerCheck.semester} start page at page ${i} (confidence: ${headerCheck.confidence || 'high'})`);
       }
     }
     
@@ -169,7 +158,6 @@ export const uploadAndSplitPDF = async (req, res) => {
     
     // Use it to decide splitting method
     if (forcePageSplit || semesterStartPages.length === 0) {
-      console.log(forcePageSplit ? "Forced page-based splitting." : "No semester markers found. Using page-based splitting as fallback.");
       
       // Simple fallback: Split into equal sections or by page count
       const totalPages = pageTexts.length;
@@ -185,7 +173,6 @@ export const uploadAndSplitPDF = async (req, res) => {
           semester: sem,
           confidence: 'fallback'
         });
-        console.log(`Fallback: Assigned semester ${sem} to start at page ${startPage}`);
       }
     }
     
@@ -194,7 +181,6 @@ export const uploadAndSplitPDF = async (req, res) => {
     
     // Always use high confidence threshold (0.8)
     const confidenceThreshold = 'high';
-    console.log(`Using confidence threshold: ${confidenceThreshold} (fixed value: 0.8)`);
     
     // Filter semester start pages based on confidence threshold
     const filteredSemesterStartPages = semesterStartPages.filter(page => 
@@ -215,10 +201,6 @@ export const uploadAndSplitPDF = async (req, res) => {
     processedSemesterStartPages.sort((a, b) => a.semester - b.semester);
     
     // Log the number of semesters found
-    console.log(`Found ${processedSemesterStartPages.length} semester sections in the PDF`);
-    if (processedSemesterStartPages.length < 8) {
-      console.warn(`Warning: Expected 8 semesters but only found ${processedSemesterStartPages.length}`);
-    }
     
     // Group pages by semester
     const semesterGroups = [];
@@ -346,10 +328,8 @@ export const uploadAndSplitPDF = async (req, res) => {
       deleteAt
     });
     
-    console.log(`Scheduling auto-delete for ${uniqueUploadName} after ${autoDeleteHours} hour(s)`);
     
   } catch (err) {
-    console.error(err);
     
     // Handle duplicate key errors
     if (err.code === 11000) {
@@ -379,7 +359,6 @@ export const getSemesterPDFs = async (req, res) => {
       filename: pdf.filename
     })));
   } catch (err) {
-    console.error('Error fetching semester PDFs:', err);
     res.status(500).json({ message: 'Failed to fetch PDFs', error: err.message });
   }
 };
@@ -514,7 +493,6 @@ export const deleteSemesterPDFs = async (req, res) => {
       count: pdfMetadata.length
     });
   } catch (err) {
-    console.error('Error deleting PDFs:', err);
     res.status(500).json({ message: 'Failed to delete PDFs', error: err.message });
   }
 };
@@ -549,7 +527,6 @@ export const getRecentPDFs = async (req, res) => {
       }))
     });
   } catch (err) {
-    console.error('Error fetching recent PDFs:', err);
     res.status(500).json({ message: 'Failed to fetch recent PDFs', error: err.message });
   }
 };

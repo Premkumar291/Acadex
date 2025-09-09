@@ -17,18 +17,15 @@ export const pdfReportsApi = {
  
   async generateReport(reportData) {
     try {
-      console.log('Generating PDF report with data:', reportData);
       
       const response = await reportsApi.post('/generate', reportData);
       
       if (response.data.success) {
-        console.log('PDF report generated successfully:', response.data);
         return response.data;
       } else {
         throw new Error(response.data.message || 'Failed to generate PDF report');
       }
     } catch (error) {
-      console.error('Error generating PDF report:', error);
       
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
@@ -45,18 +42,15 @@ export const pdfReportsApi = {
  
   async generateEnhancedReport(reportData) {
     try {
-      console.log('Generating enhanced PDF report with data:', reportData);
       
       const response = await reportsApi.post('/generate-enhanced', reportData);
       
       if (response.data.success) {
-        console.log('Enhanced PDF report generated successfully:', response.data);
         return response.data;
       } else {
         throw new Error(response.data.message || 'Failed to generate enhanced PDF report');
       }
     } catch (error) {
-      console.error('Error generating enhanced PDF report:', error);
       
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
@@ -73,18 +67,15 @@ export const pdfReportsApi = {
  
   async generateInstitutionalReport(reportData) {
     try {
-      console.log('Generating institutional PDF report with data:', reportData);
       
       const response = await reportsApi.post('/generate-institutional', reportData);
       
       if (response.data.success) {
-        console.log('Institutional PDF report generated successfully:', response.data);
         return response.data;
       } else {
         throw new Error(response.data.message || 'Failed to generate institutional PDF report');
       }
     } catch (error) {
-      console.error('Error generating institutional PDF report:', error);
       
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
@@ -113,7 +104,6 @@ export const pdfReportsApi = {
         throw new Error(response.data.message || 'Failed to fetch reports');
       }
     } catch (error) {
-      console.error('Error fetching reports:', error);
       
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
@@ -132,7 +122,6 @@ export const pdfReportsApi = {
       
       return response.data;
     } catch (error) {
-      console.error('Error downloading Excel report:', error);
       
       if (error.response?.status === 404) {
         throw new Error('Report not found or has been deleted.');
@@ -151,7 +140,6 @@ export const pdfReportsApi = {
       
       return response.data;
     } catch (error) {
-      console.error('Error downloading PDF report:', error);
       
       if (error.response?.status === 404) {
         throw new Error('Report not found or has been deleted.');
@@ -175,7 +163,6 @@ export const pdfReportsApi = {
       
       return response.data;
     } catch (error) {
-      console.error('Error previewing report:', error);
       
       if (error.response?.status === 404) {
         throw new Error('Report not found or has been deleted.');
@@ -196,7 +183,6 @@ export const pdfReportsApi = {
         throw new Error(response.data.message || 'Failed to delete report');
       }
     } catch (error) {
-      console.error('Error deleting report:', error);
       
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
@@ -233,8 +219,7 @@ export const pdfReportsApi = {
       }
 
       this.triggerDownload(response.data, filename);
-    } catch (error) {
-      console.error('Error generating semester Excel report:', error);
+    } catch {
       throw new Error('Failed to generate semester Excel report. Please try again.');
     }
   },
@@ -264,8 +249,7 @@ export const pdfReportsApi = {
       }
 
       this.triggerDownload(response.data, filename);
-    } catch (error) {
-      console.error('Error generating institutional Excel report:', error);
+    } catch {
       throw new Error('Failed to generate institutional Excel report. Please try again.');
     }
   },
@@ -294,7 +278,6 @@ export const pdfReportsApi = {
    */
   async DEPRECATED_generateAndDownloadExcel(reportData) {
     try {
-      console.log('Generating and downloading Excel report:', reportData);
       
       // First generate the report using institutional endpoint
       const generateResponse = await reportsApi.post('/generate-institutional', reportData);
@@ -303,18 +286,13 @@ export const pdfReportsApi = {
         const reportId = generateResponse.data.data.reportId;
         
         // Then download it immediately
-        console.log('Downloading Excel file for report ID:', reportId);
         const downloadResponse = await reportsApi.get(`/download/${reportId}`, {
           responseType: 'blob'
         });
         
-        console.log('Download response type:', typeof downloadResponse.data);
-        console.log('Download response size:', downloadResponse.data.size);
-        console.log('Download response headers:', downloadResponse.headers);
         
         // Verify we got a blob, not JSON
         if (!(downloadResponse.data instanceof Blob)) {
-          console.error('Expected blob but got:', downloadResponse.data);
           throw new Error('Server returned invalid file format. Expected Excel file.');
         }
         
@@ -327,7 +305,6 @@ export const pdfReportsApi = {
         throw new Error(generateResponse.data.message || 'Failed to generate Excel report');
       }
     } catch (error) {
-      console.error('Error generating and downloading Excel report:', error);
       
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);

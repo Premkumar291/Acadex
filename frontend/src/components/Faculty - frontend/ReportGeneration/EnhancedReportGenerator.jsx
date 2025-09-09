@@ -39,7 +39,6 @@ const EnhancedReportGenerator = ({ analysisData, isDarkMode }) => {
 
   // Extract subject codes from analysis data or fetch from API
   useEffect(() => {
-    console.log('Analysis data received:', analysisData);
     
     // Try to extract subject codes from different possible structures
     let extractedSubjectCodes = [];
@@ -55,14 +54,11 @@ const EnhancedReportGenerator = ({ analysisData, isDarkMode }) => {
     }
     
     if (extractedSubjectCodes.length > 0) {
-      console.log('Subject codes extracted:', extractedSubjectCodes);
       setSubjectCodes(extractedSubjectCodes);
       // Auto-show faculty section when analysis data is available
       setShowFacultySection(true);
     } else if (reportData.department) {
       fetchSubjectsForDepartment();
-    } else {
-      console.log('No subject codes found in analysis data or department not selected');
     }
   }, [analysisData, reportData.department]);
 
@@ -76,8 +72,7 @@ const EnhancedReportGenerator = ({ analysisData, isDarkMode }) => {
       if (!analysisData?.subjectCodes) {
         setSubjectCodes(subjects.map(subject => subject.subjectCode));
       }
-    } catch (error) {
-      console.error('Error fetching subjects:', error);
+    } catch {
       setAvailableSubjects([]);
     }
   };
@@ -161,7 +156,6 @@ const EnhancedReportGenerator = ({ analysisData, isDarkMode }) => {
         }
       }
     } catch (error) {
-      console.error('Error generating report:', error);
       toast.error(error.message || 'Failed to generate report. Please try again.');
     } finally {
       setLoading(false);

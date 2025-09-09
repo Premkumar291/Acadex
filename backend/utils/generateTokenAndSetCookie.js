@@ -27,7 +27,6 @@ export const generateTokenAndSetCookie = (userId, role, res) => {
 
         return token;
     } catch (error) {
-        console.error('Error generating JWT tokens:', error);
         throw new Error('Failed to generate authentication tokens');
     }
 };

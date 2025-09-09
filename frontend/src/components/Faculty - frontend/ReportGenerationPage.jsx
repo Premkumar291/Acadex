@@ -75,17 +75,15 @@ function ReportGenerationPage() {
         const initialSubjectNames = {};
         if (parsedData.analysisData && parsedData.analysisData.subjectCodes) {
           parsedData.analysisData.subjectCodes.forEach(subjectCode => {
-            initialSubjectNames[subjectCode] = '';
+            initialSubjectNames[subjectCode] = parsedData.analysisData.subjectNames[subjectCode];
           });
         }
         setSubjectNames(initialSubjectNames);
-      } catch (error) {
-        console.error('ReportGenerationPage: Error parsing sessionStorage data:', error);
+      } catch {
         toast.error('Invalid report data. Please go back to analysis page.');
         navigate('/dashboard');
       }
     } else {
-      console.error('ReportGenerationPage: No data found in sessionStorage');
       toast.error('No report generation data found. Please go back to analysis page.');
       // Add a small delay to prevent immediate navigation during component mount
       setTimeout(() => {
@@ -241,7 +239,6 @@ function ReportGenerationPage() {
       });
       setShowPreview(true);
     } catch (error) {
-      console.error('Error generating institutional report:', error);
       toast.error(error.message || 'Failed to generate institutional report. Please try again.');
     } finally {
       setLoading(false);
@@ -710,8 +707,7 @@ function ReportGenerationPage() {
                         // Download the Excel report
                         await pdfReportsApi.generateInstitutionalExcel(generatedReport);
                         toast.success('Excel report downloaded successfully!');
-                      } catch (error) {
-                        console.error('Error downloading Excel report:', error);
+                      } catch {
                         toast.error('Failed to download Excel report. Please try again.');
                       }
                     }}

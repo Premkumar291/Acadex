@@ -70,14 +70,12 @@ export const createFaculty = async (req, res) => {
 
         await faculty.save();
 
-        console.log('Faculty created successfully:', faculty._id);
         res.status(201).json({
             success: true,
             message: 'Faculty created successfully',
             data: faculty
         });
     } catch (error) {
-        console.error('Error creating faculty:', error);
         res.status(500).json({
             success: false,
             message: 'Error creating faculty',
@@ -134,7 +132,6 @@ export const getFaculty = async (req, res) => {
         const totalFaculty = await Faculty.countDocuments(filter);
         const totalPages = Math.ceil(totalFaculty / parseInt(limit));
 
-        console.log(`Found ${faculty.length} faculty members visible to admin ${adminId}`);
         res.status(200).json({
             success: true,
             data: faculty,
@@ -147,7 +144,6 @@ export const getFaculty = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching faculty:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching faculty',
@@ -172,13 +168,11 @@ export const getFacultyById = async (req, res) => {
             });
         }
 
-        console.log('Faculty retrieved:', faculty._id);
         res.status(200).json({
             success: true,
             data: faculty
         });
     } catch (error) {
-        console.error('Error fetching faculty:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching faculty',
@@ -222,14 +216,12 @@ export const updateFaculty = async (req, res) => {
             });
         }
 
-        console.log('Faculty updated successfully:', faculty._id);
         res.status(200).json({
             success: true,
             message: 'Faculty updated successfully',
             data: faculty
         });
     } catch (error) {
-        console.error('Error updating faculty:', error);
         res.status(500).json({
             success: false,
             message: 'Error updating faculty',
@@ -256,13 +248,11 @@ export const deleteFaculty = async (req, res) => {
             });
         }
 
-        console.log('Faculty deleted successfully:', id);
         res.status(200).json({
             success: true,
             message: 'Faculty deleted successfully'
         });
     } catch (error) {
-        console.error('Error deleting faculty:', error);
         res.status(500).json({
             success: false,
             message: 'Error deleting faculty',
@@ -281,13 +271,11 @@ export const getFacultyByDepartment = async (req, res) => {
             .sort({ name: 1 })
             .lean();
 
-        console.log(`Found ${faculty.length} faculty members in ${department} department`);
         res.status(200).json({
             success: true,
             data: faculty
         });
     } catch (error) {
-        console.error('Error fetching faculty by department:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching faculty by department',
@@ -320,14 +308,12 @@ export const addStudyToFaculty = async (req, res) => {
 
         await faculty.addStudy(studyData);
 
-        console.log('Study added to faculty:', id);
         res.status(200).json({
             success: true,
             message: 'Study added successfully',
             data: faculty
         });
     } catch (error) {
-        console.error('Error adding study to faculty:', error);
         res.status(500).json({
             success: false,
             message: 'Error adding study to faculty',
@@ -360,14 +346,12 @@ export const removeStudyFromFaculty = async (req, res) => {
         study.remove();
         await faculty.save();
 
-        console.log('Study removed from faculty:', id);
         res.status(200).json({
             success: true,
             message: 'Study removed successfully',
             data: faculty
         });
     } catch (error) {
-        console.error('Error removing study from faculty:', error);
         res.status(500).json({
             success: false,
             message: 'Error removing study from faculty',

@@ -11,6 +11,33 @@ const api = axios.create({
     },
 });
 
+// Add request interceptor for debugging
+api.interceptors.request.use(
+    (config) => {
+        // The backend expects JWT token in cookies, not Authorization header
+        // Since withCredentials: true is set, cookies will be sent automatically
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Add response interceptor to handle errors
+api.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        console.error('Subject API Error:', {
+            status: error.response?.status,
+            message: error.response?.data?.message || error.message,
+            url: error.config?.url
+        });
+        return Promise.reject(error);
+    }
+);
+
 // Subject Management API
 export const subjectAPI = {
     // Create new subject

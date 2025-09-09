@@ -16,9 +16,6 @@ export const createSubAdmin = async (req, res) => {
         const { email, password, name, department } = req.body;
         const creatorId = req.userId || req.user?.userId || req.user?._id;
         
-        console.log('CreateSubAdmin - creatorId:', creatorId);
-        console.log('CreateSubAdmin - req.userId:', req.userId);
-        console.log('CreateSubAdmin - req.user:', req.user);
 
         // Validate required fields
         if (!email || !password || !name || !department) {
@@ -75,7 +72,6 @@ export const createSubAdmin = async (req, res) => {
         const hashedPassword = await bcryptjs.hash(password, 12);
 
         // Create sub-admin
-        console.log('Creating sub-admin with creatorId:', creatorId, 'type:', typeof creatorId);
         
         const subAdmin = new User({
             email,
@@ -88,23 +84,9 @@ export const createSubAdmin = async (req, res) => {
             isVerified: true // Sub-admins are auto-verified
         });
 
-        console.log('Sub-admin object before save:', {
-            email: subAdmin.email,
-            role: subAdmin.role,
-            parentAdmin: subAdmin.parentAdmin,
-            createdBy: subAdmin.createdBy,
-            parentAdminType: typeof subAdmin.parentAdmin
-        });
 
-        console.log('About to save sub-admin with parentAdmin:', creatorId);
         await subAdmin.save();
         
-        console.log('Sub-admin saved with:', {
-            parentAdmin: subAdmin.parentAdmin,
-            createdBy: subAdmin.createdBy,
-            hierarchyPath: subAdmin.hierarchyPath,
-            adminLevel: subAdmin.adminLevel
-        });
 
         // Remove password from response
         const { password: _, ...subAdminData } = subAdmin.toObject();
@@ -116,7 +98,6 @@ export const createSubAdmin = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error creating sub-admin:", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -141,7 +122,6 @@ export const getHierarchy = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error getting hierarchy:", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -181,7 +161,6 @@ export const getVisibleUsers = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error getting visible users:", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -206,7 +185,6 @@ export const getAdminStatistics = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error getting admin statistics:", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -273,7 +251,6 @@ export const updateSubAdmin = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error updating sub-admin:", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -330,7 +307,6 @@ export const deleteSubAdmin = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error deleting sub-admin:", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -364,7 +340,6 @@ export const getSubAdminCreationStatus = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error getting sub-admin creation status:", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",

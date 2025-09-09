@@ -39,14 +39,12 @@ export const createSubject = async (req, res) => {
 
         await subject.save();
 
-        console.log('Subject created successfully:', subject._id);
         res.status(201).json({
             success: true,
             message: 'Subject created successfully',
             data: subject
         });
     } catch (error) {
-        console.error('Error creating subject:', error);
         res.status(500).json({
             success: false,
             message: 'Error creating subject',
@@ -100,7 +98,6 @@ export const getSubjects = async (req, res) => {
         const totalSubjects = await Subject.countDocuments(filter);
         const totalPages = Math.ceil(totalSubjects / parseInt(limit));
 
-        console.log(`Found ${subjects.length} subjects`);
         res.status(200).json({
             success: true,
             data: subjects,
@@ -113,7 +110,6 @@ export const getSubjects = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching subjects:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching subjects',
@@ -138,13 +134,11 @@ export const getSubjectById = async (req, res) => {
             });
         }
 
-        console.log('Subject retrieved:', subject._id);
         res.status(200).json({
             success: true,
             data: subject
         });
     } catch (error) {
-        console.error('Error fetching subject:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching subject',
@@ -186,14 +180,12 @@ export const updateSubject = async (req, res) => {
             });
         }
 
-        console.log('Subject updated successfully:', subject._id);
         res.status(200).json({
             success: true,
             message: 'Subject updated successfully',
             data: subject
         });
     } catch (error) {
-        console.error('Error updating subject:', error);
         res.status(500).json({
             success: false,
             message: 'Error updating subject',
@@ -220,13 +212,11 @@ export const deleteSubject = async (req, res) => {
             });
         }
 
-        console.log('Subject deleted successfully:', id);
         res.status(200).json({
             success: true,
             message: 'Subject deleted successfully'
         });
     } catch (error) {
-        console.error('Error deleting subject:', error);
         res.status(500).json({
             success: false,
             message: 'Error deleting subject',
@@ -260,14 +250,12 @@ export const addFacultyToSubject = async (req, res) => {
         subject.faculty.push(facultyData);
         await subject.save();
 
-        console.log('Faculty added to subject:', id);
         res.status(200).json({
             success: true,
             message: 'Faculty added successfully',
             data: subject
         });
     } catch (error) {
-        console.error('Error adding faculty to subject:', error);
         res.status(500).json({
             success: false,
             message: 'Error adding faculty to subject',
@@ -300,14 +288,12 @@ export const removeFacultyFromSubject = async (req, res) => {
         facultyMember.remove();
         await subject.save();
 
-        console.log('Faculty removed from subject:', id);
         res.status(200).json({
             success: true,
             message: 'Faculty removed successfully',
             data: subject
         });
     } catch (error) {
-        console.error('Error removing faculty from subject:', error);
         res.status(500).json({
             success: false,
             message: 'Error removing faculty from subject',
@@ -326,13 +312,11 @@ export const getSubjectsByDepartment = async (req, res) => {
             .sort({ subjectCode: 1 })
             .lean();
 
-        console.log(`Found ${subjects.length} subjects in ${department} department`);
         res.status(200).json({
             success: true,
             data: subjects
         });
     } catch (error) {
-        console.error('Error fetching subjects by department:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching subjects by department',

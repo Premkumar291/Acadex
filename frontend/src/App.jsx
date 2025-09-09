@@ -16,6 +16,7 @@ import CreateFaculty from "./components/Admin - frontend/creatingPages/create-fa
 import SubjectManagement from "./components/Admin - frontend/creatingPages/subject-management";
 import FacultyManagement from "./components/Admin - frontend/creatingPages/faculty-management";
 import AdminHierarchyPage from "./components/AdminHierarchyPage";
+import AdminLayout from "./components/Admin - frontend/Layout/AdminLayout";
 
 
 // Layout wrapper component that applies different styles based on route
@@ -51,13 +52,12 @@ function AppLayout({ children }) {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/faculty-dashboard" element={<FacultyDashboard />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/createFaculty/add-student" element={<AddStudentPage />} />
-          <Route path="/admin/createFaculty/create-faculty" element={<CreateFaculty />} />
-          <Route path="/admin/subject-management" element={<SubjectManagement />} />
-          <Route path="/admin/faculty-management" element={<FacultyManagement />} />
-          <Route path="/admin/admin-hierarchy" element={<AdminHierarchyPage />} />
+          <Route path="/admin-dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+          <Route path="/admin-dashboard/add-student" element={<AdminLayout><AddStudentPage /></AdminLayout>} />
+          <Route path="/admin-dashboard/create-faculty" element={<AdminLayout><CreateFaculty /></AdminLayout>} />
+          <Route path="/admin-dashboard/subject-management" element={<AdminLayout><SubjectManagement /></AdminLayout>} />
+          <Route path="/admin-dashboard/faculty-management" element={<AdminLayout><FacultyManagement /></AdminLayout>} />
+          <Route path="/admin-dashboard/admin-hierarchy" element={<AdminLayout><AdminHierarchyPage /></AdminLayout>} />
           
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

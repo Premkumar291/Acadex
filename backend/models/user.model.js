@@ -68,26 +68,26 @@ userSchema.index({ role: 1, adminLevel: 1 });
 // Pre-save middleware to update hierarchy path
 userSchema.pre('save', async function(next) {
     try {
-        console.log('Pre-save middleware triggered for user:', this.email, 'role:', this.role);
-        console.log('isNew:', this.isNew, 'isModified(parentAdmin):', this.isModified('parentAdmin'));
-        console.log('parentAdmin:', this.parentAdmin);
+        ('Pre-save middleware triggered for user:', this.email, 'role:', this.role);
+        ('isNew:', this.isNew, 'isModified(parentAdmin):', this.isModified('parentAdmin'));
+        ('parentAdmin:', this.parentAdmin);
         
         // Always set hierarchy fields for new users or when parentAdmin is modified
         if (this.isNew || this.isModified('parentAdmin')) {
             if (this.parentAdmin) {
-                console.log('Finding parent admin with ID:', this.parentAdmin);
+                ('Finding parent admin with ID:', this.parentAdmin);
                 const parent = await this.constructor.findById(this.parentAdmin);
-                console.log('Parent found:', parent ? parent.email : 'null');
+                ('Parent found:', parent ? parent.email : 'null');
                 
                 if (parent) {
                     this.hierarchyPath = parent.hierarchyPath ? 
                         `${parent.hierarchyPath}/${this.parentAdmin}` : 
                         this.parentAdmin.toString();
                     this.adminLevel = parent.adminLevel + 1;
-                    console.log('Set hierarchyPath:', this.hierarchyPath);
-                    console.log('Set adminLevel:', this.adminLevel);
+                    ('Set hierarchyPath:', this.hierarchyPath);
+                    ('Set adminLevel:', this.adminLevel);
                 } else {
-                    console.log('Parent not found, setting default values');
+                    ('Parent not found, setting default values');
                     this.hierarchyPath = '';
                     this.adminLevel = 0;
                 }
@@ -95,7 +95,7 @@ userSchema.pre('save', async function(next) {
                 // No parent admin - set defaults
                 this.hierarchyPath = '';
                 this.adminLevel = 0;
-                console.log('No parent admin - hierarchyPath set to empty, adminLevel set to 0');
+                ('No parent admin - hierarchyPath set to empty, adminLevel set to 0');
             }
         }
         
@@ -106,7 +106,7 @@ userSchema.pre('save', async function(next) {
         
         next();
     } catch (error) {
-        console.error('Error in pre-save middleware:', error);
+        ('Error in pre-save middleware:', error);
         next(error);
     }
 });
@@ -169,7 +169,7 @@ userSchema.methods.canCreateSubAdmin = async function() {
 
 // Static method to fix existing users' hierarchy paths
 userSchema.statics.fixHierarchyPaths = async function() {
-    console.log('Starting hierarchy path migration...');
+    ('Starting hierarchy path migration...');
     
     // Find all users with undefined or null hierarchyPath
     const usersToFix = await this.find({
@@ -180,7 +180,7 @@ userSchema.statics.fixHierarchyPaths = async function() {
         ]
     });
     
-    console.log(`Found ${usersToFix.length} users to fix`);
+    (`Found ${usersToFix.length} users to fix`);
     
     for (const user of usersToFix) {
         if (user.parentAdmin) {
@@ -200,10 +200,10 @@ userSchema.statics.fixHierarchyPaths = async function() {
         }
         
         await user.save();
-        console.log(`Fixed hierarchy for user: ${user.email}`);
+        (`Fixed hierarchy for user: ${user.email}`);
     }
     
-    console.log('Hierarchy path migration completed');
+    ('Hierarchy path migration completed');
 };
 
 export const User = mongoose.model('User', userSchema);

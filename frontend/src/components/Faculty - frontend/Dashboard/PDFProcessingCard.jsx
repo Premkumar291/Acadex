@@ -30,8 +30,7 @@ export default function PDFProcessingCard() {
           setUploadId(response.data.uploadName);
           toast.success(`Loaded ${response.data.pdfs.length} existing semester PDFs`);
         }
-      } catch (error) {
-        console.error("Failed to load existing PDFs:", error);
+      } catch {
         // Don't show error toast as this is a background operation
       } finally {
         setLoadingSemesterList(false);
@@ -59,9 +58,8 @@ export default function PDFProcessingCard() {
       if (uploadId) {
         try {
           await axios.delete(`${API_URL}/pdf/${uploadId}`);
-          console.log(`Deleted previous PDFs for ${uploadId}`);
-        } catch (err) {
-          console.error("Failed to delete previous PDFs", err);
+        } catch {
+          // Ignore deletion errors - proceed with upload
         }
       }
       
@@ -93,7 +91,6 @@ export default function PDFProcessingCard() {
       // Display the specific error message from the backend if available
       const errorMessage = error.response?.data?.message || "Failed to upload or split PDF";
       toast.error(errorMessage);
-      console.error("Upload error:", error);
     } finally {
       setUploading(false);
     }
@@ -148,9 +145,8 @@ export default function PDFProcessingCard() {
           window.open(`${API_URL}/pdf/${uploadId}/${selectedSemester}?download=true`, '_blank');
         }
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to download PDF");
-      console.error("Download error:", error);
       setDownloadingPdfId(null);
     }
   };

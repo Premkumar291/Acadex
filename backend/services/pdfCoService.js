@@ -38,7 +38,6 @@ export const uploadPdfToPdfCo = async (fileBuffer, fileName) => {
 
     return response.data;
   } catch (error) {
-    console.error('PDF.co upload error:', error.response?.data || error.message);
     throw new ApiError(
       `PDF.co upload failed: ${error.response?.data?.message || error.message}`,
       error.response?.status || 500
@@ -77,14 +76,10 @@ export const convertPdfToCsv = async (pdfUrl, options = {}) => {
       throw new ApiError('Failed to convert PDF to CSV', 500);
     }
     
-    // Log CSV content for debugging
-    console.log('\n===== CSV CONTENT FROM PDF.CO =====');
-    console.log(response.data.body.substring(0, 1000) + '...');
-    console.log('===== END CSV CONTENT =====\n');
+    // Removed the logging of CSV content for debugging
 
     return response.data.body;
   } catch (error) {
-    console.error('PDF.co conversion error:', error.response?.data || error.message);
     throw new ApiError(
       `PDF.co conversion failed: ${error.response?.data?.message || error.message}`,
       error.response?.status || 500
@@ -99,9 +94,6 @@ export const convertPdfToCsv = async (pdfUrl, options = {}) => {
  */
 export const parseCsvToResultJson = (csvData) => {
   try {
-    // Log the raw CSV data
-    console.log('\n===== PARSING CSV TO JSON =====');
-    console.log('CSV Data Length:', csvData.length, 'characters');
     
     // Preprocess lines
     const lines = csvData
@@ -109,17 +101,12 @@ export const parseCsvToResultJson = (csvData) => {
       .map(line => line.trim())
       .filter(line => line.startsWith('"'));
     
-    console.log('Filtered Lines Count:', lines.length);
-    console.log('First 3 lines sample:');
-    lines.slice(0, 3).forEach((line, i) => console.log(`Line ${i+1}:`, line));
 
     // Identify subject code rows
     let subjectCodeLineIndex = -1;
     for (let i = 0; i < lines.length; i++) {
       if (lines[i].includes('Subject Code')) {
         subjectCodeLineIndex = i;
-        console.log('Found Subject Code at line index:', i);
-        console.log('Subject Code Line:', lines[i]);
         break;
       }
     }
@@ -130,8 +117,6 @@ export const parseCsvToResultJson = (csvData) => {
       const codeNames = lines[subjectCodeLineIndex].split(',').slice(4).map(s => s.replace(/"/g, '').trim());
       const codeNumbers = lines[subjectCodeLineIndex + 1].split(',').slice(4).map(s => s.replace(/"/g, '').trim());
       
-      console.log('Code Names:', codeNames);
-      console.log('Code Numbers:', codeNumbers);
 
       for (let i = 0; i < codeNames.length; i++) {
         const name = (codeNames[i] || '').replace(/Grade$/i, '').trim(); // remove 'Grade' if present
@@ -140,7 +125,6 @@ export const parseCsvToResultJson = (csvData) => {
         if (code) subjectCodes.push(code);
       }
       
-      console.log('Extracted Subject Codes:', subjectCodes);
     }
 
     // Extract student data
@@ -200,18 +184,9 @@ export const parseCsvToResultJson = (csvData) => {
       subjectCodes
     };
     
-    // Log the final JSON result
-    console.log('\n===== FINAL JSON RESULT =====');
-    console.log('Students Count:', results.length);
-    console.log('Subject Codes Count:', subjectCodes.length);
-    if (results.length > 0) {
-      console.log('Sample Student Data:', JSON.stringify(results[0], null, 2));
-    }
-    console.log('===== END JSON RESULT =====\n');
     
     return resultJson;
   } catch (error) {
-    console.error('CSV parsing error:', error);
     throw new ApiError(`Failed to parse CSV data: ${error.message}`, 500);
   }
 };

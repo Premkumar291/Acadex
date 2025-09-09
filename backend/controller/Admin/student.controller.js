@@ -72,14 +72,12 @@ export const createStudent = async (req, res) => {
 
         await student.save();
 
-        console.log('Student created successfully:', student._id);
         res.status(201).json({
             success: true,
             message: 'Student created successfully',
             data: student
         });
     } catch (error) {
-        console.error('Error creating student:', error);
         res.status(500).json({
             success: false,
             message: 'Error creating student',
@@ -107,7 +105,6 @@ export const getStudentsByDepartment = async (req, res) => {
         const totalStudents = await Student.countDocuments(filter);
         const totalPages = Math.ceil(totalStudents / parseInt(limit));
 
-        console.log(`Found ${students.length} students in ${department} department`);
         res.status(200).json({
             success: true,
             data: students,
@@ -120,7 +117,6 @@ export const getStudentsByDepartment = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching students by department:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching students by department',
@@ -163,7 +159,6 @@ export const searchStudentsByName = async (req, res) => {
         const totalStudents = await Student.countDocuments(filter);
         const totalPages = Math.ceil(totalStudents / parseInt(limit));
 
-        console.log(`Found ${students.length} students matching name: ${name}`);
         res.status(200).json({
             success: true,
             data: students,
@@ -177,7 +172,6 @@ export const searchStudentsByName = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error searching students by name:', error);
         res.status(500).json({
             success: false,
             message: 'Error searching students by name',
@@ -195,13 +189,11 @@ export const getDepartments = async (req, res) => {
             { $project: { department: '$_id', count: 1, _id: 0 } }
         ]);
 
-        console.log('Departments retrieved:', departments);
         res.status(200).json({
             success: true,
             data: departments
         });
     } catch (error) {
-        console.error('Error fetching departments:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching departments',
@@ -226,13 +218,11 @@ export const getStudentByRegNumber = async (req, res) => {
             });
         }
 
-        console.log('Student retrieved by register number:', student._id);
         res.status(200).json({
             success: true,
             data: student
         });
     } catch (error) {
-        console.error('Error fetching student by register number:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching student',
@@ -270,14 +260,12 @@ export const updateStudent = async (req, res) => {
             });
         }
 
-        console.log('Student updated successfully:', student._id);
         res.status(200).json({
             success: true,
             message: 'Student updated successfully',
             data: student
         });
     } catch (error) {
-        console.error('Error updating student:', error);
         res.status(500).json({
             success: false,
             message: 'Error updating student',
@@ -300,13 +288,11 @@ export const deleteStudent = async (req, res) => {
             });
         }
 
-        console.log('Student deleted successfully:', id);
         res.status(200).json({
             success: true,
             message: 'Student deleted successfully'
         });
     } catch (error) {
-        console.error('Error deleting student:', error);
         res.status(500).json({
             success: false,
             message: 'Error deleting student',

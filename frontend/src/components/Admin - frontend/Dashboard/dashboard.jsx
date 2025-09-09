@@ -37,25 +37,25 @@ const Dashboard = () => {
       name: "Faculty Creation",
       icon: Users,
       description: "Create faculty & sub-admin accounts",
-      url: "/admin/createFaculty/create-faculty",
+      url: "/admin-dashboard/create-faculty",
     },
     {
       name: "Add Student",
       icon: UserPlus,
       description: "Enroll new students",
-      url: "/admin/createFaculty/add-student", 
+      url: "/admin-dashboard/add-student", 
     },
     {
       name: "Subject Management",
       icon: BookOpen,
       description: "Manage academic subjects",
-      url: "/admin/subject-management",
+      url: "/admin-dashboard/subject-management",
     },
     {
       name: "Faculty Management",
       icon: Users,
       description: "Manage faculty profiles",
-      url: "/admin/faculty-management",
+      url: "/admin-dashboard/faculty-management",
     },
   ]
 
