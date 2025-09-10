@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useReducer, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -20,33 +20,88 @@ import SubjectNameInput from './ReportGeneration/SubjectNameInput';
 import FacultyNameInput from './ReportGeneration/FacultyNameInput';
 
 
+// Initial state for the form
+const initialFormState = {
+  reportData: null,
+  departmentInfo: {
+    semester: '',
+    academicYear: new Date().getFullYear() + '-' + (new Date().getFullYear() + 1),
+    department: 'IT',
+    classAdvisorName: '',
+    monthsAndYear: ''
+  },
+  facultyAssignments: {},
+  subjectNames: {},
+  errors: {},
+  ui: {
+    loading: false,
+    showPreview: false,
+    generatedReport: null
+  }
+};
+
+// Reducer for managing form state
+function formReducer(state, action) {
+  switch (action.type) {
+    case 'SET_REPORT_DATA':
+      return { ...state, reportData: action.payload };
+    
+    case 'UPDATE_DEPARTMENT_INFO':
+      return {
+        ...state,
+        departmentInfo: { ...state.departmentInfo, [action.field]: action.value },
+        errors: { ...state.errors, [action.field]: '' }
+      };
+    
+    case 'UPDATE_FACULTY_ASSIGNMENT':
+      return {
+        ...state,
+        facultyAssignments: { ...state.facultyAssignments, [action.subjectCode]: action.value },
+        errors: { ...state.errors, [`faculty_${action.subjectCode}`]: '' }
+      };
+    
+    case 'UPDATE_SUBJECT_NAME':
+      return {
+        ...state,
+        subjectNames: { ...state.subjectNames, [action.subjectCode]: action.value },
+        errors: { ...state.errors, [`subject_${action.subjectCode}`]: '' }
+      };
+    
+    case 'SET_ERRORS':
+      return { ...state, errors: action.payload };
+    
+    case 'CLEAR_ERROR':
+      return { ...state, errors: { ...state.errors, [action.field]: '' } };
+    
+    case 'SET_LOADING':
+      return { ...state, ui: { ...state.ui, loading: action.payload } };
+    
+    case 'SET_PREVIEW':
+      return { ...state, ui: { ...state.ui, showPreview: action.payload } };
+    
+    case 'SET_GENERATED_REPORT':
+      return { ...state, ui: { ...state.ui, generatedReport: action.payload } };
+    
+    case 'INITIALIZE_SUBJECTS':
+      return {
+        ...state,
+        facultyAssignments: action.facultyAssignments,
+        subjectNames: action.subjectNames,
+        departmentInfo: { ...state.departmentInfo, semester: action.semester }
+      };
+    
+    default:
+      return state;
+  }
+}
+
 // Report Generation Page
 function ReportGenerationPage() {
   const navigate = useNavigate();
+  const [state, dispatch] = useReducer(formReducer, initialFormState);
   
-  // State for storing report data from analysis
-  const [reportData, setReportData] = useState(null);
-  
-  // Department information
-  const [departmentInfo, setDepartmentInfo] = useState({
-    semester: '',
-    academicYear: new Date().getFullYear() + '-' + (new Date().getFullYear() + 1),
-    department: 'CSE',
-    classAdvisorName: '',
-    monthsAndYear: ''
-  });
-  
-  // Faculty assignments per subject
-  const [facultyAssignments, setFacultyAssignments] = useState({});
-  const [subjectNames, setSubjectNames] = useState({});
-  
-  // Loading state and form validation errors
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
-  
-  // Report generation state
-  const [generatedReport, setGeneratedReport] = useState(null);
-  const [showPreview, setShowPreview] = useState(false);
+  const { reportData, departmentInfo, facultyAssignments, subjectNames, errors, ui } = state;
+  const { loading, showPreview, generatedReport } = ui;
 
   useEffect(() => {
     // Retrieve saved report generation data from session storage
@@ -55,30 +110,25 @@ function ReportGenerationPage() {
     if (data) {
       try {
         const parsedData = JSON.parse(data);
-        setReportData(parsedData);
+        dispatch({ type: 'SET_REPORT_DATA', payload: parsedData });
 
-        // Initialize department info with data from analysis
-        setDepartmentInfo(prev => ({
-          ...prev,
-          semester: parsedData.semester || ''
-        }));
-
-        // Initialize faculty assignments object for all detected subjects
+        // Initialize faculty assignments and subject names
         const initialAssignments = {};
+        const initialSubjectNames = {};
+        
         if (parsedData.analysisData && parsedData.analysisData.subjectCodes) {
           parsedData.analysisData.subjectCodes.forEach(subjectCode => {
             initialAssignments[subjectCode] = '';
-          });
-        }
-        setFacultyAssignments(initialAssignments);
-
-        const initialSubjectNames = {};
-        if (parsedData.analysisData && parsedData.analysisData.subjectCodes) {
-          parsedData.analysisData.subjectCodes.forEach(subjectCode => {
             initialSubjectNames[subjectCode] = subjectCode; // Use subject code as default name
           });
         }
-        setSubjectNames(initialSubjectNames);
+        
+        dispatch({
+          type: 'INITIALIZE_SUBJECTS',
+          facultyAssignments: initialAssignments,
+          subjectNames: initialSubjectNames,
+          semester: parsedData.semester || ''
+        });
       } catch {
         toast.error('Invalid report data. Please go back to analysis page.');
         navigate('/dashboard');
@@ -92,46 +142,29 @@ function ReportGenerationPage() {
     }
   }, [navigate]);
 
-  const handleSubjectNameChange = (subjectCode, subjectName) => {
-    setSubjectNames(prev => ({
-      ...prev,
-      [subjectCode]: subjectName
-    }));
-    if (errors[`subject_${subjectCode}`]) {
-      setErrors(prev => ({
-        ...prev,
-        [`subject_${subjectCode}`]: ''
-      }));
-    }
-  };
+  const handleSubjectNameChange = useCallback((subjectCode, subjectName) => {
+    dispatch({
+      type: 'UPDATE_SUBJECT_NAME',
+      subjectCode,
+      value: subjectName
+    });
+  }, []);
 
-  const handleFacultyAssignmentChange = (subjectCode, facultyName) => {
-    setFacultyAssignments(prev => ({
-      ...prev,
-      [subjectCode]: facultyName
-    }));
-    // Clear errors when user starts typing
-    if (errors[`faculty_${subjectCode}`]) {
-      setErrors(prev => ({
-        ...prev,
-        [`faculty_${subjectCode}`]: ''
-      }));
-    }
-  };
+  const handleFacultyAssignmentChange = useCallback((subjectCode, facultyName) => {
+    dispatch({
+      type: 'UPDATE_FACULTY_ASSIGNMENT',
+      subjectCode,
+      value: facultyName
+    });
+  }, []);
 
-  const handleDepartmentInfoChange = (field, value) => {
-    setDepartmentInfo(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    // Clear errors when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: ''
-      }));
-    }
-  };
+  const handleDepartmentInfoChange = useCallback((field, value) => {
+    dispatch({
+      type: 'UPDATE_DEPARTMENT_INFO',
+      field,
+      value
+    });
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -165,7 +198,7 @@ function ReportGenerationPage() {
       });
     }
 
-    setErrors(newErrors);
+    dispatch({ type: 'SET_ERRORS', payload: newErrors });
     return Object.keys(newErrors).length === 0;
   };
 
@@ -190,7 +223,7 @@ function ReportGenerationPage() {
         return;
       }
 
-      setLoading(true);
+      dispatch({ type: 'SET_LOADING', payload: true });
 
       // Prepare the API request data to match backend expectations
       const reportRequestData = {
@@ -227,15 +260,18 @@ function ReportGenerationPage() {
       toast.success('Excel report generated and downloaded successfully!');
 
       // Use the request data to populate the preview modal
-      setGeneratedReport({
+
+      // Mimic structure of old response for preview component
+      const generatedReportData = {
         ...reportRequestData,
-        // Mimic structure of old response for preview component
         generatedAt: reportRequestData.reportGeneratedAt,
         totalStudents: reportData?.resultData?.totalStudents || 0,
         overallPassPercentage: reportData?.resultData?.overallPassPercentage || 0,
         filename: `institutional_report_${reportRequestData.semester}.xlsx` // Approximate filename
-      });
-      setShowPreview(true);
+      };
+      
+      dispatch({ type: 'SET_GENERATED_REPORT', payload: generatedReportData });
+      dispatch({ type: 'SET_PREVIEW', payload: true });
     } catch (error) {
       console.error('Report generation error details:', {
         message: error.message,
@@ -247,7 +283,7 @@ function ReportGenerationPage() {
       const errorMessage = error.response?.data?.message || error.message || 'Failed to generate report. Please check your connection and try again.';
       toast.error(`Report Generation Failed: ${errorMessage}`);
     } finally {
-      setLoading(false);
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
@@ -690,7 +726,7 @@ function ReportGenerationPage() {
                 
                 {/* Close Button */}
                 <button
-                  onClick={() => setShowPreview(false)}
+                  onClick={() => dispatch({ type: 'SET_PREVIEW', payload: false })}
                   className="mt-4 text-gray-500 hover:text-gray-700 text-sm transition-colors"
                 >
                   Close
