@@ -11,6 +11,19 @@ const reportsApi = axios.create({
   },
 });
 
+// Add response interceptor to handle errors
+reportsApi.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('Reports API Error:', {
+      status: error.response?.status,
+      message: error.response?.data?.message || error.message,
+      url: error.config?.url
+    });
+    return Promise.reject(error);
+  }
+);
+
 
 export const pdfReportsApi = {
   
@@ -231,11 +244,17 @@ export const pdfReportsApi = {
    */
   async generateInstitutionalExcel(reportData) {
     try {
+      console.log('Sending report data to API:', reportData);
+      
       const response = await reportsApi.post('/generate-institutional', reportData, {
         responseType: 'blob',
+        timeout: 30000, // 30 second timeout
       });
 
+      console.log('API response received:', response.status, response.headers);
+
       if (!(response.data instanceof Blob)) {
+        console.error('Invalid response type:', typeof response.data);
         throw new Error('Server returned invalid file format. Expected Excel file.');
       }
 
@@ -243,14 +262,26 @@ export const pdfReportsApi = {
       let filename = 'institutional-report.xlsx';
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
-        if (filenameMatch.length > 1) {
+        if (filenameMatch && filenameMatch.length > 1) {
           filename = filenameMatch[1];
         }
       }
 
+      console.log('Triggering download for file:', filename);
       this.triggerDownload(response.data, filename);
-    } catch {
-      throw new Error('Failed to generate institutional Excel report. Please try again.');
+    } catch (error) {
+      console.error('Excel generation error:', error);
+      if (error.response?.data) {
+        // Try to read the error response if it's not a blob
+        try {
+          const errorText = await error.response.data.text();
+          const errorData = JSON.parse(errorText);
+          throw new Error(errorData.message || 'Server error occurred');
+        } catch {
+          // If we can't parse the error, use a generic message
+        }
+      }
+      throw new Error(error.message || 'Failed to generate institutional Excel report. Please try again.');
     }
   },
 

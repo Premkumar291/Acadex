@@ -125,7 +125,7 @@ const PageNotFound = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             {/* Go Home Button */}
             <Link
-              to="/dashboard"
+              to="/faculty-dashboard"
               className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:shadow-lg active:translate-y-[1px] active:scale-[0.98]
                 ${
                   isDarkMode
@@ -153,7 +153,7 @@ const PageNotFound = () => {
           {/* Helpful Links */}
           <div className={`mt-8 pt-8 border-t ${isDarkMode ? "border-gray-800" : "border-gray-100"}`}>
             <p className={`text-sm mb-4 ${isDarkMode ? "dark-text-muted" : "text-gray-500"}`}>
-              Or try one of these helpful links:
+               Contact your admin Or try one of these helpful links:
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm">
               <Link
@@ -165,14 +165,7 @@ const PageNotFound = () => {
                 Login
               </Link>
               <span className={`${isDarkMode ? "text-gray-600" : "text-gray-300"}`}>•</span>
-              <Link
-                to="/signup"
-                className={`${
-                  isDarkMode ? "text-purple-400 hover:text-purple-300" : "text-pink-500 hover:text-pink-600"
-                } hover:underline transition-colors duration-200`}
-              >
-                Sign Up
-              </Link>
+              
               <span className={`${isDarkMode ? "text-gray-600" : "text-gray-300"}`}>•</span>
               <Link
                 to="/forgot-password"
@@ -189,7 +182,7 @@ const PageNotFound = () => {
         <div className="mt-8 text-center">
           <p className={`text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>
             <span className={`font-semibold ${isDarkMode ? "text-purple-400" : "text-purple-700"}`}>
-              College Result Portal
+              ACADEX
             </span>{" "}
             - Automate Results. Empower Colleges.
           </p>

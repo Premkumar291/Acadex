@@ -75,7 +75,7 @@ function ReportGenerationPage() {
         const initialSubjectNames = {};
         if (parsedData.analysisData && parsedData.analysisData.subjectCodes) {
           parsedData.analysisData.subjectCodes.forEach(subjectCode => {
-            initialSubjectNames[subjectCode] = parsedData.analysisData.subjectNames[subjectCode];
+            initialSubjectNames[subjectCode] = subjectCode; // Use subject code as default name
           });
         }
         setSubjectNames(initialSubjectNames);
@@ -195,24 +195,21 @@ function ReportGenerationPage() {
       // Prepare the API request data to match backend expectations
       const reportRequestData = {
         // Required fields that backend validates
-        department: departmentInfo.department,
-        semester: departmentInfo.semester.trim(),
-        academicYear: departmentInfo.academicYear.trim(),
-        classAdvisorName: departmentInfo.classAdvisorName.trim(),
-        monthsAndYear: departmentInfo.monthsAndYear.trim(),
-        // Analysis data from the previous analysis
+        department: departmentInfo.department || 'CSE',
+        semester: departmentInfo.semester?.toString().trim() || '',
+        academicYear: departmentInfo.academicYear?.toString().trim() || '',
+        classAdvisorName: departmentInfo.classAdvisorName?.toString().trim() || '',
+        monthsAndYear: departmentInfo.monthsAndYear?.toString().trim() || '',
+        
+        // Analysis data from the previous analysis - backend expects only students and subjectCodes
         analysisData: {
-          students: reportData.analysisData.students,
-          subjectCodes: reportData.analysisData.subjectCodes,
-          totalStudents: reportData.resultData.totalStudents,
-          totalSubjects: reportData.resultData.totalSubjects,
-          overallPassPercentage: reportData.resultData.overallPassPercentage,
-          subjectWiseResults: reportData.resultData.subjectWiseResults
+          students: reportData?.analysisData?.students || [],
+          subjectCodes: reportData?.analysisData?.subjectCodes || []
         },
         
-        // Faculty assignments and subject names
-        facultyAssignments: facultyAssignments,
-        subjectNames: subjectNames,
+        // Faculty assignments and subject names - ensure objects exist
+        facultyAssignments: facultyAssignments || {},
+        subjectNames: subjectNames || {},
         
         // Optional fields with defaults
         facultyId: null, // Will use req.user?.id from backend
@@ -221,25 +218,34 @@ function ReportGenerationPage() {
         reportGeneratedAt: new Date().toISOString()
       };
 
-      // Call the new API to generate and download the Excel report directly
+
+      // Call the API to generate and download the Excel report directly
       await pdfReportsApi.generateInstitutionalExcel(reportRequestData);
 
       // Since the file is downloaded directly, we can show success and a preview modal
       // using the data we already have on the client.
-      toast.success('Excel report downloaded successfully!');
+      toast.success('Excel report generated and downloaded successfully!');
 
       // Use the request data to populate the preview modal
       setGeneratedReport({
         ...reportRequestData,
         // Mimic structure of old response for preview component
         generatedAt: reportRequestData.reportGeneratedAt,
-        totalStudents: reportRequestData.analysisData.totalStudents,
-        overallPassPercentage: reportRequestData.analysisData.overallPassPercentage,
+        totalStudents: reportData?.resultData?.totalStudents || 0,
+        overallPassPercentage: reportData?.resultData?.overallPassPercentage || 0,
         filename: `institutional_report_${reportRequestData.semester}.xlsx` // Approximate filename
       });
       setShowPreview(true);
     } catch (error) {
-      toast.error(error.message || 'Failed to generate institutional report. Please try again.');
+      console.error('Report generation error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
+      // Show more specific error message
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to generate report. Please check your connection and try again.';
+      toast.error(`Report Generation Failed: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -272,12 +278,7 @@ function ReportGenerationPage() {
         </div>
 
         {/* Header */}
-        <div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-          className="bg-white rounded-lg shadow-sm p-6 mb-6"
-        >
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-center mb-4">
             <FileText className="h-8 w-8 text-blue-600 mr-3" />
             <div>
@@ -288,12 +289,7 @@ function ReportGenerationPage() {
 
           {/* Analysis Summary */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: 0.2 }}
-              className="bg-blue-50 p-4 rounded-lg"
-            >
+            <div className="bg-blue-50 p-4 rounded-lg">
               <div className="flex items-center">
                 <Users className="h-6 w-6 text-blue-600 mr-2" />
                 <div>
@@ -302,12 +298,7 @@ function ReportGenerationPage() {
                 </div>
               </div>
             </div>
-            <div 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.3 }}
-              className="bg-green-50 p-4 rounded-lg"
-            >
+            <div className="bg-green-50 p-4 rounded-lg">
               <div className="flex items-center">
                 <BookOpen className="h-6 w-6 text-green-600 mr-2" />
                 <div>
@@ -316,12 +307,7 @@ function ReportGenerationPage() {
                 </div>
               </div>
             </div>
-            <div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: 0.4 }}
-              className="bg-purple-50 p-4 rounded-lg"
-            >
+            <div className="bg-purple-50 p-4 rounded-lg">
               <div className="flex items-center">
                 <Building2 className="h-6 w-6 text-purple-600 mr-2" />
                 <div>
@@ -334,12 +320,7 @@ function ReportGenerationPage() {
         </div>
 
         {/* Report Form */}
-        <div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-          className="bg-white rounded-lg shadow-sm p-6"
-        >
+        <div className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
             <Building2 className="h-5 w-5 mr-2 text-blue-600" />
             Institutional Report Details
@@ -557,9 +538,6 @@ function ReportGenerationPage() {
               {reportData.resultData.subjectWiseResults.map((subject, index) => (
                 <div 
                   key={index}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
                   className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
                 >
                   <h4 className="font-medium text-gray-900 mb-2 flex items-center">
@@ -629,16 +607,8 @@ function ReportGenerationPage() {
 
         {/* Report Generated Success Modal */}
         {showPreview && generatedReport && (
-          <div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-          >
-            <div 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6"
-            >
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
                   <CheckCircle className="h-8 w-8 text-green-600" />
@@ -691,7 +661,7 @@ function ReportGenerationPage() {
                   <button
                     onClick={() => {
                       // Open preview in new tab - use env API URL
-                      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+                      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
                       const correctedPreviewUrl = `${apiBaseUrl}/reports/preview/${generatedReport.reportId}`;
                       window.open(correctedPreviewUrl, '_blank');
                     }}
