@@ -16,27 +16,8 @@ import {
   BookOpen,
   LinkIcon,
 } from "lucide-react"
-// import { facultyAPI, DEGREE_OPTIONS, TITLE_OPTIONS, DEPARTMENT_OPTIONS } from "../../../api/faculty"
+import { facultyAPI, DEGREE_OPTIONS, TITLE_OPTIONS, DEPARTMENT_OPTIONS } from "../../../api/faculty"
 import toast from "react-hot-toast"
-
-const DEGREE_OPTIONS = ["PhD", "M.Tech", "M.Sc", "B.Tech", "B.Sc", "MBA", "MA", "BA"]
-const TITLE_OPTIONS = ["Dr.", "Prof.", "Mr.", "Ms.", "Mrs."]
-const DEPARTMENT_OPTIONS = [
-  "Computer Science",
-  "Electronics",
-  "Mechanical",
-  "Civil",
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-]
-
-const facultyAPI = {
-  getFaculty: async (params) => ({ data: [] }),
-  createFaculty: async (data) => ({ success: true }),
-  updateFaculty: async (id, data) => ({ success: true }),
-  deleteFaculty: async (id) => ({ success: true }),
-}
 
 const SidebarAcadexLogo = () => {
   return (
@@ -288,7 +269,7 @@ const NavItem = ({ item, isActive, onClick, isCollapsed, isDarkMode }) => {
           {item.description && <div style={{ color: "#9CA3AF", fontSize: "10px" }}>{item.description}</div>}
         </div>
       )}
-      <style jsx>{`
+      <style>{`
         .tooltip {
           opacity: 0;
         }

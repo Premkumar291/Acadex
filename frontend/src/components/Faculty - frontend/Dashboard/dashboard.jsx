@@ -310,15 +310,18 @@ const Dashboard = () => {
           { y: 0, opacity: 1, duration: 1.2, stagger: 0.2, ease: "power3.out" },
         )
         gsap.fromTo(".animate-header", { y: -30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" })
-        // Continuous animations
-        gsap.to(".pulse-indicator", {
-          scale: 1.2,
-          opacity: 0.6,
-          duration: 2,
-          repeat: -1,
-          yoyo: true,
-          ease: "power2.inOut",
-        })
+        // Continuous animations - check if elements exist first
+        const pulseElements = document.querySelectorAll(".pulse-indicator");
+        if (pulseElements.length > 0) {
+          gsap.to(".pulse-indicator", {
+            scale: 1.2,
+            opacity: 0.6,
+            duration: 2,
+            repeat: -1,
+            yoyo: true,
+            ease: "power2.inOut",
+          });
+        }
         gsap.to(".float-element", {
           y: -8,
           duration: 3,
@@ -449,7 +452,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <style jsx>{`
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap');
         * {
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;

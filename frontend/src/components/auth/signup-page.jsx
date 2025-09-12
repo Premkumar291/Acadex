@@ -164,7 +164,7 @@ const Signup = () => {
 
   return (
     <>
-      <style jsx>{`
+      <style>{`
         * {
           margin: 0;
           padding: 0;

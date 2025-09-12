@@ -5,6 +5,9 @@ import cors from 'cors';
 import { connectDb } from './dataBase/connectDb.js';
 import { initGridFS } from './utils/gridfsConfig.js';
 import { startFileCleanupScheduler } from './utils/fileCleanup.js';
+import { errorHandler, notFound } from './middleware/errorHandler.js';
+import { generalLimiter, authLimiter } from './middleware/rateLimiter.js';
+import { securityMiddleware, corsOptions } from './middleware/security.js';
 import adminRoutes from './routes/admin.route.js';
 import protectedRoutes from './routes/protected.route.js';
 import gridFSPdfRoutes from './routes/gridFSPdfSplit.route.js';
@@ -16,6 +19,7 @@ import subjectRoutes from './routes/subject.route.js';
 import facultyRoutes from './routes/faculty.route.js';
 import adminHierarchyRoutes from './routes/adminHierarchy.routes.js';
 import { User } from './models/user.model.js';
+import { createIndexes } from './models/index.js';
 
 
 dotenv.config();
@@ -23,14 +27,20 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Middleware
-app.use(express.json({ limit: '50mb' })); // Increased limit for large files
+// CORS configuration (must be first)
+app.use(cors(corsOptions));
+
+// Security middleware
+app.use(securityMiddleware);
+
+// Rate limiting
+app.use('/api/auth', authLimiter);
+app.use('/api', generalLimiter);
+
+// Body parsing middleware
+app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
-app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174","http://localhost:5175"],
-  credentials: true
-}));
 
 // In-memory session storage for temporary data (use Redis in production)
 const tempSessionStorage = new Map();
@@ -52,6 +62,10 @@ app.use("/api/admin-hierarchy", adminHierarchyRoutes); // Admin hierarchy manage
 app.use("/api/analyze", pdfCoAnalysisRoutes); // Using PDF.co as the primary analyzer
 app.use("/api/reports", pdfReportRoutes); // PDF report generation and management
 
+// Error handling middleware (must be last)
+app.use(notFound);
+app.use(errorHandler);
+
 // Start server
 app.listen(PORT, async () => {
   await connectDb();
@@ -62,6 +76,13 @@ app.listen(PORT, async () => {
     await User.fixHierarchyPaths();
   } catch (error) {
     console.error('Error fixing hierarchy paths:', error);
+  }
+  
+  // Create database indexes for optimal performance
+  try {
+    await createIndexes();
+  } catch (error) {
+    console.error('Error creating database indexes:', error);
   }
   
   // Start file cleanup scheduler for uploads folder (12-hour intervals)

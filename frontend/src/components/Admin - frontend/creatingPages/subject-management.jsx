@@ -42,8 +42,7 @@ const SubjectManagement = () => {
       setLoading(true)
       const response = await subjectAPI.getSubjects()
       setSubjects(response.data || [])
-    } catch (error) {
-      console.error("Failed to fetch subjects:", error)
+    } catch {
       toast.error("Failed to fetch subjects. Please check your connection and try again.")
       setSubjects([])
     } finally {
