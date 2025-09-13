@@ -36,7 +36,7 @@ const Dashboard = () => {
     {
       name: "Faculty Creation",
       icon: Users,
-      description: "Create faculty & sub-admin accounts",
+      description: "Create faculty & admin accounts",
       url: "/admin-dashboard/create-faculty",
     },
     {

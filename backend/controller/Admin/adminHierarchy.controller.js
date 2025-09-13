@@ -1,6 +1,6 @@
 import { User } from '../../models/user.model.js';
 import { Faculty } from '../../models/faculty.model.js';
-import { getVisibleUsersForAdmin, getHierarchyTree, getAdminStats, canCreateSubAdmin } from '../../utils/hierarchyUtils.js';
+import { getVisibleUsersForAdmin, getAdminData, getAdminStats, canCreateAdmin } from '../../utils/hierarchyUtils.js';
 import bcryptjs from 'bcryptjs';
 import { generateTokenAndSetCookie } from '../../utils/generateTokenAndSetCookie.js';
 
@@ -9,9 +9,9 @@ import { generateTokenAndSetCookie } from '../../utils/generateTokenAndSetCookie
  */
 
 /**
- * Create a sub-admin
+ * Create an admin
  */
-export const createSubAdmin = async (req, res) => {
+export const createAdmin = async (req, res) => {
     try {
         const { email, password, name, department } = req.body;
         const creatorId = req.userId || req.user?.userId || req.user?._id;
@@ -59,8 +59,8 @@ export const createSubAdmin = async (req, res) => {
             });
         }
 
-        // Check if creator can create sub-admin
-        const canCreate = await canCreateSubAdmin(creatorId);
+        // Check if creator can create admin
+        const canCreate = await canCreateAdmin(creatorId);
         if (!canCreate.canCreate) {
             return res.status(403).json({
                 success: false,
@@ -71,30 +71,26 @@ export const createSubAdmin = async (req, res) => {
         // Hash password
         const hashedPassword = await bcryptjs.hash(password, 12);
 
-        // Create sub-admin
-        
-        const subAdmin = new User({
+        // Create admin
+        const newAdmin = new User({
             email,
             password: hashedPassword,
             name,
             department,
             role: 'admin',
-            parentAdmin: creatorId,
             createdBy: creatorId,
-            isVerified: true // Sub-admins are auto-verified
+            isVerified: true // Admins are auto-verified
         });
 
-
-        await subAdmin.save();
+        await newAdmin.save();
         
-
         // Remove password from response
-        const { password: _, ...subAdminData } = subAdmin.toObject();
+        const { password: _, ...adminData } = newAdmin.toObject();
 
         res.status(201).json({
             success: true,
-            message: "Sub-admin created successfully",
-            subAdmin: subAdminData
+            message: "Admin created successfully",
+            admin: adminData
         });
 
     } catch (error) {
@@ -107,18 +103,26 @@ export const createSubAdmin = async (req, res) => {
 };
 
 /**
- * Get hierarchy tree for current admin
+ * Get admin data and their created users
  */
-export const getHierarchy = async (req, res) => {
+export const getAdminInfo = async (req, res) => {
     try {
         const adminId = req.user.userId;
         
-        const hierarchyData = await getHierarchyTree(adminId);
+        const adminData = await getAdminData(adminId);
+        
+        // Get created faculty separately
+        const createdFaculty = await Faculty.find({ createdBy: adminId })
+            .select('name email department phoneNumber createdAt')
+            .sort({ createdAt: -1 });
+        
+        // Add faculty to the response
+        adminData.createdFaculty = createdFaculty;
         
         res.status(200).json({
             success: true,
-            message: "Hierarchy retrieved successfully",
-            data: hierarchyData
+            message: "Admin data retrieved successfully",
+            data: adminData
         });
 
     } catch (error) {
@@ -131,32 +135,36 @@ export const getHierarchy = async (req, res) => {
 };
 
 /**
- * Get visible users for current admin
+ * Get users created by current admin
  */
-export const getVisibleUsers = async (req, res) => {
+export const getCreatedUsers = async (req, res) => {
     try {
         const adminId = req.user.userId;
-        const { type } = req.query; // 'admins', 'faculty', or 'all'
+        const { type } = req.query; // 'admins', 'faculty', 'users', or 'all'
         
-        const visibleUsers = await getVisibleUsersForAdmin(adminId);
+        const createdUsers = await getVisibleUsersForAdmin(adminId);
         
         let responseData = {};
         
         if (type === 'admins' || !type) {
-            responseData.admins = visibleUsers.admins;
+            responseData.admins = createdUsers.admins;
         }
         
         if (type === 'faculty' || !type) {
-            responseData.faculty = visibleUsers.faculty;
+            responseData.faculty = createdUsers.faculty;
+        }
+        
+        if (type === 'users' || !type) {
+            responseData.users = createdUsers.users;
         }
         
         if (!type) {
-            responseData = visibleUsers;
+            responseData = createdUsers;
         }
         
         res.status(200).json({
             success: true,
-            message: "Visible users retrieved successfully",
+            message: "Created users retrieved successfully",
             data: responseData
         });
 
@@ -194,40 +202,37 @@ export const getAdminStatistics = async (req, res) => {
 };
 
 /**
- * Update sub-admin information
+ * Update admin information
  */
-export const updateSubAdmin = async (req, res) => {
+export const updateAdmin = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, department, email } = req.body;
         const adminId = req.user.userId;
 
-        // Find the sub-admin
-        const subAdmin = await User.findById(id);
-        if (!subAdmin) {
+        // Find the admin
+        const targetAdmin = await User.findById(id);
+        if (!targetAdmin) {
             return res.status(404).json({
                 success: false,
-                message: "Sub-admin not found"
+                message: "Admin not found"
             });
         }
 
-        // Check if current admin can modify this sub-admin
-        const admin = await User.findById(adminId);
-        const canModify = subAdmin.createdBy?.equals(adminId) || 
-                         subAdmin.parentAdmin?.equals(adminId) ||
-                         (admin.hierarchyPath && subAdmin.hierarchyPath.includes(adminId));
+        // Check if current admin can modify this admin (only if they created them)
+        const canModify = targetAdmin.createdBy?.equals(adminId);
 
         if (!canModify) {
             return res.status(403).json({
                 success: false,
-                message: "You don't have permission to modify this sub-admin"
+                message: "You don't have permission to modify this admin"
             });
         }
 
         // Update fields
-        if (name) subAdmin.name = name;
-        if (department) subAdmin.department = department;
-        if (email && email !== subAdmin.email) {
+        if (name) targetAdmin.name = name;
+        if (department) targetAdmin.department = department;
+        if (email && email !== targetAdmin.email) {
             // Check if email is already taken
             const existingUser = await User.findOne({ email, _id: { $ne: id } });
             if (existingUser) {
@@ -236,18 +241,18 @@ export const updateSubAdmin = async (req, res) => {
                     message: "Email already in use"
                 });
             }
-            subAdmin.email = email;
+            targetAdmin.email = email;
         }
 
-        await subAdmin.save();
+        await targetAdmin.save();
 
         // Remove password from response
-        const { password: _, ...subAdminData } = subAdmin.toObject();
+        const { password: _, ...adminData } = targetAdmin.toObject();
 
         res.status(200).json({
             success: true,
-            message: "Sub-admin updated successfully",
-            subAdmin: subAdminData
+            message: "Admin updated successfully",
+            admin: adminData
         });
 
     } catch (error) {
@@ -260,42 +265,40 @@ export const updateSubAdmin = async (req, res) => {
 };
 
 /**
- * Delete sub-admin
+ * Delete admin
  */
-export const deleteSubAdmin = async (req, res) => {
+export const deleteAdmin = async (req, res) => {
     try {
         const { id } = req.params;
         const adminId = req.user.userId;
 
-        // Find the sub-admin
-        const subAdmin = await User.findById(id);
-        if (!subAdmin) {
+        // Find the admin
+        const targetAdmin = await User.findById(id);
+        if (!targetAdmin) {
             return res.status(404).json({
                 success: false,
-                message: "Sub-admin not found"
+                message: "Admin not found"
             });
         }
 
-        // Check if current admin can delete this sub-admin
-        const admin = await User.findById(adminId);
-        const canDelete = subAdmin.createdBy?.equals(adminId) || 
-                         subAdmin.parentAdmin?.equals(adminId);
+        // Check if current admin can delete this admin (only if they created them)
+        const canDelete = targetAdmin.createdBy?.equals(adminId);
 
         if (!canDelete) {
             return res.status(403).json({
                 success: false,
-                message: "You don't have permission to delete this sub-admin"
+                message: "You don't have permission to delete this admin"
             });
         }
 
-        // Check if sub-admin has created users
+        // Check if admin has created users
         const createdUsers = await User.countDocuments({ createdBy: id });
         const createdFaculty = await Faculty.countDocuments({ createdBy: id });
 
         if (createdUsers > 0 || createdFaculty > 0) {
             return res.status(400).json({
                 success: false,
-                message: `Cannot delete sub-admin who has created ${createdUsers} users and ${createdFaculty} faculty members. Please reassign or delete them first.`
+                message: `Cannot delete admin who has created ${createdUsers} users and ${createdFaculty} faculty members. Please reassign or delete them first.`
             });
         }
 
@@ -303,7 +306,7 @@ export const deleteSubAdmin = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: "Sub-admin deleted successfully"
+            message: "Admin deleted successfully"
         });
 
     } catch (error) {
@@ -316,26 +319,28 @@ export const deleteSubAdmin = async (req, res) => {
 };
 
 /**
- * Get sub-admin creation status
+ * Get admin creation status
  */
-export const getSubAdminCreationStatus = async (req, res) => {
+export const getAdminCreationStatus = async (req, res) => {
     try {
         const adminId = req.user.userId;
         
-        const canCreateStatus = await canCreateSubAdmin(adminId);
+        const canCreateStatus = await canCreateAdmin(adminId);
         const admin = await User.findById(adminId);
-        const subAdminCount = await admin.getSubAdminCount();
+        const createdAdminCount = await User.countDocuments({ 
+            createdBy: adminId, 
+            role: 'admin' 
+        });
         
         res.status(200).json({
             success: true,
-            message: "Sub-admin creation status retrieved",
+            message: "Admin creation status retrieved",
             data: {
                 canCreate: canCreateStatus.canCreate,
                 reason: canCreateStatus.reason,
-                currentSubAdmins: subAdminCount,
-                maxSubAdmins: 3,
-                adminLevel: admin.adminLevel,
-                maxLevel: 3
+                currentCreatedAdmins: createdAdminCount,
+                adminName: admin.name,
+                adminEmail: admin.email
             }
         });
 

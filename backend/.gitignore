@@ -14,7 +14,9 @@ dist/
 .env.test.local
 .env.production.local
 .env
-
+/.env/
+./env/
+./env
 # IDE/Editor files
 .vscode/
 .idea/

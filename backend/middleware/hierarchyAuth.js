@@ -95,9 +95,9 @@ export const canSeeFaculty = async (req, res, next) => {
 };
 
 /**
- * Middleware to check if admin can create sub-admin
+ * Middleware to check if admin can create another admin
  */
-export const canCreateSubAdmin = async (req, res, next) => {
+export const canCreateAdmin = async (req, res, next) => {
     try {
         const adminId = req.userId || req.user?.userId || req.user?._id;
         const admin = await User.findById(adminId);
@@ -109,45 +109,27 @@ export const canCreateSubAdmin = async (req, res, next) => {
             });
         }
 
-        // Check if can create sub-admin
-        const canCreate = await admin.canCreateSubAdmin();
-        
-        if (!canCreate) {
-            const subAdminCount = await admin.getSubAdminCount();
-            let reason = "Cannot create sub-admin";
-            
-            if (admin.adminLevel >= 3) {
-                reason = "Maximum hierarchy depth reached (3 levels)";
-            } else if (subAdminCount >= 3) {
-                reason = "Maximum sub-admin limit reached (3 per admin)";
-            }
-
-            return res.status(403).json({
-                success: false,
-                message: reason
-            });
-        }
-
+        // All admins can create other admins (no restrictions)
         next();
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Error checking sub-admin creation permissions",
+            message: "Error checking admin creation permissions",
             error: error.message
         });
     }
 };
 
 /**
- * Middleware to filter results based on hierarchy visibility
+ * Middleware to filter results based on creator visibility
  */
-export const filterByHierarchy = (model) => {
+export const filterByCreator = (model) => {
     return async (req, res, next) => {
         try {
             const adminId = req.userId || req.user?.userId || req.user?._id;
             
-            // Add hierarchy filter to the request
-            req.hierarchyFilter = {
+            // Add creator filter to the request
+            req.creatorFilter = {
                 adminId,
                 model
             };
@@ -156,7 +138,7 @@ export const filterByHierarchy = (model) => {
         } catch (error) {
             return res.status(500).json({
                 success: false,
-                message: "Error setting up hierarchy filter",
+                message: "Error setting up creator filter",
                 error: error.message
             });
         }

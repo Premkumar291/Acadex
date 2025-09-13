@@ -15,21 +15,21 @@ const api = axios.create({
  * Admin Hierarchy API Service Functions
  */
 
-// Get hierarchy tree for current admin
+// Get admin info and their created users
 export const getHierarchy = async () => {
   try {
-    const response = await api.get('/hierarchy');
+    const response = await api.get('/info');
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
 
-// Get visible users (admins and faculty)
+// Get users created by current admin
 export const getVisibleUsers = async (type = null) => {
   try {
     const params = type ? { type } : {};
-    const response = await api.get('/visible-users', { params });
+    const response = await api.get('/created-users', { params });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -46,52 +46,68 @@ export const getAdminStatistics = async () => {
   }
 };
 
-// Get sub-admin creation status
-export const getSubAdminCreationStatus = async () => {
+// Get admin creation status
+export const getAdminCreationStatus = async () => {
   try {
-    const response = await api.get('/sub-admin-status');
+    const response = await api.get('/creation-status');
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
 
-// Create sub-admin
-export const createSubAdmin = async (subAdminData) => {
+// Alias for backward compatibility
+export const getSubAdminCreationStatus = getAdminCreationStatus;
+
+// Create admin
+export const createAdmin = async (adminData) => {
   try {
-    const response = await api.post('/sub-admin', subAdminData);
+    const response = await api.post('/admin', adminData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
 
-// Update sub-admin
-export const updateSubAdmin = async (id, updateData) => {
+// Alias for backward compatibility
+export const createSubAdmin = createAdmin;
+
+// Update admin
+export const updateAdmin = async (id, updateData) => {
   try {
-    const response = await api.put(`/sub-admin/${id}`, updateData);
+    const response = await api.put(`/admin/${id}`, updateData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
 
-// Delete sub-admin
-export const deleteSubAdmin = async (id) => {
+// Alias for backward compatibility
+export const updateSubAdmin = updateAdmin;
+
+// Delete admin
+export const deleteAdmin = async (id) => {
   try {
-    const response = await api.delete(`/sub-admin/${id}`);
+    const response = await api.delete(`/admin/${id}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
+
+// Alias for backward compatibility
+export const deleteSubAdmin = deleteAdmin;
 
 export default {
   getHierarchy,
   getVisibleUsers,
   getAdminStatistics,
+  getAdminCreationStatus,
   getSubAdminCreationStatus,
+  createAdmin,
   createSubAdmin,
+  updateAdmin,
   updateSubAdmin,
+  deleteAdmin,
   deleteSubAdmin,
 };

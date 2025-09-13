@@ -17,39 +17,24 @@ export const getVisibleUsersForAdmin = async (adminId) => {
             throw new Error('Invalid admin');
         }
 
-        // Build visibility query based on hierarchy rules
-        const visibilityQuery = {
-            $or: [
-                // Users created by this admin
-                { createdBy: adminId },
-                // Users in the admin's subtree (sub-admins and their creations)
-                { hierarchyPath: new RegExp(`(^|/)${adminId}(/|$)`) },
-                // Parent admin (if this admin has a parent)
-                ...(admin.parentAdmin ? [{ _id: admin.parentAdmin }] : []),
-                // Sibling admins (same parent)
-                ...(admin.parentAdmin ? [{ parentAdmin: admin.parentAdmin, _id: { $ne: adminId } }] : [])
-            ]
-        };
+        // Get users created by this admin only
+        const visibleUsers = await User.find({
+            createdBy: adminId
+        }).populate('createdBy', 'name email role');
 
-        // Get visible admins
-        const visibleAdmins = await User.find({
-            ...visibilityQuery,
-            role: 'admin'
-        }).populate('parentAdmin createdBy', 'name email role adminLevel');
+        // Separate admins and faculty
+        const visibleAdmins = visibleUsers.filter(user => user.role === 'admin');
+        const visibleFacultyUsers = visibleUsers.filter(user => user.role === 'faculty');
 
-        // Get visible faculty (faculty visibility follows same rules)
+        // Get faculty created by this admin
         const visibleFaculty = await Faculty.find({
-            $or: [
-                // Faculty created by this admin
-                { createdBy: adminId },
-                // Faculty created by admins in this admin's subtree
-                { createdBy: { $in: visibleAdmins.map(a => a._id) } }
-            ]
-        }).populate('createdBy', 'name email role adminLevel');
+            createdBy: adminId
+        }).populate('createdBy', 'name email role');
 
         return {
             admins: visibleAdmins,
-            faculty: visibleFaculty
+            faculty: visibleFaculty,
+            users: visibleFacultyUsers
         };
     } catch (error) {
         throw new Error(`Error getting visible users: ${error.message}`);
@@ -76,24 +61,8 @@ export const canAdminSeeUser = async (adminId, targetUserId) => {
             return true;
         }
 
-        // Can see users they created
+        // Can only see users they created directly
         if (targetUser.createdBy && targetUser.createdBy.equals(adminId)) {
-            return true;
-        }
-
-        // Can see their parent admin
-        if (admin.parentAdmin && admin.parentAdmin.equals(targetUserId)) {
-            return true;
-        }
-
-        // Can see sibling admins (same parent)
-        if (admin.parentAdmin && targetUser.parentAdmin && 
-            admin.parentAdmin.equals(targetUser.parentAdmin)) {
-            return true;
-        }
-
-        // Can see users in their subtree
-        if (targetUser.hierarchyPath.includes(adminId)) {
             return true;
         }
 
@@ -118,14 +87,9 @@ export const canAdminSeeFaculty = async (adminId, facultyId) => {
             return false;
         }
 
-        // Can see faculty they created
+        // Can only see faculty they created directly
         if (faculty.createdBy && faculty.createdBy._id.equals(adminId)) {
             return true;
-        }
-
-        // Can see faculty created by users they can see
-        if (faculty.createdBy) {
-            return await canAdminSeeUser(adminId, faculty.createdBy._id.toString());
         }
 
         return false;
@@ -135,11 +99,11 @@ export const canAdminSeeFaculty = async (adminId, facultyId) => {
 };
 
 /**
- * Check if an admin can create a sub-admin
+ * Check if an admin can create another admin
  * @param {string} adminId - The admin's ObjectId
  * @returns {Object} Object with canCreate boolean and reason
  */
-export const canCreateSubAdmin = async (adminId) => {
+export const canCreateAdmin = async (adminId) => {
     try {
         const admin = await User.findById(adminId);
         
@@ -147,89 +111,46 @@ export const canCreateSubAdmin = async (adminId) => {
             return { canCreate: false, reason: 'Invalid admin' };
         }
 
-        // Check admin level (max 3 levels deep: 0, 1, 2, 3)
-        if (admin.adminLevel >= 3) {
-            return { canCreate: false, reason: 'Maximum hierarchy depth reached' };
-        }
-
-        // Check sub-admin count (max 3 per admin)
-        const subAdminCount = await User.countDocuments({
-            parentAdmin: adminId,
-            role: 'admin'
-        });
-
-        if (subAdminCount >= 3) {
-            return { canCreate: false, reason: 'Maximum sub-admin limit reached (3)' };
-        }
-
-        return { canCreate: true, reason: 'Can create sub-admin' };
+        // All admins can create other admins (no restrictions)
+        return { canCreate: true, reason: 'Can create admin' };
     } catch (error) {
         return { canCreate: false, reason: `Error: ${error.message}` };
     }
 };
 
 /**
- * Get hierarchy tree for an admin
+ * Get admin data and their created users
  * @param {string} adminId - The admin's ObjectId
- * @returns {Object} Hierarchical tree structure
+ * @returns {Object} Admin data with created users
  */
-export const getHierarchyTree = async (adminId) => {
+export const getAdminData = async (adminId) => {
     try {
-        const admin = await User.findById(adminId).populate('parentAdmin');
+        const admin = await User.findById(adminId);
         if (!admin || admin.role !== 'admin') {
             throw new Error('Invalid admin');
         }
 
         // Get all visible users
-        const { admins, faculty } = await getVisibleUsersForAdmin(adminId);
-
-        // Build tree structure
-        const buildTree = (users, parentId = null) => {
-            return users
-                .filter(user => {
-                    if (parentId === null) {
-                        return !user.parentAdmin || user.parentAdmin.equals(adminId);
-                    }
-                    return user.parentAdmin && user.parentAdmin.equals(parentId);
-                })
-                .map(user => ({
-                    ...user.toObject(),
-                    children: buildTree(users, user._id),
-                    faculty: faculty.filter(f => f.createdBy && f.createdBy._id.equals(user._id))
-                }));
-        };
-
-        // Start from the current admin or their root
-        let rootAdmins = [];
-        if (admin.adminLevel === 0) {
-            // This is a root admin, start from them
-            rootAdmins = [admin];
-        } else {
-            // Find the root admin in their hierarchy
-            const rootAdmin = admins.find(a => a.adminLevel === 0 && 
-                admin.hierarchyPath.startsWith(a._id.toString()));
-            if (rootAdmin) {
-                rootAdmins = [rootAdmin];
-            }
-        }
-
-        const tree = buildTree([...rootAdmins, ...admins]);
+        const { admins, faculty, users } = await getVisibleUsersForAdmin(adminId);
         
         return {
-            tree,
             currentAdmin: admin,
-            totalAdmins: admins.length + 1, // +1 for current admin
-            totalFaculty: faculty.length
+            createdAdmins: admins,
+            createdFaculty: faculty,
+            createdUsers: users,
+            totalCreatedAdmins: admins.length,
+            totalCreatedFaculty: faculty.length,
+            totalCreatedUsers: users.length
         };
     } catch (error) {
-        throw new Error(`Error building hierarchy tree: ${error.message}`);
+        throw new Error(`Error getting admin data: ${error.message}`);
     }
 };
 
 /**
  * Get admin statistics
  * @param {string} adminId - The admin's ObjectId
- * @returns {Object} Statistics about the admin's hierarchy
+ * @returns {Object} Statistics about the admin's created users
  */
 export const getAdminStats = async (adminId) => {
     try {
@@ -238,34 +159,28 @@ export const getAdminStats = async (adminId) => {
             throw new Error('Invalid admin');
         }
 
-        const { admins, faculty } = await getVisibleUsersForAdmin(adminId);
-
-        // Count direct sub-admins
-        const directSubAdmins = await User.countDocuments({
-            parentAdmin: adminId,
+        // Count users created by this admin
+        const createdAdmins = await User.countDocuments({
+            createdBy: adminId,
             role: 'admin'
         });
 
-        // Count direct faculty created
-        const directFaculty = await Faculty.countDocuments({
+        const createdUsers = await User.countDocuments({
+            createdBy: adminId,
+            role: 'faculty'
+        });
+
+        const createdFaculty = await Faculty.countDocuments({
             createdBy: adminId
         });
 
-        // Count total in subtree
-        const subtreeAdmins = admins.filter(a => 
-            a.hierarchyPath.includes(adminId) || a.createdBy?.equals(adminId)
-        ).length;
-
         return {
-            adminLevel: admin.adminLevel,
-            directSubAdmins,
-            maxSubAdmins: 3,
-            canCreateMoreSubAdmins: directSubAdmins < 3 && admin.adminLevel < 3,
-            directFaculty,
-            totalVisibleAdmins: admins.length,
-            totalVisibleFaculty: faculty.length,
-            subtreeAdmins,
-            hierarchyDepth: admin.adminLevel
+            adminName: admin.name,
+            adminEmail: admin.email,
+            createdAdmins,
+            createdUsers,
+            createdFaculty,
+            totalCreated: createdAdmins + createdUsers + createdFaculty
         };
     } catch (error) {
         throw new Error(`Error getting admin stats: ${error.message}`);

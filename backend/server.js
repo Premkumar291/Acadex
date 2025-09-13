@@ -57,7 +57,7 @@ app.use("/api/pdf", gridFSPdfRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/subjects", subjectRoutes); // Subject management routes
 app.use("/api/faculty", facultyRoutes); // Faculty management routes
-app.use("/api/admin-hierarchy", adminHierarchyRoutes); // Admin hierarchy management routes
+app.use("/api/admin-hierarchy", adminHierarchyRoutes); // Admin management routes
 
 app.use("/api/analyze", pdfCoAnalysisRoutes); // Using PDF.co as the primary analyzer
 app.use("/api/reports", pdfReportRoutes); // PDF report generation and management
@@ -71,12 +71,8 @@ app.listen(PORT, async () => {
   await connectDb();
   console.log(`Server is running on http://localhost:${PORT}`);
   
-  // Fix existing users' hierarchy paths
-  try {
-    await User.fixHierarchyPaths();
-  } catch (error) {
-    console.error('Error fixing hierarchy paths:', error);
-  }
+  // System initialization complete
+  console.log('Admin management system initialized');
   
   // Create database indexes for optimal performance
   try {

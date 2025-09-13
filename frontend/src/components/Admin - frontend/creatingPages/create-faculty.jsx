@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { signup } from "../../../api/auth"
-import { createSubAdmin, getHierarchy, deleteSubAdmin } from "../../../api/adminHierarchy"
+import { createAdmin, getHierarchy, deleteAdmin } from "../../../api/adminHierarchy"
 
 // Icons from reference UI
 
@@ -104,43 +104,24 @@ const CreateFaculty = () => {
     email: "",
     password: "",
     department: "",
-    role: "faculty", // Default to faculty
-    hierarchyLevel: "department_admin", // For admin roles
-    permissions: {
-      canCreateFaculty: false,
-      canManageStudents: false,
-      canGenerateReports: false,
-      canManageSubjects: false,
-      canViewAllDepartments: false
-    }
+    role: "faculty" // Default to faculty
   })
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     
-    if (name.startsWith('permissions.')) {
-      const permissionKey = name.split('.')[1]
-      setForm({
-        ...form,
-        permissions: {
-          ...form.permissions,
-          [permissionKey]: checked
-        }
-      })
-    } else {
-      setForm({
-        ...form,
-        [name]: type === 'checkbox' ? checked : value
-      })
-    }
+    setForm({
+      ...form,
+      [name]: type === 'checkbox' ? checked : value
+    })
   }
 
   const fetchAdminHierarchy = async () => {
     try {
       const response = await getHierarchy()
       if (response.success && response.data) {
-        // Ensure we have an array, even if empty
-        const hierarchyData = Array.isArray(response.data) ? response.data : []
+        // New API returns createdAdmins array
+        const hierarchyData = response.data.createdAdmins || []
         setAdminHierarchy(hierarchyData)
       } else {
         setAdminHierarchy([])
@@ -153,7 +134,7 @@ const CreateFaculty = () => {
   const handleDeleteAdmin = async (adminId) => {
     if (window.confirm('Are you sure you want to delete this admin?')) {
       try {
-        const response = await deleteSubAdmin(adminId)
+        const response = await deleteAdmin(adminId)
         if (response.success) {
           fetchAdminHierarchy() // Refresh the list
         }
@@ -176,8 +157,8 @@ const CreateFaculty = () => {
     try {
       let response;
       if (form.role === 'admin') {
-        // Use sub-admin creation API for admin role
-        response = await createSubAdmin(form)
+        // Use admin creation API for admin role
+        response = await createAdmin(form)
       } else {
         // Use regular signup for faculty role
         response = await signup(form)
@@ -190,21 +171,13 @@ const CreateFaculty = () => {
           email: "",
           password: "",
           department: "",
-          role: "faculty",
-          hierarchyLevel: "department_admin",
-          permissions: {
-            canCreateFaculty: false,
-            canManageStudents: false,
-            canGenerateReports: false,
-            canManageSubjects: false,
-            canViewAllDepartments: false
-          }
+          role: "faculty"
         })
         if (form.role === 'admin') {
           fetchAdminHierarchy()
         }
         // Show success message or redirect
-        alert(`${form.role === 'admin' ? 'Sub-Admin' : 'Faculty'} created successfully!`)
+        alert(`${form.role === 'admin' ? 'Admin' : 'Faculty'} created successfully!`)
       }
     } catch {
       alert(`Error creating ${form.role}. Please try again.`)
@@ -249,7 +222,7 @@ const CreateFaculty = () => {
       {activeTab === 'create' && (
         <div className="max-w-md mx-auto">
           <h2 className="text-2xl font-bold text-center mb-6 text-white">
-            {form.role === 'admin' ? 'Create New Sub-Admin Account' : 'Create New Faculty Account'}
+            {form.role === 'admin' ? 'Create New Admin Account' : 'Create New Faculty Account'}
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -318,88 +291,6 @@ const CreateFaculty = () => {
               </select>
             </div>
 
-            {/* Admin Hierarchy Level (only for admin role) */}
-            {form.role === 'admin' && (
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M8 6L21 6L19 12L21 18L8 18L10 12L8 6Z"></path>
-                    <path d="M3 6L3 18"></path>
-                    <path d="M3 12L8 12"></path>
-                  </svg>
-                </div>
-                <select
-                  name="hierarchyLevel"
-                  value={form.hierarchyLevel}
-                  onChange={handleChange}
-                  required
-                  className="w-full h-12 pl-12 pr-4 bg-gray-800/60 border border-gray-600/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                >
-                  <option value="department_admin">Department Admin</option>
-                  <option value="academic_admin">Academic Admin</option>
-                  <option value="system_admin">System Admin</option>
-                </select>
-              </div>
-            )}
-
-            {/* Admin Permissions (only for admin role) */}
-            {form.role === 'admin' && (
-              <div className="bg-gray-800/30 rounded-lg p-4">
-                <h3 className="text-lg font-medium mb-4">Admin Permissions</h3>
-                <div className="space-y-3">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="permissions.canCreateFaculty"
-                      checked={form.permissions.canCreateFaculty}
-                      onChange={handleChange}
-                      className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <span>Can Create Faculty</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="permissions.canManageStudents"
-                      checked={form.permissions.canManageStudents}
-                      onChange={handleChange}
-                      className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <span>Can Manage Students</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="permissions.canGenerateReports"
-                      checked={form.permissions.canGenerateReports}
-                      onChange={handleChange}
-                      className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <span>Can Generate Reports</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="permissions.canManageSubjects"
-                      checked={form.permissions.canManageSubjects}
-                      onChange={handleChange}
-                      className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <span>Can Manage Subjects</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="permissions.canViewAllDepartments"
-                      checked={form.permissions.canViewAllDepartments}
-                      onChange={handleChange}
-                      className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <span>Can View All Departments</span>
-                  </label>
-                </div>
-              </div>
-            )}
 
             {/* Password Input */}
             <div className="relative">
@@ -441,7 +332,7 @@ const CreateFaculty = () => {
                 loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
               }`}
             >
-              {loading ? "Creating Account..." : `Create ${form.role === 'admin' ? 'Sub-Admin' : 'Faculty'} Account`}
+              {loading ? "Creating Account..." : `Create ${form.role === 'admin' ? 'Admin' : 'Faculty'} Account`}
             </button>
           </form>
         </div>
@@ -456,11 +347,11 @@ const CreateFaculty = () => {
             <div className="text-center py-12">
               <div className="text-gray-400 mb-4">
                 <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 919.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 0 0-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 0 1 9.288 0M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm6 3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM7 10a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-300 mb-2">No Sub-Admins Found</h3>
-              <p className="text-gray-400">Create your first sub-admin using the "Create New User" tab.</p>
+              <h3 className="text-lg font-medium text-gray-300 mb-2">No Admins Found</h3>
+              <p className="text-gray-400">Create your first admin using the "Create New User" tab.</p>
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -471,12 +362,8 @@ const CreateFaculty = () => {
                       <h3 className="text-lg font-semibold text-white">{admin.name}</h3>
                       <p className="text-sm text-gray-400">{admin.email}</p>
                     </div>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      admin.hierarchyLevel === 'system_admin' ? 'bg-red-900/50 text-red-300' :
-                      admin.hierarchyLevel === 'academic_admin' ? 'bg-blue-900/50 text-blue-300' :
-                      'bg-green-900/50 text-green-300'
-                    }`}>
-                      {admin.hierarchyLevel?.replace('_', ' ').toUpperCase()}
+                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-900/50 text-blue-300">
+                      ADMIN
                     </span>
                   </div>
                   
@@ -489,20 +376,6 @@ const CreateFaculty = () => {
                     </p>
                   </div>
 
-                  {admin.permissions && (
-                    <div className="mb-4">
-                      <h4 className="text-sm font-medium text-gray-300 mb-2">Permissions:</h4>
-                      <div className="space-y-1">
-                        {Object.entries(admin.permissions).map(([key, value]) => (
-                          value && (
-                            <span key={key} className="inline-block bg-blue-900/30 text-blue-300 text-xs px-2 py-1 rounded mr-1 mb-1">
-                              {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                            </span>
-                          )
-                        ))}
-                      </div>
-                    </div>
-                  )}
 
                   <div className="flex space-x-2">
                     <button

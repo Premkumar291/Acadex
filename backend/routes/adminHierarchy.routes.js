@@ -1,14 +1,14 @@
 import express from 'express';
 import { verifyToken } from '../middleware/verifyToken.js';
-import { verifyHierarchyAdmin, canCreateSubAdmin, canSeeUser } from '../middleware/hierarchyAuth.js';
+import { verifyHierarchyAdmin, canCreateAdmin, canSeeUser } from '../middleware/hierarchyAuth.js';
 import {
-    createSubAdmin,
-    getHierarchy,
-    getVisibleUsers,
+    createAdmin,
+    getAdminInfo,
+    getCreatedUsers,
     getAdminStatistics,
-    updateSubAdmin,
-    deleteSubAdmin,
-    getSubAdminCreationStatus
+    updateAdmin,
+    deleteAdmin,
+    getAdminCreationStatus
 } from '../controller/Admin/adminHierarchy.controller.js';
 
 const router = express.Router();
@@ -17,25 +17,25 @@ const router = express.Router();
 router.use(verifyToken);
 router.use(verifyHierarchyAdmin);
 
-// Get hierarchy tree for current admin
-router.get('/hierarchy', getHierarchy);
+// Get admin info and their created users
+router.get('/info', getAdminInfo);
 
-// Get visible users (admins and faculty)
-router.get('/visible-users', getVisibleUsers);
+// Get users created by current admin
+router.get('/created-users', getCreatedUsers);
 
 // Get admin statistics
 router.get('/statistics', getAdminStatistics);
 
-// Get sub-admin creation status
-router.get('/sub-admin-status', getSubAdminCreationStatus);
+// Get admin creation status
+router.get('/creation-status', getAdminCreationStatus);
 
-// Create sub-admin (with permission check)
-router.post('/sub-admin', canCreateSubAdmin, createSubAdmin);
+// Create admin (with permission check)
+router.post('/admin', canCreateAdmin, createAdmin);
 
-// Update sub-admin (with visibility check)
-router.put('/sub-admin/:id', canSeeUser, updateSubAdmin);
+// Update admin (with visibility check)
+router.put('/admin/:id', canSeeUser, updateAdmin);
 
-// Delete sub-admin (with visibility check)
-router.delete('/sub-admin/:id', canSeeUser, deleteSubAdmin);
+// Delete admin (with visibility check)
+router.delete('/admin/:id', canSeeUser, deleteAdmin);
 
 export default router;
