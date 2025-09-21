@@ -11,6 +11,20 @@ const api = axios.create({
     },
 });
 
+// Add request interceptor to include JWT token
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 // Faculty Management API
 export const facultyAPI = {
     // Create new faculty

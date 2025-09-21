@@ -24,10 +24,6 @@ const facultySchema = new mongoose.Schema({
         uppercase: true,
         enum: ['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AUTO', 'CS & DS', 'ENGLISH', 'MATHS', 'PHYSICS', 'CHEMISTRY', 'OTHER']
     },
-    isActive: {
-        type: Boolean,
-        default: true
-    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

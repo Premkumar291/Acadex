@@ -23,8 +23,7 @@ export const createFaculty = async (req, res) => {
         const existingFaculty = await Faculty.findOne({
             name: name.trim(),
             initials: initials.trim(),
-            department: department.toUpperCase(),
-            isActive: true
+            department: department.toUpperCase()
         });
 
         if (existingFaculty) {
@@ -69,9 +68,10 @@ export const getFaculty = async (req, res) => {
             search 
         } = req.query;
 
-        let filter = { 
-            isActive: true
-        };
+        console.log('Faculty API called with params:', { page, limit, department, search });
+        console.log('User ID from token:', req.user?.userId);
+
+        let filter = {};
 
         // Add department filter
         if (department) {
@@ -87,14 +87,21 @@ export const getFaculty = async (req, res) => {
             ];
         }
 
+        console.log('Faculty filter:', filter);
+
         const skip = (parseInt(page) - 1) * parseInt(limit);
 
+        // First, let's check total count in database
+        const totalInDB = await Faculty.countDocuments({});
+        console.log(`Total faculty in DB: ${totalInDB}`);
+
         const faculty = await Faculty.find(filter)
-            .populate('createdBy', 'name email role')
             .skip(skip)
             .limit(parseInt(limit))
             .sort({ name: 1 })
             .lean();
+
+        console.log(`Found ${faculty.length} faculty members matching filter`);
 
         const totalFaculty = await Faculty.countDocuments(filter);
         const totalPages = Math.ceil(totalFaculty / parseInt(limit));
@@ -125,11 +132,9 @@ export const getFacultyById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const faculty = await Faculty.findById(id)
-            .populate('createdBy', 'name email role')
-            .lean();
+        const faculty = await Faculty.findById(id).lean();
 
-        if (!faculty || !faculty.isActive) {
+        if (!faculty) {
             return res.status(404).json({
                 success: false,
                 message: 'Faculty not found'
@@ -179,7 +184,7 @@ export const updateFaculty = async (req, res) => {
             id,
             updates,
             { new: true, runValidators: true }
-        ).populate('createdBy', 'name email');
+        );
 
         if (!faculty) {
             return res.status(404).json({
@@ -207,11 +212,7 @@ export const deleteFaculty = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const faculty = await Faculty.findByIdAndUpdate(
-            id,
-            { isActive: false },
-            { new: true }
-        );
+        const faculty = await Faculty.findByIdAndDelete(id);
 
         if (!faculty) {
             return res.status(404).json({
@@ -238,8 +239,7 @@ export const getFacultyByDepartment = async (req, res) => {
     try {
         const { department } = req.params;
 
-        const faculty = await Faculty.findByDepartment(department)
-            .populate('createdBy', 'name email')
+        const faculty = await Faculty.find({ department: department.toUpperCase() })
             .sort({ name: 1 })
             .lean();
 

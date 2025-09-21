@@ -1,6 +1,5 @@
 import express from 'express';
 import { verifyToken, verifyAdmin } from '../middleware/verifyToken.js';
-import { canSeeFaculty } from '../middleware/hierarchyAuth.js';
 import {
     createFaculty,
     getFaculty,
@@ -17,12 +16,12 @@ router.use(verifyToken, verifyAdmin);
 
 // Faculty CRUD operations
 router.post('/', createFaculty);                           // Create new faculty
-router.get('/', getFaculty);                               // Get faculty created by this admin only
-router.get('/:id', canSeeFaculty, getFacultyById);         // Get faculty by ID (with permission check)
-router.put('/:id', canSeeFaculty, updateFaculty);          // Update faculty (with permission check)
-router.delete('/:id', canSeeFaculty, deleteFaculty);       // Delete faculty (with permission check)
+router.get('/', getFaculty);                               // Get all active faculty
+router.get('/:id', getFacultyById);                        // Get faculty by ID
+router.put('/:id', updateFaculty);                         // Update faculty
+router.delete('/:id', deleteFaculty);                      // Delete faculty
 
 // Department-specific routes
-router.get('/department/:department', getFacultyByDepartment); // Get faculty by department (filtered by creator)
+router.get('/department/:department', getFacultyByDepartment); // Get faculty by department
 
 export default router;

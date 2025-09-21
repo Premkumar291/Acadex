@@ -357,10 +357,14 @@ const FacultyManagement = () => {
         ...(searchTerm && { search: searchTerm }),
         ...(departmentFilter && { department: departmentFilter }),
       }
+      console.log('Fetching faculty with params:', params)
       const response = await facultyAPI.getFaculty(params)
-      setFaculty(response.data)
+      console.log('Faculty API response:', response)
+      setFaculty(response.data || [])
     } catch (error) {
-      toast.error("Failed to fetch faculty: " + error.message)
+      console.error('Faculty fetch error:', error)
+      toast.error("Failed to fetch faculty: " + (error.message || 'Unknown error'))
+      setFaculty([])
     } finally {
       setLoading(false)
     }

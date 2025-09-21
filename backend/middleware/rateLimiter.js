@@ -19,10 +19,10 @@ export const generalLimiter = rateLimit({
  */
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 login attempts per windowMs
+  max: 100, // increased limit to 100 attempts per windowMs
   message: {
     success: false,
-    message: 'Too many login attempts from this IP, please try again after 15 minutes.'
+    message: 'Rate limit exceeded, please try again later.'
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -33,7 +33,7 @@ export const authLimiter = rateLimit({
  */
 export const uploadLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // limit each IP to 10 file uploads per hour
+  max: 100, // limit each IP to 10 file uploads per hour
   message: {
     success: false,
     message: 'Too many file uploads from this IP, please try again later.'

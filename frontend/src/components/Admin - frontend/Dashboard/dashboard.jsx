@@ -367,14 +367,17 @@ const Dashboard = () => {
             ease: "power2.inOut",
           });
         }
-        gsap.to(".float-element", {
-          y: -8,
-          duration: 3,
-          repeat: -1,
-          yoyo: true,
-          ease: "power1.inOut",
-          stagger: 0.5,
-        })
+        const floatElements = document.querySelectorAll(".float-element");
+        if (floatElements.length > 0) {
+          gsap.to(".float-element", {
+            y: -8,
+            duration: 3,
+            repeat: -1,
+            yoyo: true,
+            ease: "power1.inOut",
+            stagger: 0.5,
+          });
+        }
       }
     }
     loadGSAP()
