@@ -22,7 +22,7 @@ const facultySchema = new mongoose.Schema({
         required: true,
         trim: true,
         uppercase: true,
-        enum: ['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AIDS', 'AIML', 'CSBS', 'OTHER']
+        enum: ['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AUTO', 'CS & DS', 'ENGLISH', 'MATHS', 'PHYSICS', 'CHEMISTRY', 'OTHER']
     },
     isActive: {
         type: Boolean,

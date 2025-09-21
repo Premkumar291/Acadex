@@ -2,16 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Search, Plus, Edit2, Trash2, X, Filter } from "lucide-react"
 import toast from "react-hot-toast"
 import { subjectAPI } from "../../../api/subjects.js"
-
-const DEPARTMENT_OPTIONS = [
-  "Computer Science",
-  "Electronics", 
-  "Mechanical",
-  "Civil",
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-]
+import { DEPARTMENT_OPTIONS } from "../../../config/subjects.config.js"
 
 const SEMESTER_OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8"]
 const SUBJECT_TYPE_OPTIONS = ["Theory", "Practical", "Project"]
@@ -32,7 +23,6 @@ const SubjectManagement = () => {
     subjectType: "",
     description: ""
   })
-
   useEffect(() => {
     fetchSubjects()
   }, [])
@@ -292,6 +282,7 @@ const SubjectManagement = () => {
                   value={formData.subjectName}
                   onChange={(e) => setFormData({...formData, subjectName: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter subject name"
                 />
               </div>
               

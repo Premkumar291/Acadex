@@ -105,7 +105,7 @@ export const TITLE_OPTIONS = [
 ];
 
 export const DEPARTMENT_OPTIONS = [
-    'CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AIDS', 'AIML', 'CSBS', 'OTHER'
+    'CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AUTO', 'CS & DS', 'English', 'Maths', 'Physics', 'Chemistry', 'OTHER'
 ];
 
 export default facultyAPI;

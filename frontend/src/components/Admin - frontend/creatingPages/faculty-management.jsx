@@ -15,7 +15,8 @@ import {
   BookOpen,
   LinkIcon,
 } from "lucide-react"
-import { facultyAPI, TITLE_OPTIONS, DEPARTMENT_OPTIONS } from "../../../api/faculty"
+import { facultyAPI, TITLE_OPTIONS } from "../../../api/faculty"
+import { DEPARTMENT_OPTIONS } from "../../../config/subjects.config"
 import toast from "react-hot-toast"
 
 const SidebarAcadexLogo = () => {
