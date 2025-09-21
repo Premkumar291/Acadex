@@ -7,12 +7,7 @@ export const createFaculty = async (req, res) => {
             title, 
             name, 
             initials, 
-            email, 
-            department, 
-            studies,
-            employeeId,
-            phoneNumber,
-            dateOfJoining
+            department
         } = req.body;
         const userId = req.user.userId;
 
@@ -24,47 +19,27 @@ export const createFaculty = async (req, res) => {
             });
         }
 
-        // Check if faculty already exists with same email or employee ID
+        // Check if faculty already exists with same name and initials
         const existingFaculty = await Faculty.findOne({
-            $or: [
-                ...(email ? [{ email }] : []),
-                ...(employeeId ? [{ employeeId }] : [])
-            ]
+            name: name.trim(),
+            initials: initials.trim(),
+            department: department.toUpperCase(),
+            isActive: true
         });
 
         if (existingFaculty) {
-            let field = 'email';
-            if (existingFaculty.employeeId === employeeId) field = 'employee ID';
-            
             return res.status(400).json({
                 success: false,
-                message: `Faculty with this ${field} already exists`
+                message: 'Faculty with this name and initials already exists in this department'
             });
-        }
-
-        // Validate studies if provided
-        if (studies && studies.length > 0) {
-            for (const study of studies) {
-                if (!study.degree) {
-                    return res.status(400).json({
-                        success: false,
-                        message: 'Degree is required for each study entry'
-                    });
-                }
-            }
         }
 
         // Create new faculty
         const faculty = new Faculty({
             title,
-            name,
-            initials,
-            email: email || undefined,
+            name: name.trim(),
+            initials: initials.trim(),
             department: department.toUpperCase(),
-            studies: studies || [],
-            employeeId: employeeId || undefined,
-            phoneNumber,
-            dateOfJoining: dateOfJoining ? new Date(dateOfJoining) : undefined,
             createdBy: userId
         });
 
@@ -84,7 +59,7 @@ export const createFaculty = async (req, res) => {
     }
 };
 
-// Get all faculty with pagination and filters (hierarchy-aware)
+// Get all faculty with pagination and filters
 export const getFaculty = async (req, res) => {
     try {
         const { 
@@ -93,15 +68,9 @@ export const getFaculty = async (req, res) => {
             department, 
             search 
         } = req.query;
-        const adminId = req.user.userId;
-
-        // Get faculty visible to this admin using hierarchy rules
-        const visibleFaculty = await Faculty.getVisibleFaculty(adminId);
-        const visibleFacultyIds = visibleFaculty.map(f => f._id);
 
         let filter = { 
-            isActive: true,
-            _id: { $in: visibleFacultyIds }
+            isActive: true
         };
 
         // Add department filter
@@ -114,16 +83,14 @@ export const getFaculty = async (req, res) => {
             const regex = new RegExp(search, 'i');
             filter.$or = [
                 { name: regex },
-                { initials: regex },
-                { email: regex },
-                { employeeId: regex }
+                { initials: regex }
             ];
         }
 
         const skip = (parseInt(page) - 1) * parseInt(limit);
 
         const faculty = await Faculty.find(filter)
-            .populate('createdBy', 'name email role adminLevel')
+            .populate('createdBy', 'name email role')
             .skip(skip)
             .limit(parseInt(limit))
             .sort({ name: 1 })
@@ -144,6 +111,7 @@ export const getFaculty = async (req, res) => {
             }
         });
     } catch (error) {
+        console.error('Error fetching faculty:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching faculty',
@@ -158,10 +126,10 @@ export const getFacultyById = async (req, res) => {
         const { id } = req.params;
 
         const faculty = await Faculty.findById(id)
-            .populate('createdBy', 'name email')
+            .populate('createdBy', 'name email role')
             .lean();
 
-        if (!faculty) {
+        if (!faculty || !faculty.isActive) {
             return res.status(404).json({
                 success: false,
                 message: 'Faculty not found'
@@ -173,6 +141,7 @@ export const getFacultyById = async (req, res) => {
             data: faculty
         });
     } catch (error) {
+        console.error('Error fetching faculty by ID:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching faculty',
@@ -198,9 +167,12 @@ export const updateFaculty = async (req, res) => {
             updates.department = updates.department.toUpperCase();
         }
 
-        // Convert dateOfJoining to Date object if provided
-        if (updates.dateOfJoining) {
-            updates.dateOfJoining = new Date(updates.dateOfJoining);
+        // Trim name and initials if provided
+        if (updates.name) {
+            updates.name = updates.name.trim();
+        }
+        if (updates.initials) {
+            updates.initials = updates.initials.trim();
         }
 
         const faculty = await Faculty.findByIdAndUpdate(
@@ -284,78 +256,3 @@ export const getFacultyByDepartment = async (req, res) => {
     }
 };
 
-// Add study to faculty
-export const addStudyToFaculty = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const studyData = req.body;
-
-        // Validate study data
-        if (!studyData.degree) {
-            return res.status(400).json({
-                success: false,
-                message: 'Degree is required'
-            });
-        }
-
-        const faculty = await Faculty.findById(id);
-        if (!faculty) {
-            return res.status(404).json({
-                success: false,
-                message: 'Faculty not found'
-            });
-        }
-
-        await faculty.addStudy(studyData);
-
-        res.status(200).json({
-            success: true,
-            message: 'Study added successfully',
-            data: faculty
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error adding study to faculty',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
-    }
-};
-
-// Remove study from faculty
-export const removeStudyFromFaculty = async (req, res) => {
-    try {
-        const { id, studyId } = req.params;
-
-        const faculty = await Faculty.findById(id);
-        if (!faculty) {
-            return res.status(404).json({
-                success: false,
-                message: 'Faculty not found'
-            });
-        }
-
-        const study = faculty.studies.id(studyId);
-        if (!study) {
-            return res.status(404).json({
-                success: false,
-                message: 'Study not found'
-            });
-        }
-
-        study.remove();
-        await faculty.save();
-
-        res.status(200).json({
-            success: true,
-            message: 'Study removed successfully',
-            data: faculty
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error removing study from faculty',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
-    }
-};

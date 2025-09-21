@@ -10,14 +10,16 @@ import { Faculty } from './faculty.model.js';
  */
 export const createIndexes = async () => {
   try {
-    console.log('Creating database indexes...');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Creating database indexes...');
+    }
 
     // User model indexes
     await User.collection.createIndex({ email: 1 }, { unique: true });
     await User.collection.createIndex({ department: 1 });
     await User.collection.createIndex({ role: 1 });
     await User.collection.createIndex({ createdAt: -1 });
-    await User.collection.createIndex({ 'hierarchyPath.level': 1 });
+    // Removed hierarchyPath.level index as field doesn't exist in current schema
 
     // Subject model indexes
     await Subject.collection.createIndex({ subjectCode: 1 }, { unique: true });
@@ -35,9 +37,13 @@ export const createIndexes = async () => {
     await Faculty.collection.createIndex({ dateOfJoining: -1 });
 
 
-    console.log('Database indexes created successfully');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Database indexes created successfully');
+    }
   } catch (error) {
-    console.error('Error creating database indexes:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Error creating database indexes:', error);
+    }
   }
 };
 
@@ -46,14 +52,20 @@ export const createIndexes = async () => {
  */
 export const dropIndexes = async () => {
   try {
-    console.log('Dropping database indexes...');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Dropping database indexes...');
+    }
     
     await User.collection.dropIndexes();
     await Subject.collection.dropIndexes();
     await Faculty.collection.dropIndexes();
     
-    console.log('Database indexes dropped successfully');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Database indexes dropped successfully');
+    }
   } catch (error) {
-    console.error('Error dropping database indexes:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Error dropping database indexes:', error);
+    }
   }
 };

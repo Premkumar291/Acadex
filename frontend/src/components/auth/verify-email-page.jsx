@@ -58,7 +58,9 @@ const VerifyEmail = () => {
           await resendVerificationCode(email)
           toast.success('A new verification code has been sent to your email.')
         } catch (error) {
-          console.error('Failed to send verification code:', error)
+          if (import.meta.env.DEV) {
+            console.error('Failed to send verification code:', error);
+          }
           // Don't show error toast on page load, just log it
         }
       }
@@ -81,7 +83,9 @@ const VerifyEmail = () => {
       toast.success('A new verification code has been sent to your email.')
       setError('') // Clear any existing errors
     } catch (error) {
-      console.error('Resend failed:', error)
+      if (import.meta.env.DEV) {
+        console.error('Resend failed:', error);
+      }
       toast.error(error.message || 'Failed to resend verification code')
     } finally {
       setResending(false)
@@ -119,7 +123,9 @@ const VerifyEmail = () => {
             setTimeout(() => navigate("/login"), 2000)
           }
         } catch (authError) {
-          console.error("Auth check failed:", authError)
+          if (import.meta.env.DEV) {
+            console.error("Auth check failed:", authError);
+          }
           setTimeout(() => navigate("/login"), 2000)
         }
       } else {

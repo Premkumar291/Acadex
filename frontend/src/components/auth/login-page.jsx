@@ -115,7 +115,9 @@ const Login = () => {
         toast.error(data.message || "Login failed")
       }
     } catch (err) {
-      console.error("Login error:", err)
+      if (import.meta.env.DEV) {
+        console.error("Login error:", err);
+      }
       setError(err.message || "Network error occurred. Please try again.")
       toast.error(err.message || "Login failed. Please try again.")
     } finally {

@@ -7,7 +7,6 @@ import {
   Trash2,
   Users,
   X,
-  GraduationCap,
   Filter,
   ChevronLeft,
   ChevronRight,
@@ -16,7 +15,7 @@ import {
   BookOpen,
   LinkIcon,
 } from "lucide-react"
-import { facultyAPI, DEGREE_OPTIONS, TITLE_OPTIONS, DEPARTMENT_OPTIONS } from "../../../api/faculty"
+import { facultyAPI, TITLE_OPTIONS, DEPARTMENT_OPTIONS } from "../../../api/faculty"
 import toast from "react-hot-toast"
 
 const SidebarAcadexLogo = () => {
@@ -343,19 +342,7 @@ const FacultyManagement = () => {
     title: "",
     name: "",
     initials: "",
-    email: "",
     department: "",
-    employeeId: "",
-    phoneNumber: "",
-    dateOfJoining: "",
-    studies: [],
-  })
-
-  const [studyForm, setStudyForm] = useState({
-    degree: "",
-    specialization: "",
-    institution: "",
-    year: "",
   })
 
   useEffect(() => {
@@ -383,14 +370,8 @@ const FacultyManagement = () => {
       title: "",
       name: "",
       initials: "",
-      email: "",
       department: "",
-      employeeId: "",
-      phoneNumber: "",
-      dateOfJoining: "",
-      studies: [],
     })
-    setStudyForm({ degree: "", specialization: "", institution: "", year: "" })
     setEditingFaculty(null)
   }
 
@@ -426,15 +407,6 @@ const FacultyManagement = () => {
     }
   }
 
-  const addStudy = () => {
-    if (!studyForm.degree) return toast.error("Please select a degree")
-    setFormData((prev) => ({ ...prev, studies: [...prev.studies, { ...studyForm }] }))
-    setStudyForm({ degree: "", specialization: "", institution: "", year: "" })
-  }
-
-  const removeStudy = (index) => {
-    setFormData((prev) => ({ ...prev, studies: prev.studies.filter((_, i) => i !== index) }))
-  }
 
   const openEditModal = (facultyMember) => {
     setEditingFaculty(facultyMember)
@@ -442,12 +414,7 @@ const FacultyManagement = () => {
       title: facultyMember.title,
       name: facultyMember.name,
       initials: facultyMember.initials,
-      email: facultyMember.email || "",
       department: facultyMember.department,
-      employeeId: facultyMember.employeeId || "",
-      phoneNumber: facultyMember.phoneNumber || "",
-      dateOfJoining: facultyMember.dateOfJoining ? facultyMember.dateOfJoining.split("T")[0] : "",
-      studies: facultyMember.studies || [],
     })
     setShowModal(true)
   }
@@ -482,9 +449,13 @@ const FacultyManagement = () => {
 
       window.location.href = "/"
 
-      console.log("User logged out successfully")
+      if (import.meta.env.DEV) {
+        console.log("User logged out successfully");
+      }
     } catch (error) {
-      console.error("Logout error:", error)
+      if (import.meta.env.DEV) {
+        console.error("Logout error:", error);
+      }
     } finally {
       setIsLoggingOut(false)
     }
@@ -1009,7 +980,33 @@ const FacultyManagement = () => {
                             letterSpacing: "0.05em",
                           }}
                         >
-                          Faculty Details
+                          Title
+                        </th>
+                        <th
+                          style={{
+                            padding: "20px 24px",
+                            textAlign: "left",
+                            fontSize: "14px",
+                            fontWeight: "700",
+                            color: "#ffffff",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05em",
+                          }}
+                        >
+                          Name
+                        </th>
+                        <th
+                          style={{
+                            padding: "20px 24px",
+                            textAlign: "left",
+                            fontSize: "14px",
+                            fontWeight: "700",
+                            color: "#ffffff",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05em",
+                          }}
+                        >
+                          Initials
                         </th>
                         <th
                           style={{
@@ -1023,32 +1020,6 @@ const FacultyManagement = () => {
                           }}
                         >
                           Department
-                        </th>
-                        <th
-                          style={{
-                            padding: "20px 24px",
-                            textAlign: "left",
-                            fontSize: "14px",
-                            fontWeight: "700",
-                            color: "#ffffff",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.05em",
-                          }}
-                        >
-                          Qualifications
-                        </th>
-                        <th
-                          style={{
-                            padding: "20px 24px",
-                            textAlign: "left",
-                            fontSize: "14px",
-                            fontWeight: "700",
-                            color: "#ffffff",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.05em",
-                          }}
-                        >
-                          Contact
                         </th>
                         <th
                           style={{
@@ -1088,20 +1059,29 @@ const FacultyManagement = () => {
                           }}
                         >
                           <td style={{ padding: "24px" }}>
-                            <div>
-                              <div
-                                style={{ fontSize: "16px", fontWeight: "700", color: "#000000", marginBottom: "4px" }}
-                              >
-                                {facultyMember.title} {facultyMember.name}
-                              </div>
-                              <div style={{ fontSize: "14px", color: "#666666", marginBottom: "4px" }}>
-                                {facultyMember.initials}
-                              </div>
-                              {facultyMember.employeeId && (
-                                <div style={{ fontSize: "12px", color: "#000000", fontWeight: "600" }}>
-                                  ID: {facultyMember.employeeId}
-                                </div>
-                              )}
+                            <span
+                              style={{
+                                padding: "8px 16px",
+                                borderRadius: "20px",
+                                fontSize: "14px",
+                                fontWeight: "600",
+                                background: "linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)",
+                                color: "#ffffff",
+                              }}
+                            >
+                              {facultyMember.title}
+                            </span>
+                          </td>
+                          <td style={{ padding: "24px" }}>
+                            <div
+                              style={{ fontSize: "16px", fontWeight: "700", color: "#000000" }}
+                            >
+                              {facultyMember.name}
+                            </div>
+                          </td>
+                          <td style={{ padding: "24px" }}>
+                            <div style={{ fontSize: "14px", color: "#666666", fontWeight: "600" }}>
+                              {facultyMember.initials}
                             </div>
                           </td>
                           <td style={{ padding: "24px" }}>
@@ -1117,46 +1097,6 @@ const FacultyManagement = () => {
                             >
                               {facultyMember.department}
                             </span>
-                          </td>
-                          <td style={{ padding: "24px" }}>
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                              {facultyMember.studies?.slice(0, 3).map((study, index) => (
-                                <span
-                                  key={index}
-                                  style={{
-                                    padding: "6px 12px",
-                                    background: "linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)",
-                                    color: "#000000",
-                                    fontSize: "12px",
-                                    fontWeight: "600",
-                                    borderRadius: "12px",
-                                    border: "1px solid #e5e7eb",
-                                  }}
-                                >
-                                  {study.degree}
-                                </span>
-                              ))}
-                              {facultyMember.studies?.length > 3 && (
-                                <span
-                                  style={{
-                                    padding: "6px 12px",
-                                    background: "#e5e7eb",
-                                    color: "#666666",
-                                    fontSize: "12px",
-                                    fontWeight: "600",
-                                    borderRadius: "12px",
-                                  }}
-                                >
-                                  +{facultyMember.studies.length - 3} more
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td style={{ padding: "24px" }}>
-                            <div style={{ fontSize: "14px", color: "#666666" }}>
-                              {facultyMember.email && <div style={{ marginBottom: "4px" }}>{facultyMember.email}</div>}
-                              {facultyMember.phoneNumber && <div>{facultyMember.phoneNumber}</div>}
-                            </div>
                           </td>
                           <td style={{ padding: "24px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -1464,420 +1404,6 @@ const FacultyManagement = () => {
                             ))}
                           </select>
                         </div>
-                        <div>
-                          <label
-                            className="block text-sm font-medium text-gray-700 mb-2"
-                            style={{
-                              display: "block",
-                              fontSize: "14px",
-                              fontWeight: "700",
-                              color: "#000000",
-                              marginBottom: "8px",
-                            }}
-                          >
-                            Email
-                          </label>
-                          <motion.input
-                            whileFocus={{ scale: 1.01 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                            placeholder="email@example.com"
-                            style={{
-                              width: "100%",
-                              padding: "16px",
-                              borderRadius: "12px",
-                              border: "2px solid #e5e7eb",
-                              backgroundColor: "#ffffff",
-                              fontSize: "16px",
-                              fontWeight: "500",
-                              color: "#000000",
-                              outline: "none",
-                              cursor: "pointer",
-                              transition: "all 0.3s ease",
-                            }}
-                            onFocus={(e) => {
-                              e.target.style.borderColor = "#000000"
-                              e.target.style.boxShadow = "0 0 0 4px rgba(0, 0, 0, 0.1)"
-                            }}
-                            onBlur={(e) => {
-                              e.target.style.borderColor = "#e5e7eb"
-                              e.target.style.boxShadow = "none"
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <label
-                            className="block text-sm font-medium text-gray-700 mb-2"
-                            style={{
-                              display: "block",
-                              fontSize: "14px",
-                              fontWeight: "700",
-                              color: "#000000",
-                              marginBottom: "8px",
-                            }}
-                          >
-                            Employee ID
-                          </label>
-                          <motion.input
-                            whileFocus={{ scale: 1.01 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                            type="text"
-                            value={formData.employeeId}
-                            onChange={(e) => setFormData((prev) => ({ ...prev, employeeId: e.target.value }))}
-                            placeholder="EMP001"
-                            style={{
-                              width: "100%",
-                              padding: "16px",
-                              borderRadius: "12px",
-                              border: "2px solid #e5e7eb",
-                              backgroundColor: "#ffffff",
-                              fontSize: "16px",
-                              fontWeight: "500",
-                              color: "#000000",
-                              outline: "none",
-                              cursor: "pointer",
-                              transition: "all 0.3s ease",
-                            }}
-                            onFocus={(e) => {
-                              e.target.style.borderColor = "#000000"
-                              e.target.style.boxShadow = "0 0 0 4px rgba(0, 0, 0, 0.1)"
-                            }}
-                            onBlur={(e) => {
-                              e.target.style.borderColor = "#e5e7eb"
-                              e.target.style.boxShadow = "none"
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <label
-                            className="block text-sm font-medium text-gray-700 mb-2"
-                            style={{
-                              display: "block",
-                              fontSize: "14px",
-                              fontWeight: "700",
-                              color: "#000000",
-                              marginBottom: "8px",
-                            }}
-                          >
-                            Phone Number
-                          </label>
-                          <motion.input
-                            whileFocus={{ scale: 1.01 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                            type="tel"
-                            value={formData.phoneNumber}
-                            onChange={(e) => setFormData((prev) => ({ ...prev, phoneNumber: e.target.value }))}
-                            placeholder="+91 9876543210"
-                            style={{
-                              width: "100%",
-                              padding: "16px",
-                              borderRadius: "12px",
-                              border: "2px solid #e5e7eb",
-                              backgroundColor: "#ffffff",
-                              fontSize: "16px",
-                              fontWeight: "500",
-                              color: "#000000",
-                              outline: "none",
-                              cursor: "pointer",
-                              transition: "all 0.3s ease",
-                            }}
-                            onFocus={(e) => {
-                              e.target.style.borderColor = "#000000"
-                              e.target.style.boxShadow = "0 0 0 4px rgba(0, 0, 0, 0.1)"
-                            }}
-                            onBlur={(e) => {
-                              e.target.style.borderColor = "#e5e7eb"
-                              e.target.style.boxShadow = "none"
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <label
-                            className="block text-sm font-medium text-gray-700 mb-2"
-                            style={{
-                              display: "block",
-                              fontSize: "14px",
-                              fontWeight: "700",
-                              color: "#000000",
-                              marginBottom: "8px",
-                            }}
-                          >
-                            Date of Joining
-                          </label>
-                          <motion.input
-                            whileFocus={{ scale: 1.01 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                            type="date"
-                            value={formData.dateOfJoining}
-                            onChange={(e) => setFormData((prev) => ({ ...prev, dateOfJoining: e.target.value }))}
-                            style={{
-                              width: "100%",
-                              padding: "16px",
-                              borderRadius: "12px",
-                              border: "2px solid #e5e7eb",
-                              backgroundColor: "#ffffff",
-                              fontSize: "16px",
-                              fontWeight: "500",
-                              color: "#000000",
-                              outline: "none",
-                              cursor: "pointer",
-                              transition: "all 0.3s ease",
-                            }}
-                            onFocus={(e) => {
-                              e.target.style.borderColor = "#000000"
-                              e.target.style.boxShadow = "0 0 0 4px rgba(0, 0, 0, 0.1)"
-                            }}
-                            onBlur={(e) => {
-                              e.target.style.borderColor = "#e5e7eb"
-                              e.target.style.boxShadow = "none"
-                            }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Studies Section */}
-                      <div style={{ marginBottom: "40px" }}>
-                        <h3
-                          style={{
-                            fontSize: "24px",
-                            fontWeight: "700",
-                            color: "#000000",
-                            marginBottom: "24px",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "12px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              background: "linear-gradient(135deg, #000000 0%, #333333 100%)",
-                              borderRadius: "12px",
-                              padding: "8px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <GraduationCap size={20} color="#ffffff" />
-                          </div>
-                          Academic Qualifications
-                        </h3>
-
-                        {/* Add Study Form */}
-                        <div
-                          style={{ background: "#f8f9fa", padding: "24px", borderRadius: "16px", marginBottom: "24px" }}
-                        >
-                          <div
-                            style={{
-                              display: "grid",
-                              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                              gap: "16px",
-                            }}
-                          >
-                            <div style={{ position: "relative" }}>
-                              <label
-                                style={{
-                                  display: "block",
-                                  fontSize: "14px",
-                                  fontWeight: "600",
-                                  color: "#333333",
-                                  marginBottom: "8px",
-                                }}
-                              >
-                                Degree
-                              </label>
-                              <select
-                                value={studyForm.degree}
-                                onChange={(e) => setStudyForm((prev) => ({ ...prev, degree: e.target.value }))}
-                                style={{
-                                  width: "100%",
-                                  padding: "12px",
-                                  borderRadius: "8px",
-                                  border: "1px solid #ced4da",
-                                  backgroundColor: "#ffffff",
-                                  fontSize: "14px",
-                                  fontWeight: "500",
-                                  color: "#495057",
-                                  outline: "none",
-                                  cursor: "pointer",
-                                  transition: "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
-                                }}
-                              >
-                                <option value="">Select Degree</option>
-                                {DEGREE_OPTIONS.map((degree) => (
-                                  <option key={degree} value={degree}>
-                                    {degree}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                            <div style={{ position: "relative" }}>
-                              <label
-                                style={{
-                                  display: "block",
-                                  fontSize: "14px",
-                                  fontWeight: "600",
-                                  color: "#333333",
-                                  marginBottom: "8px",
-                                }}
-                              >
-                                Specialization
-                              </label>
-                              <motion.input
-                                whileFocus={{ scale: 1.01 }}
-                                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                                type="text"
-                                value={studyForm.specialization}
-                                onChange={(e) => setStudyForm((prev) => ({ ...prev, specialization: e.target.value }))}
-                                placeholder="Specialization"
-                                style={{
-                                  width: "100%",
-                                  padding: "12px",
-                                  borderRadius: "8px",
-                                  border: "1px solid #ced4da",
-                                  backgroundColor: "#ffffff",
-                                  fontSize: "14px",
-                                  fontWeight: "500",
-                                  color: "#495057",
-                                  outline: "none",
-                                  transition: "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
-                                }}
-                              />
-                            </div>
-                            <div style={{ position: "relative" }}>
-                              <label
-                                style={{
-                                  display: "block",
-                                  fontSize: "14px",
-                                  fontWeight: "600",
-                                  color: "#333333",
-                                  marginBottom: "8px",
-                                }}
-                              >
-                                Institution
-                              </label>
-                              <motion.input
-                                whileFocus={{ scale: 1.01 }}
-                                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                                type="text"
-                                value={studyForm.institution}
-                                onChange={(e) => setStudyForm((prev) => ({ ...prev, institution: e.target.value }))}
-                                placeholder="Institution"
-                                style={{
-                                  width: "100%",
-                                  padding: "12px",
-                                  borderRadius: "8px",
-                                  border: "1px solid #ced4da",
-                                  backgroundColor: "#ffffff",
-                                  fontSize: "14px",
-                                  fontWeight: "500",
-                                  color: "#495057",
-                                  outline: "none",
-                                  transition: "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
-                                }}
-                              />
-                            </div>
-                            <div style={{ position: "relative", display: "flex", gap: "8px" }}>
-                              <label
-                                style={{
-                                  display: "block",
-                                  fontSize: "14px",
-                                  fontWeight: "600",
-                                  color: "#333333",
-                                  marginBottom: "8px",
-                                }}
-                              >
-                                Year
-                              </label>
-                              <motion.input
-                                whileFocus={{ scale: 1.01 }}
-                                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                                type="number"
-                                value={studyForm.year}
-                                onChange={(e) => setStudyForm((prev) => ({ ...prev, year: e.target.value }))}
-                                placeholder="Year"
-                                min="1950"
-                                max={new Date().getFullYear()}
-                                style={{
-                                  width: "100%",
-                                  padding: "12px",
-                                  borderRadius: "8px",
-                                  border: "1px solid #ced4da",
-                                  backgroundColor: "#ffffff",
-                                  fontSize: "14px",
-                                  fontWeight: "500",
-                                  color: "#495057",
-                                  outline: "none",
-                                  transition: "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
-                                }}
-                              />
-                              <motion.button
-                                whileHover={{ scale: 1.1, y: -2 }}
-                                whileTap={{ scale: 0.9 }}
-                                type="button"
-                                onClick={addStudy}
-                                style={{
-                                  padding: "8px",
-                                  background: "linear-gradient(135deg, #000000 0%, #333333 100%)",
-                                  color: "#ffffff",
-                                  borderRadius: "8px",
-                                  border: "none",
-                                  cursor: "pointer",
-                                  transition: "all 0.2s ease",
-                                }}
-                              >
-                                <Plus size={16} />
-                              </motion.button>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Studies List */}
-                        {formData.studies.length > 0 && (
-                          <div style={{ marginBottom: "24px" }}>
-                            {formData.studies.map((study, index) => (
-                              <div
-                                key={index}
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  background: "#ffffff",
-                                  padding: "16px",
-                                  borderRadius: "8px",
-                                  marginBottom: "8px",
-                                  border: "1px solid #e5e7eb",
-                                }}
-                              >
-                                <span style={{ fontSize: "14px", color: "#333333" }}>
-                                  <strong>{study.degree}</strong>
-                                  {study.specialization && ` in ${study.specialization}`}
-                                  {study.institution && ` from ${study.institution}`}
-                                  {study.year && ` (${study.year})`}
-                                </span>
-                                <motion.button
-                                  whileHover={{ scale: 1.1, y: -2 }}
-                                  whileTap={{ scale: 0.9 }}
-                                  type="button"
-                                  onClick={() => removeStudy(index)}
-                                  style={{
-                                    padding: "8px",
-                                    background: "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)",
-                                    color: "#ffffff",
-                                    borderRadius: "8px",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    transition: "all 0.2s ease",
-                                  }}
-                                >
-                                  <X size={16} />
-                                </motion.button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
                       </div>
 
                       <div

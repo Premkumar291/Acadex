@@ -69,16 +69,22 @@ app.use(errorHandler);
 // Start server
 app.listen(PORT, async () => {
   await connectDb();
-  console.log(`Server is running on http://localhost:${PORT}`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  }
   
   // System initialization complete
-  console.log('Admin management system initialized');
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('Admin management system initialized');
+  }
   
   // Create database indexes for optimal performance
   try {
     await createIndexes();
   } catch (error) {
-    console.error('Error creating database indexes:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Error creating database indexes:', error);
+    }
   }
   
   // Start file cleanup scheduler for uploads folder (12-hour intervals)

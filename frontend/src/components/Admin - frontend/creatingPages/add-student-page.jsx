@@ -278,9 +278,13 @@ const AddStudentPage = () => {
       // Navigate to login page
       navigate("/")
 
-      console.log("User logged out successfully")
+      if (import.meta.env.DEV) {
+        console.log("User logged out successfully");
+      }
     } catch (error) {
-      console.error("Logout error:", error)
+      if (import.meta.env.DEV) {
+        console.error("Logout error:", error);
+      }
     } finally {
       setIsLoggingOut(false)
     }

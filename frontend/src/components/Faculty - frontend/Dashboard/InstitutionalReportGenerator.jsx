@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+// Removed unused motion import
 import { FileText, Download, Eye, AlertCircle, CheckCircle, Building2, Calendar, BookOpen } from 'lucide-react';
 import { pdfReportsApi } from '../../../api/pdfReports';
 
@@ -50,7 +50,9 @@ const InstitutionalReportGenerator = ({ isDarkMode }) => {
       setGeneratedReport(response.data);
       setSuccess('Institutional report generated successfully!');
     } catch (error) {
-      console.error('Error generating institutional report:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error generating institutional report:', error);
+      }
       setError(error.message || 'Failed to generate institutional report');
     } finally {
       setIsGenerating(false);
@@ -65,7 +67,9 @@ const InstitutionalReportGenerator = ({ isDarkMode }) => {
       const filename = generatedReport.filename || 'institutional_report.pdf';
       pdfReportsApi.triggerDownload(blob, filename);
     } catch (error) {
-      console.error('Error downloading report:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error downloading report:', error);
+      }
       setError('Failed to download report. Please try again.');
     }
   };

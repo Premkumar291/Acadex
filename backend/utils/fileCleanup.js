@@ -15,11 +15,15 @@ const FILE_MAX_AGE = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
  */
 export const cleanupOldFiles = async () => {
   try {
-    console.log('🧹 Starting file cleanup process...');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('🧹 Starting file cleanup process...');
+    }
     
     // Ensure uploads directory exists
     if (!fs.existsSync(UPLOADS_DIR)) {
-      console.log('📁 Uploads directory does not exist, creating it...');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('📁 Uploads directory does not exist, creating it...');
+      }
       fs.mkdirSync(UPLOADS_DIR, { recursive: true });
       return;
     }
@@ -38,16 +42,24 @@ export const cleanupOldFiles = async () => {
         if (fileAge > FILE_MAX_AGE) {
           fs.unlinkSync(filePath);
           deletedCount++;
-          console.log(`🗑️  Deleted old file: ${file} (age: ${Math.round(fileAge / (1000 * 60 * 60))} hours)`);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`🗑️  Deleted old file: ${file} (age: ${Math.round(fileAge / (1000 * 60 * 60))} hours)`);
+          }
         }
       } catch (error) {
-        console.error(`❌ Error processing file ${file}:`, error.message);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(`❌ Error processing file ${file}:`, error.message);
+        }
       }
     }
 
-    console.log(`✅ File cleanup completed. Deleted ${deletedCount} files.`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`✅ File cleanup completed. Deleted ${deletedCount} files.`);
+    }
   } catch (error) {
-    console.error('❌ Error during file cleanup:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('❌ Error during file cleanup:', error);
+    }
   }
 };
 
@@ -55,7 +67,9 @@ export const cleanupOldFiles = async () => {
  * Start the automatic file cleanup scheduler
  */
 export const startFileCleanupScheduler = () => {
-  console.log('🚀 Starting file cleanup scheduler (12-hour intervals)...');
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('🚀 Starting file cleanup scheduler (12-hour intervals)...');
+  }
   
   // Run cleanup immediately on startup
   cleanupOldFiles();
@@ -63,13 +77,17 @@ export const startFileCleanupScheduler = () => {
   // Schedule cleanup every 12 hours
   setInterval(cleanupOldFiles, CLEANUP_INTERVAL);
   
-  console.log('⏰ File cleanup scheduler is running');
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('⏰ File cleanup scheduler is running');
+  }
 };
 
 /**
  * Manually trigger file cleanup (for testing or manual cleanup)
  */
 export const manualCleanup = () => {
-  console.log('🔧 Manual file cleanup triggered');
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('🔧 Manual file cleanup triggered');
+  }
   return cleanupOldFiles();
 };

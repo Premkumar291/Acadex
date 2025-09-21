@@ -58,7 +58,9 @@ export class ExcelReportService {
       return await workbook.xlsx.writeBuffer();
 
     } catch (error) {
-      console.error('Error generating Excel report buffer:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error generating Excel report buffer:', error);
+      }
       throw error;
     }
   }
@@ -84,7 +86,9 @@ export class ExcelReportService {
       return outputPath;
 
     } catch (error) {
-      console.error('Error generating Excel report:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error generating Excel report:', error);
+      }
       throw error;
     }
   }
@@ -111,7 +115,9 @@ export class ExcelReportService {
       return outputPath;
 
     } catch (error) {
-      console.error('Error generating enhanced Excel report:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error generating enhanced Excel report:', error);
+      }
       throw error;
     }
   }
@@ -134,7 +140,9 @@ export class ExcelReportService {
       return await workbook.xlsx.writeBuffer();
 
     } catch (error) {
-      console.error('Error generating institutional Excel report buffer:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error generating institutional Excel report buffer:', error);
+      }
       throw error;
     }
   }
@@ -158,7 +166,9 @@ export class ExcelReportService {
       return outputPath;
 
     } catch (error) {
-      console.error('Error generating institutional Excel report:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error generating institutional Excel report:', error);
+      }
       throw error;
     }
   }
@@ -1372,7 +1382,9 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
 
       return previewData;
     } catch (error) {
-      console.error('Error converting Excel to preview data:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error converting Excel to preview data:', error);
+      }
       throw error;
     }
   }
@@ -1399,7 +1411,9 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       await workbook.xlsx.writeFile(filePath);
       return filePath;
     } catch (error) {
-      console.error('Error updating Excel file:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error updating Excel file:', error);
+      }
       throw error;
     }
   }

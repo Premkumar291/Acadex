@@ -7,9 +7,7 @@ import {
     getFacultyById,
     updateFaculty,
     deleteFaculty,
-    getFacultyByDepartment,
-    addStudyToFaculty,
-    removeStudyFromFaculty
+    getFacultyByDepartment
 } from '../controller/Admin/faculty.controller.js';
 
 const router = express.Router();
@@ -26,9 +24,5 @@ router.delete('/:id', canSeeFaculty, deleteFaculty);       // Delete faculty (wi
 
 // Department-specific routes
 router.get('/department/:department', getFacultyByDepartment); // Get faculty by department (filtered by creator)
-
-// Studies management within faculty
-router.post('/:id/studies', canSeeFaculty, addStudyToFaculty);            // Add study to faculty
-router.delete('/:id/studies/:studyId', canSeeFaculty, removeStudyFromFaculty); // Remove study from faculty
 
 export default router;

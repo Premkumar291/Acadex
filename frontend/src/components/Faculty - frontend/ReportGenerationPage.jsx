@@ -273,11 +273,13 @@ function ReportGenerationPage() {
       dispatch({ type: 'SET_GENERATED_REPORT', payload: generatedReportData });
       dispatch({ type: 'SET_PREVIEW', payload: true });
     } catch (error) {
-      console.error('Report generation error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
+      if (import.meta.env.DEV) {
+        console.error('Report generation error details:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        });
+      }
       
       // Show more specific error message
       const errorMessage = error.response?.data?.message || error.message || 'Failed to generate report. Please check your connection and try again.';

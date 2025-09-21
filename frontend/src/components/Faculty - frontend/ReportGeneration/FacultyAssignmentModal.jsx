@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { X, User, Search, Check, BookOpen, Users, AlertCircle } from 'lucide-react';
 import { facultyAPI } from '../../../api/faculty';
 
@@ -20,23 +20,25 @@ const FacultyAssignmentModal = ({
   
   // Fetch available faculty when modal opens
   useEffect(() => {
+    const fetchFaculty = async () => {
+      setLoading(true);
+      try {
+        const response = await facultyAPI.getFacultyByDepartment(department);
+        setAvailableFaculty(response.data || []);
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Error fetching faculty:', error);
+        }
+        setAvailableFaculty([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (isOpen && department) {
       fetchFaculty();
     }
   }, [isOpen, department]);
-
-  const fetchFaculty = async () => {
-    setLoading(true);
-    try {
-      const response = await facultyAPI.getFacultyByDepartment(department);
-      setAvailableFaculty(response.data || []);
-    } catch (error) {
-      console.error('Error fetching faculty:', error);
-      setAvailableFaculty([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAssignmentChange = (subjectCode, facultyData) => {
     setAssignments(prev => ({

@@ -56,7 +56,9 @@ const AdminHierarchyPage = () => {
       setCreationStatus(statusRes.data);
       
     } catch (error) {
-      console.error('Error loading hierarchy data:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error loading hierarchy data:', error);
+      }
       toast.error('Failed to load hierarchy data');
     } finally {
       setLoading(false);

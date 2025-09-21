@@ -4,7 +4,7 @@ import App from './App.jsx'
 import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 
-console.log('main.jsx loading...');
+// Main entry point loaded
 
 createRoot(document.getElementById('root')).render(
   

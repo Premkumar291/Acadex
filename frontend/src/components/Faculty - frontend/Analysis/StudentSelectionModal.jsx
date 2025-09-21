@@ -83,7 +83,9 @@ export default function StudentSelectionModal({ isOpen, students, onSelectStuden
                                   setSelectedStudentIndex(index);
                                   
                                   const originalIndex = filteredToOriginalIndex[index];
-                                  console.log('Student selected:', student.regNo, 'filtered index:', index, 'original index:', originalIndex);
+                                  if (import.meta.env.DEV) {
+                                    console.log('Student selected:', student.regNo, 'filtered index:', index, 'original index:', originalIndex);
+                                  }
                                   
                                   // Add a small delay to show the selection state
                                   setTimeout(() => {

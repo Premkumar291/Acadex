@@ -67,7 +67,9 @@ export class PDFReportController {
       res.send(excelBuffer);
 
     } catch (error) {
-      console.error('Error generating Excel report:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error generating Excel report:', error);
+      }
       res.status(500).json({
         success: false,
         message: 'Failed to generate Excel report',
@@ -122,7 +124,9 @@ export class PDFReportController {
       res.send(excelBuffer);
 
     } catch (error) {
-      console.error('Error generating institutional Excel report:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error generating institutional Excel report:', error);
+      }
       res.status(500).json({
         success: false,
         message: 'Failed to generate institutional Excel report',
@@ -161,7 +165,9 @@ export class PDFReportController {
       fileStream.pipe(res);
 
     } catch (error) {
-      console.error('Error downloading PDF report:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error downloading PDF report:', error);
+      }
       res.status(500).json({
         success: false,
         message: 'Failed to download PDF report',
@@ -199,7 +205,9 @@ export class PDFReportController {
       fileStream.pipe(res);
 
     } catch (error) {
-      console.error('Error previewing PDF report:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error previewing PDF report:', error);
+      }
       res.status(500).json({
         success: false,
         message: 'Failed to preview PDF report',
@@ -242,7 +250,9 @@ export class PDFReportController {
       });
 
     } catch (error) {
-      console.error('Error fetching reports:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error fetching reports:', error);
+      }
       res.status(500).json({
         success: false,
         message: 'Failed to fetch reports',
@@ -326,7 +336,9 @@ export class PDFReportController {
       });
 
     } catch (error) {
-      console.error('Error generating institutional PDF report:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error generating institutional PDF report:', error);
+      }
       res.status(500).json({
         success: false,
         message: 'Failed to generate institutional PDF report',
@@ -395,7 +407,9 @@ export class PDFReportController {
       });
 
     } catch (error) {
-      console.error('Error generating PDF report:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error generating PDF report:', error);
+      }
       res.status(500).json({
         success: false,
         message: 'Failed to generate PDF report',
@@ -434,7 +448,9 @@ export class PDFReportController {
       });
 
     } catch (error) {
-      console.error('Error deleting report:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error deleting report:', error);
+      }
       res.status(500).json({
         success: false,
         message: 'Failed to delete report',

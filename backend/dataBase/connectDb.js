@@ -11,8 +11,10 @@ export const connectDb = async () => {
       process.exit(1);
     }
 
-    console.log('Attempting to connect to MongoDB...');
-    console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Attempting to connect to MongoDB...');
+      console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
+    }
     
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       bufferCommands: false,
@@ -27,13 +29,19 @@ export const connectDb = async () => {
     
     // Initialize GridFS
     const { gfs, gridFSBucket } = initGridFS(conn.connection);
-    console.log('GridFS initialized successfully');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('GridFS initialized successfully');
+    }
     
-    console.log(`MongoDB connected successfully: ${conn.connection.host}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`MongoDB connected successfully: ${conn.connection.host}`);
+    }
     return conn;
   } catch (error) {
     console.error(`MongoDB connection error: ${error.message}`);
-    console.error('Full error details:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Full error details:', error);
+    }
     process.exit(1); // Exit the process with failure
   }
 };
