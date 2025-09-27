@@ -100,25 +100,7 @@ export const subjectAPI = {
         }
     },
 
-    // Add faculty to subject
-    addFacultyToSubject: async (subjectId, facultyData) => {
-        try {
-            const response = await api.post(`/${subjectId}/faculty`, facultyData);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
-    },
-
-    // Remove faculty from subject
-    removeFacultyFromSubject: async (subjectId, facultyId) => {
-        try {
-            const response = await api.delete(`/${subjectId}/faculty/${facultyId}`);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
-    }
+    // Note: Faculty-Subject assignment is handled separately through Faculty Management system
 };
 
 // Constants for dropdowns

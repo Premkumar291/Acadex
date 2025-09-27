@@ -8,12 +8,9 @@ export const DEPARTMENT_OPTIONS = [
     'MECH',
     'CIVIL',
     'IT',
-    'AUTO',
-    'CS & DS',
-    'English',
-    'Maths',
-    'Physics',
-    'Chemistry',
+    'AIDS',
+    'AIML',
+    'CSBS',
     'OTHER'
 ];
 

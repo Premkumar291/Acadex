@@ -24,9 +24,11 @@ A comprehensive web-based academic management system designed for educational in
 
 ### 📋 Academic Management
 - **Subject Management**: Complete subject catalog with codes, credits, and departments
-- **Faculty Management**: Comprehensive faculty profiles with academic qualifications
+- **Smart Subject Codes**: Auto-uppercase conversion with real-time validation (CS101, MATH201A)
+- **Faculty Profiles**: Comprehensive faculty management with academic qualifications
 - **Department Organization**: Multi-department support with role-based filtering
 - **Semester Organization**: Multi-semester academic structure support
+- **Input Validation**: Real-time regex validation with visual feedback indicators
 
 ### 📈 Reporting & Analytics
 - **Excel Report Generation**: Institutional format Excel reports with dynamic subject columns
@@ -299,7 +301,19 @@ For support and questions:
 
 ## 🔄 Recent Updates
 
-### Version 1.0.0 - Current Implementation
+### Version 1.0.1 - Latest Enhancements (September 2025)
+- ✅ **Fixed Subjects API 500 Error**: Resolved authentication issues and invalid search filters
+- ✅ **Enhanced Subject Code Input**: Auto-uppercase conversion with real-time validation
+  - Smart input field that converts lowercase to uppercase automatically
+  - Real-time validation using regex pattern `/^[A-Z]{2,4}\d{3,4}[A-Z]?$/`
+  - Visual feedback with green checkmarks (✓) for valid codes and red X marks (✗) for invalid
+  - Professional monospace font styling for better code readability
+- ✅ **Improved User Experience**: Visual feedback with color-coded validation indicators
+- ✅ **Architecture Cleanup**: Removed unnecessary faculty-to-subject assignment logic
+- ✅ **Department Consistency**: Aligned frontend/backend department configurations
+- ✅ **Input Validation**: Real-time regex validation with professional styling
+
+### Version 1.0.0 - Core Implementation
 - ✅ Complete faculty management system with academic qualifications
 - ✅ Subject management with department-wise organization
 - ✅ Student management with CRUD operations

@@ -7,6 +7,14 @@ import { DEPARTMENT_OPTIONS } from "../../../config/subjects.config.js"
 const SEMESTER_OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8"]
 const SUBJECT_TYPE_OPTIONS = ["Theory", "Practical", "Project"]
 
+// Subject code validation regex
+const SUBJECT_CODE_REGEX = /^[A-Z]{2,4}\d{3,4}[A-Z]?$/
+
+// Validate subject code format
+const isValidSubjectCode = (code) => {
+  return SUBJECT_CODE_REGEX.test(code)
+}
+
 const SubjectManagement = () => {
   const [subjects, setSubjects] = useState([])
   const [loading, setLoading] = useState(true)
@@ -290,13 +298,40 @@ const SubjectManagement = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Subject Code
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.subjectCode}
-                  onChange={(e) => setFormData({...formData, subjectCode: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    required
+                    value={formData.subjectCode}
+                    onChange={(e) => setFormData({...formData, subjectCode: e.target.value.toUpperCase()})}
+                    className={`w-full px-3 py-2 pr-10 border rounded-md focus:ring-2 focus:border-transparent uppercase font-mono tracking-wider ${
+                      formData.subjectCode && !isValidSubjectCode(formData.subjectCode)
+                        ? 'border-red-300 focus:ring-red-500'
+                        : formData.subjectCode && isValidSubjectCode(formData.subjectCode)
+                        ? 'border-green-300 focus:ring-green-500'
+                        : 'border-gray-300 focus:ring-blue-500'
+                    }`}
+                    placeholder="e.g., CS101, MATH201"
+                    pattern="^[A-Z]{2,4}\d{3,4}[A-Z]?$"
+                    title="Subject code format: 2-4 letters + 3-4 digits + optional letter (e.g., CS101, MATH201A)"
+                  />
+                  {formData.subjectCode && (
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                      {isValidSubjectCode(formData.subjectCode) ? (
+                        <span className="text-green-500 text-sm">✓</span>
+                      ) : (
+                        <span className="text-red-500 text-sm">✗</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <p className={`mt-1 text-xs ${
+                  formData.subjectCode && !isValidSubjectCode(formData.subjectCode)
+                    ? 'text-red-500'
+                    : 'text-gray-500'
+                }`}>
+                  Format: 2-4 letters + 3-4 digits + optional letter (automatically converted to uppercase)
+                </p>
               </div>
               
               <div>

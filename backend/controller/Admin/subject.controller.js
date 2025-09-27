@@ -4,7 +4,15 @@ import { Subject } from "../../models/subject.model.js";
 export const createSubject = async (req, res) => {
     try {
         const { subjectCode, subjectName, department, semester, credits, subjectType } = req.body;
-        const userId = req.user.id;
+        const userId = req.user?.id || req.user?._id || req.user?.userId;
+
+        // Validate user authentication for protected route
+        if (!userId) {
+            return res.status(401).json({
+                success: false,
+                message: 'Authentication required to create subjects'
+            });
+        }
 
         // Validate required fields
         if (!subjectCode || !subjectName || !department) {
@@ -81,8 +89,7 @@ export const getSubjects = async (req, res) => {
             const regex = new RegExp(search, 'i');
             filter.$or = [
                 { subjectCode: regex },
-                { subjectName: regex },
-                { 'faculty.name': regex }
+                { subjectName: regex }
             ];
         }
 
@@ -225,82 +232,7 @@ export const deleteSubject = async (req, res) => {
     }
 };
 
-// Add faculty to subject
-export const addFacultyToSubject = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const facultyData = req.body;
-
-        // Validate faculty data
-        if (!facultyData.title || !facultyData.name || !facultyData.initials) {
-            return res.status(400).json({
-                success: false,
-                message: 'Faculty title, name, and initials are required'
-            });
-        }
-
-        const subject = await Subject.findById(id);
-        if (!subject) {
-            return res.status(404).json({
-                success: false,
-                message: 'Subject not found'
-            });
-        }
-
-        subject.faculty.push(facultyData);
-        await subject.save();
-
-        res.status(200).json({
-            success: true,
-            message: 'Faculty added successfully',
-            data: subject
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error adding faculty to subject',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
-    }
-};
-
-// Remove faculty from subject
-export const removeFacultyFromSubject = async (req, res) => {
-    try {
-        const { id, facultyId } = req.params;
-
-        const subject = await Subject.findById(id);
-        if (!subject) {
-            return res.status(404).json({
-                success: false,
-                message: 'Subject not found'
-            });
-        }
-
-        const facultyMember = subject.faculty.id(facultyId);
-        if (!facultyMember) {
-            return res.status(404).json({
-                success: false,
-                message: 'Faculty member not found in this subject'
-            });
-        }
-
-        facultyMember.remove();
-        await subject.save();
-
-        res.status(200).json({
-            success: true,
-            message: 'Faculty removed successfully',
-            data: subject
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error removing faculty from subject',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
-    }
-};
+// Note: Faculty-Subject assignment is handled separately through Faculty Management system
 
 // Get subjects by department
 export const getSubjectsByDepartment = async (req, res) => {

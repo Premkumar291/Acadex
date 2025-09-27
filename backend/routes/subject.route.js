@@ -6,8 +6,6 @@ import {
     getSubjectById,
     updateSubject,
     deleteSubject,
-    addFacultyToSubject,
-    removeFacultyFromSubject,
     getSubjectsByDepartment
 } from '../controller/Admin/subject.controller.js';
 
@@ -23,9 +21,5 @@ router.use(verifyToken, verifyAdmin);
 router.post('/', createSubject);                           // Create new subject
 router.put('/:id', updateSubject);                         // Update subject
 router.delete('/:id', deleteSubject);                      // Delete subject (soft delete)
-
-// Faculty management within subjects
-router.post('/:id/faculty', addFacultyToSubject);          // Add faculty to subject
-router.delete('/:id/faculty/:facultyId', removeFacultyFromSubject); // Remove faculty from subject
 
 export default router;
