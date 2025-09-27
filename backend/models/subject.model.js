@@ -14,12 +14,17 @@ const subjectSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    department: {
+    departments: [{
         type: String,
         required: true,
         trim: true,
-        uppercase: true,
-        enum: ['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AIDS', 'AIML', 'CSBS', 'OTHER']
+        uppercase: true
+    }],
+    primaryDepartment: {
+        type: String,
+        required: true,
+        trim: true,
+        uppercase: true
     },
     semester: {
         type: Number,
@@ -53,7 +58,8 @@ const subjectSchema = new mongoose.Schema({
 
 // Indexes for better performance
 subjectSchema.index({ subjectCode: 1 });
-subjectSchema.index({ department: 1 });
+subjectSchema.index({ departments: 1 });
+subjectSchema.index({ primaryDepartment: 1 });
 subjectSchema.index({ subjectName: 1 });
 
 // Virtual for full subject display
@@ -61,9 +67,29 @@ subjectSchema.virtual('displayName').get(function() {
     return `${this.subjectCode} - ${this.subjectName}`;
 });
 
-// Static method to find subjects by department
+// Virtual for department display
+subjectSchema.virtual('departmentDisplay').get(function() {
+    if (this.departments.length === 1) {
+        return this.departments[0];
+    }
+    return `${this.primaryDepartment} (+${this.departments.length - 1} more)`;
+});
+
+// Static method to find subjects by department (supports multiple departments)
 subjectSchema.statics.findByDepartment = function(department) {
-    return this.find({ department: department.toUpperCase(), isActive: true });
+    return this.find({ 
+        departments: { $in: [department.toUpperCase()] }, 
+        isActive: true 
+    });
+};
+
+// Static method to find subjects by multiple departments
+subjectSchema.statics.findByDepartments = function(departments) {
+    const upperDepartments = departments.map(dept => dept.toUpperCase());
+    return this.find({ 
+        departments: { $in: upperDepartments }, 
+        isActive: true 
+    });
 };
 
 // Static method to search subjects
@@ -76,6 +102,27 @@ subjectSchema.statics.searchSubjects = function(searchTerm) {
         ],
         isActive: true
     });
+};
+
+// Instance method to check if subject belongs to department
+subjectSchema.methods.belongsToDepartment = function(department) {
+    return this.departments.includes(department.toUpperCase());
+};
+
+// Instance method to add department
+subjectSchema.methods.addDepartment = function(department) {
+    const upperDept = department.toUpperCase();
+    if (!this.departments.includes(upperDept)) {
+        this.departments.push(upperDept);
+    }
+    return this;
+};
+
+// Instance method to remove department
+subjectSchema.methods.removeDepartment = function(department) {
+    const upperDept = department.toUpperCase();
+    this.departments = this.departments.filter(dept => dept !== upperDept);
+    return this;
 };
 
 export const Subject = mongoose.model('Subject', subjectSchema);

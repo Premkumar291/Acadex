@@ -25,7 +25,8 @@ const SubjectManagement = () => {
   const [formData, setFormData] = useState({
     subjectName: "",
     subjectCode: "",
-    department: "",
+    departments: [],
+    primaryDepartment: "",
     semester: "",
     credits: "",
     subjectType: "",
@@ -52,7 +53,8 @@ const SubjectManagement = () => {
     setFormData({
       subjectName: subject.subjectName,
       subjectCode: subject.subjectCode,
-      department: subject.department,
+      departments: subject.departments || [subject.department], // Handle legacy data
+      primaryDepartment: subject.primaryDepartment || subject.department, // Handle legacy data
       semester: subject.semester,
       credits: subject.credits.toString(),
       subjectType: subject.subjectType,
@@ -64,10 +66,24 @@ const SubjectManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    // Validate departments selection
+    if (formData.departments.length === 0) {
+      toast.error("Please select at least one department")
+      return
+    }
+    
+    // Validate primary department for multiple departments
+    if (formData.departments.length > 1 && !formData.primaryDepartment) {
+      toast.error("Please select a primary department when multiple departments are selected")
+      return
+    }
+    
     try {
       const subjectData = {
         ...formData,
-        credits: Number.parseInt(formData.credits)
+        credits: Number.parseInt(formData.credits),
+        primaryDepartment: formData.departments.length === 1 ? formData.departments[0] : formData.primaryDepartment
       }
 
       if (editingSubject) {
@@ -101,7 +117,8 @@ const SubjectManagement = () => {
     setFormData({
       subjectName: "",
       subjectCode: "",
-      department: "",
+      departments: [],
+      primaryDepartment: "",
       semester: "",
       credits: "",
       subjectType: "",
@@ -115,7 +132,11 @@ const SubjectManagement = () => {
     const matchesSearch =
       subject.subjectName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       subject.subjectCode?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesDepartment = !departmentFilter || subject.department === departmentFilter
+    
+    // Handle both new multi-department structure and legacy single department
+    const subjectDepartments = subject.departments || [subject.department]
+    const matchesDepartment = !departmentFilter || subjectDepartments.includes(departmentFilter)
+    
     return matchesSearch && matchesDepartment
   })
 
@@ -215,7 +236,23 @@ const SubjectManagement = () => {
                       {subject.subjectCode}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {subject.department}
+                      <div className="flex flex-wrap gap-1">
+                        {(subject.departments || [subject.department]).map((dept) => (
+                          <span 
+                            key={dept} 
+                            className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                              dept === (subject.primaryDepartment || subject.department) 
+                                ? 'bg-blue-100 text-blue-800 border border-blue-200' 
+                                : 'bg-gray-100 text-gray-700'
+                            }`}
+                          >
+                            {dept}
+                            {dept === (subject.primaryDepartment || subject.department) && 
+                              <span className="ml-1 text-blue-600">★</span>
+                            }
+                          </span>
+                        ))}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {subject.semester}
@@ -334,22 +371,68 @@ const SubjectManagement = () => {
                 </p>
               </div>
               
+              {/* Multiple Departments Selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Department
+                  Departments <span className="text-red-500">*</span>
                 </label>
-                <select
-                  required
-                  value={formData.department}
-                  onChange={(e) => setFormData({...formData, department: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Select Department</option>
-                  {DEPARTMENT_OPTIONS.map((dept) => (
-                    <option key={dept} value={dept}>{dept}</option>
-                  ))}
-                </select>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto border border-gray-300 rounded-md p-2">
+                    {DEPARTMENT_OPTIONS.map((dept) => (
+                      <label key={dept} className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={formData.departments.includes(dept)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData({
+                                ...formData,
+                                departments: [...formData.departments, dept],
+                                primaryDepartment: formData.primaryDepartment || dept // Set first selected as primary if none set
+                              })
+                            } else {
+                              const newDepartments = formData.departments.filter(d => d !== dept)
+                              setFormData({
+                                ...formData,
+                                departments: newDepartments,
+                                primaryDepartment: formData.primaryDepartment === dept ? newDepartments[0] || "" : formData.primaryDepartment
+                              })
+                            }
+                          }}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">{dept}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Select one or more departments that can access this subject
+                  </p>
+                </div>
               </div>
+
+              {/* Primary Department Selection */}
+              {formData.departments.length > 1 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Primary Department <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    required
+                    value={formData.primaryDepartment}
+                    onChange={(e) => setFormData({...formData, primaryDepartment: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">Select Primary Department</option>
+                    {formData.departments.map((dept) => (
+                      <option key={dept} value={dept}>{dept}</option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    The primary department will be shown first in lists and reports
+                  </p>
+                </div>
+              )}
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

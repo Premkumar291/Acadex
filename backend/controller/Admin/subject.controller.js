@@ -3,7 +3,7 @@ import { Subject } from "../../models/subject.model.js";
 // Create a new subject
 export const createSubject = async (req, res) => {
     try {
-        const { subjectCode, subjectName, department, semester, credits, subjectType } = req.body;
+        const { subjectCode, subjectName, departments, primaryDepartment, semester, credits, subjectType } = req.body;
         const userId = req.user?.id || req.user?._id || req.user?.userId;
 
         // Validate user authentication for protected route
@@ -15,10 +15,26 @@ export const createSubject = async (req, res) => {
         }
 
         // Validate required fields
-        if (!subjectCode || !subjectName || !department) {
+        if (!subjectCode || !subjectName || !departments || !primaryDepartment) {
             return res.status(400).json({
                 success: false,
-                message: 'Subject code, subject name, and department are required'
+                message: 'Subject code, subject name, departments, and primary department are required'
+            });
+        }
+
+        // Validate departments array
+        if (!Array.isArray(departments) || departments.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'At least one department must be selected'
+            });
+        }
+
+        // Validate primary department is in departments array
+        if (!departments.includes(primaryDepartment)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Primary department must be one of the selected departments'
             });
         }
 
@@ -38,7 +54,8 @@ export const createSubject = async (req, res) => {
         const subject = new Subject({
             subjectCode: subjectCode.toUpperCase(),
             subjectName,
-            department: department.toUpperCase(),
+            departments: departments.map(dept => dept.toUpperCase()),
+            primaryDepartment: primaryDepartment.toUpperCase(),
             semester,
             credits,
             subjectType: subjectType || 'Theory',
@@ -74,9 +91,9 @@ export const getSubjects = async (req, res) => {
 
         let filter = { isActive: true };
 
-        // Add department filter
+        // Add department filter (supports multiple departments)
         if (department) {
-            filter.department = department.toUpperCase();
+            filter.departments = { $in: [department.toUpperCase()] };
         }
 
         // Add semester filter
@@ -166,12 +183,25 @@ export const updateSubject = async (req, res) => {
         delete updates.createdAt;
         delete updates.updatedAt;
 
-        // Convert department and subjectCode to uppercase if provided
-        if (updates.department) {
-            updates.department = updates.department.toUpperCase();
+        // Convert departments, primaryDepartment and subjectCode to uppercase if provided
+        if (updates.departments && Array.isArray(updates.departments)) {
+            updates.departments = updates.departments.map(dept => dept.toUpperCase());
+        }
+        if (updates.primaryDepartment) {
+            updates.primaryDepartment = updates.primaryDepartment.toUpperCase();
         }
         if (updates.subjectCode) {
             updates.subjectCode = updates.subjectCode.toUpperCase();
+        }
+
+        // Validate primary department is in departments array if both are being updated
+        if (updates.departments && updates.primaryDepartment) {
+            if (!updates.departments.includes(updates.primaryDepartment)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Primary department must be one of the selected departments'
+                });
+            }
         }
 
         const subject = await Subject.findByIdAndUpdate(
