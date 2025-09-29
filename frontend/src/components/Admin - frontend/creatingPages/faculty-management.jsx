@@ -1037,6 +1037,19 @@ const FacultyManagement = () => {
                             letterSpacing: "0.05em",
                           }}
                         >
+                          College
+                        </th>
+                        <th
+                          style={{
+                            padding: "20px 24px",
+                            textAlign: "left",
+                            fontSize: "14px",
+                            fontWeight: "700",
+                            color: "#ffffff",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05em",
+                          }}
+                        >
                           Actions
                         </th>
                       </tr>
@@ -1101,6 +1114,20 @@ const FacultyManagement = () => {
                               }}
                             >
                               {facultyMember.department}
+                            </span>
+                          </td>
+                          <td style={{ padding: "24px" }}>
+                            <span
+                              style={{
+                                padding: "8px 16px",
+                                borderRadius: "20px",
+                                fontSize: "14px",
+                                fontWeight: "600",
+                                background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
+                                color: "#ffffff",
+                              }}
+                            >
+                              {facultyMember.collegeName}
                             </span>
                           </td>
                           <td style={{ padding: "24px" }}>

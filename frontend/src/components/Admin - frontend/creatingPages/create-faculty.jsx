@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react"
-import { signup } from "../../../api/auth"
-import { createAdmin, getHierarchy, deleteAdmin } from "../../../api/adminHierarchy"
+import { createAdmin, createFacultyUser, getHierarchy, deleteAdmin } from "../../../api/adminHierarchy"
 
 // Icons from reference UI
-
-
 
 const UserIcon = () => (
   <svg
@@ -160,8 +157,29 @@ const CreateFaculty = () => {
         // Use admin creation API for admin role
         response = await createAdmin(form)
       } else {
-        // Use regular signup for faculty role
-        response = await signup(form)
+        // Validate name
+        if (!form.name || form.name.trim().length === 0) {
+          throw new Error('Name is required')
+        }
+        
+        // Validate department
+        const department = form.department.toUpperCase()
+        const validDepartments = ['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AUTO', 'CS & DS', 'ENGLISH', 'MATHS', 'PHYSICS', 'CHEMISTRY', 'OTHER']
+        if (!validDepartments.includes(department)) {
+          throw new Error(`Invalid department. Must be one of: ${validDepartments.join(', ')}`)
+        }
+        
+        // Create the faculty user account in the User model
+        const userData = {
+          name: form.name.trim(),
+          email: form.email,
+          password: form.password,
+          department: department,
+          role: 'faculty' // Explicitly set role to faculty
+        }
+        
+        // Create the faculty user account
+        response = await createFacultyUser(userData)
       }
       
       if (response.success) {
@@ -178,9 +196,12 @@ const CreateFaculty = () => {
         }
         // Show success message or redirect
         alert(`${form.role === 'admin' ? 'Admin' : 'Faculty'} created successfully!`)
+      } else {
+        alert(`Failed to create ${form.role}: ${response.message}`)
       }
-    } catch {
-      alert(`Error creating ${form.role}. Please try again.`)
+    } catch (error) {
+      console.error('Error creating user:', error)
+      alert(`Error creating ${form.role}: ${error.message || 'Please try again.'}`)
     } finally {
       setLoading(false)
     }

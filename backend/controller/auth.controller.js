@@ -5,7 +5,7 @@ import { sendEmail } from "../utils/sendEmail.js";
 import { User } from '../models/user.model.js'; 
 
 export const signup = async (req, res) => {
-    const { email, password, name, department, role } = req.body;
+    const { email, password, name, department, role, collegeName } = req.body;
     try {
 
         // Validate role if provided
@@ -13,6 +13,14 @@ export const signup = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: "Invalid role. Must be either 'faculty' or 'admin'"
+            });
+        }
+
+        // For admin users, collegeName is required
+        if (role === 'admin' && !collegeName) {
+            return res.status(400).json({
+                success: false,
+                message: "College name is required for admin users"
             });
         }
 
@@ -39,6 +47,7 @@ export const signup = async (req, res) => {
             password: hashedPassword,
             name,
             department,
+            collegeName: role === 'admin' ? collegeName : undefined, // Only set for admin users
             role: role || 'faculty', // Default to faculty if role not provided
             verificationToken,
             verificationTokenExpiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
@@ -66,6 +75,7 @@ export const signup = async (req, res) => {
                 email: newUser.email,
                 name: newUser.name,
                 department: newUser.department,
+                collegeName: newUser.collegeName, // Include collegeName in response
                 role: newUser.role,
                 isVerified: newUser.isVerified
             }

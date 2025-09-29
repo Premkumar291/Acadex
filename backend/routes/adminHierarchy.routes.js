@@ -3,6 +3,7 @@ import { verifyToken } from '../middleware/verifyToken.js';
 import { verifyHierarchyAdmin, canCreateAdmin, canSeeUser } from '../middleware/hierarchyAuth.js';
 import {
     createAdmin,
+    createFacultyUser,
     getAdminInfo,
     getCreatedUsers,
     getAdminStatistics,
@@ -31,6 +32,9 @@ router.get('/creation-status', getAdminCreationStatus);
 
 // Create admin (with permission check)
 router.post('/admin', canCreateAdmin, createAdmin);
+
+// Create faculty user (admins can always create faculty)
+router.post('/faculty', createFacultyUser);
 
 // Update admin (with visibility check)
 router.put('/admin/:id', canSeeUser, updateAdmin);

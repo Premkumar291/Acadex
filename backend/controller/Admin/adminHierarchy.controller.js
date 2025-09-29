@@ -103,6 +103,100 @@ export const createAdmin = async (req, res) => {
 };
 
 /**
+ * Create a faculty user account
+ */
+export const createFacultyUser = async (req, res) => {
+    try {
+        const { email, password, name, department } = req.body;
+        const creatorId = req.userId || req.user?.userId || req.user?._id;
+        
+        // Validate required fields
+        if (!email || !password || !name || !department) {
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required"
+            });
+        }
+
+        // Validate creatorId
+        if (!creatorId) {
+            return res.status(401).json({
+                success: false,
+                message: "Authentication required - creator ID not found"
+            });
+        }
+
+        // Validate creatorId is a valid ObjectId
+        if (!creatorId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid creator ID format"
+            });
+        }
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "User with this email already exists"
+            });
+        }
+
+        // Get creator admin
+        const creator = await User.findById(creatorId);
+        if (!creator || creator.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: "Only admins can create faculty accounts"
+            });
+        }
+
+        // Get the college name from the admin creator
+        const collegeName = await creator.getCollegeName();
+        if (!collegeName) {
+            return res.status(400).json({
+                success: false,
+                message: "Admin does not have a college name assigned"
+            });
+        }
+
+        // Hash password
+        const hashedPassword = await bcryptjs.hash(password, 12);
+
+        // Create faculty user with college name inherited from admin
+        const newFacultyUser = new User({
+            email,
+            password: hashedPassword,
+            name,
+            department,
+            collegeName: collegeName, // Inherit college name from admin
+            role: 'faculty',
+            createdBy: creatorId,
+            isVerified: true // Faculty users are auto-verified when created by admin
+        });
+
+        await newFacultyUser.save();
+        
+        // Remove password from response
+        const { password: _, ...facultyData } = newFacultyUser.toObject();
+
+        res.status(201).json({
+            success: true,
+            message: "Faculty user created successfully",
+            faculty: facultyData
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        });
+    }
+};
+
+/**
  * Get admin data and their created users
  */
 export const getAdminInfo = async (req, res) => {
@@ -111,10 +205,13 @@ export const getAdminInfo = async (req, res) => {
         
         const adminData = await getAdminData(adminId);
         
-        // Get created faculty separately
-        const createdFaculty = await Faculty.find({ createdBy: adminId })
-            .select('name email department phoneNumber createdAt')
-            .sort({ createdAt: -1 });
+        // Get created faculty separately (faculty users are stored in User model)
+        const createdFaculty = await User.find({ 
+            createdBy: adminId, 
+            role: 'faculty' 
+        })
+        .select('name email department collegeName createdAt')
+        .sort({ createdAt: -1 });
         
         // Add faculty to the response
         adminData.createdFaculty = createdFaculty;
@@ -293,7 +390,11 @@ export const deleteAdmin = async (req, res) => {
 
         // Check if admin has created users
         const createdUsers = await User.countDocuments({ createdBy: id });
-        const createdFaculty = await Faculty.countDocuments({ createdBy: id });
+        // Faculty users are stored in User model, not Faculty model
+        const createdFaculty = await User.countDocuments({ 
+            createdBy: id, 
+            role: 'faculty' 
+        });
 
         if (createdUsers > 0 || createdFaculty > 0) {
             return res.status(400).json({

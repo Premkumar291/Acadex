@@ -3,13 +3,20 @@ import { Faculty } from "../../models/faculty.model.js";
 // Create a new faculty member
 export const createFaculty = async (req, res) => {
     try {
+        console.log('Faculty creation request received:', {
+            body: req.body,
+            user: req.user,
+            userId: req.userId
+        });
+        
         const { 
             title, 
             name, 
             initials, 
-            department
+            department,
+            user // User ID linking to the user account
         } = req.body;
-        const userId = req.user.userId;
+        const userId = req.user.userId || req.user._id || req.userId;
 
         // Validate required fields
         if (!title || !name || !initials || !department) {
@@ -19,37 +26,109 @@ export const createFaculty = async (req, res) => {
             });
         }
 
+        // Validate user ID
+        if (!userId) {
+            console.error('No user ID found in request');
+            return res.status(401).json({
+                success: false,
+                message: 'User authentication required'
+            });
+        }
+
+        console.log('Looking up admin user with ID:', userId);
+        
+        // Get the admin user who is creating this faculty
+        const adminUser = await User.findById(userId);
+        console.log('Admin user found:', adminUser);
+        if (!adminUser) {
+            console.error('Admin user not found for ID:', userId);
+            return res.status(404).json({
+                success: false,
+                message: 'Admin user not found'
+            });
+        }
+        
+        if (adminUser.role !== 'admin') {
+            console.error('User is not an admin:', {
+                userId: userId,
+                role: adminUser.role
+            });
+            return res.status(403).json({
+                success: false,
+                message: 'Only admin users can create faculty members'
+            });
+        }
+
+        // Get the college name from the admin user
+        console.log('Getting college name from admin user');
+        const collegeName = await adminUser.getCollegeName();
+        console.log('Admin user college name:', collegeName);
+        if (!collegeName) {
+            console.error('Admin user does not have a college name assigned');
+            return res.status(400).json({
+                success: false,
+                message: 'Admin user does not have a college name assigned'
+            });
+        }
+
         // Check if faculty already exists with same name and initials
+        console.log('Checking for existing faculty with:', {
+            name: name.trim(),
+            initials: initials.trim(),
+            department: department.toUpperCase(),
+            collegeName: collegeName
+        });
+        
         const existingFaculty = await Faculty.findOne({
             name: name.trim(),
             initials: initials.trim(),
-            department: department.toUpperCase()
+            department: department.toUpperCase(),
+            collegeName: collegeName
         });
 
         if (existingFaculty) {
+            console.log('Faculty already exists:', existingFaculty);
             return res.status(400).json({
                 success: false,
-                message: 'Faculty with this name and initials already exists in this department'
+                message: 'Faculty with this name and initials already exists in this department and college'
             });
         }
 
         // Create new faculty
+        console.log('Creating new faculty with data:', {
+            title,
+            name: name.trim(),
+            initials: initials.trim(),
+            department: department.toUpperCase(),
+            collegeName: collegeName,
+            user: user, // Link to user account
+            createdBy: userId
+        });
+        
         const faculty = new Faculty({
             title,
             name: name.trim(),
             initials: initials.trim(),
             department: department.toUpperCase(),
+            collegeName: collegeName, // Auto-assign college name from admin
+            user: user, // Link to user account
             createdBy: userId
         });
 
         await faculty.save();
+        console.log('Created faculty with college name:', faculty.collegeName);
+        
+        // Fetch the faculty again to ensure all fields are populated
+        const populatedFaculty = await Faculty.findById(faculty._id).lean();
+        console.log('Populated faculty data:', populatedFaculty);
 
         res.status(201).json({
             success: true,
             message: 'Faculty created successfully',
-            data: faculty
+            data: populatedFaculty
         });
     } catch (error) {
+        console.error('Error creating faculty:', error);
         res.status(500).json({
             success: false,
             message: 'Error creating faculty',
@@ -99,9 +178,22 @@ export const getFaculty = async (req, res) => {
             .skip(skip)
             .limit(parseInt(limit))
             .sort({ name: 1 })
+            .populate('user', 'email name') // Populate user information
             .lean();
 
         console.log(`Found ${faculty.length} faculty members matching filter`);
+        if (faculty.length > 0) {
+            console.log('Faculty data sample:', {
+                _id: faculty[0]._id,
+                title: faculty[0].title,
+                name: faculty[0].name,
+                initials: faculty[0].initials,
+                department: faculty[0].department,
+                collegeName: faculty[0].collegeName,
+                user: faculty[0].user,
+                createdBy: faculty[0].createdBy
+            });
+        }
 
         const totalFaculty = await Faculty.countDocuments(filter);
         const totalPages = Math.ceil(totalFaculty / parseInt(limit));
@@ -132,7 +224,8 @@ export const getFacultyById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const faculty = await Faculty.findById(id).lean();
+        const faculty = await Faculty.findById(id).populate('user', 'email name').lean();
+        console.log('Faculty by ID:', faculty);
 
         if (!faculty) {
             return res.status(404).json({
@@ -184,7 +277,7 @@ export const updateFaculty = async (req, res) => {
             id,
             updates,
             { new: true, runValidators: true }
-        );
+        ).populate('user', 'email name'); // Populate user information
 
         if (!faculty) {
             return res.status(404).json({
@@ -241,6 +334,7 @@ export const getFacultyByDepartment = async (req, res) => {
 
         const faculty = await Faculty.find({ department: department.toUpperCase() })
             .sort({ name: 1 })
+            .populate('user', 'email name') // Populate user information
             .lean();
 
         res.status(200).json({

@@ -1,5 +1,4 @@
 import { User } from '../models/user.model.js';
-import { Faculty } from '../models/faculty.model.js';
 
 /**
  * Hierarchy utility functions for admin visibility and permission management
@@ -26,14 +25,9 @@ export const getVisibleUsersForAdmin = async (adminId) => {
         const visibleAdmins = visibleUsers.filter(user => user.role === 'admin');
         const visibleFacultyUsers = visibleUsers.filter(user => user.role === 'faculty');
 
-        // Get faculty created by this admin
-        const visibleFaculty = await Faculty.find({
-            createdBy: adminId
-        }).populate('createdBy', 'name email role');
-
         return {
             admins: visibleAdmins,
-            faculty: visibleFaculty,
+            faculty: visibleFacultyUsers, // Faculty users are stored in User model
             users: visibleFacultyUsers
         };
     } catch (error) {
@@ -81,9 +75,9 @@ export const canAdminSeeUser = async (adminId, targetUserId) => {
 export const canAdminSeeFaculty = async (adminId, facultyId) => {
     try {
         const admin = await User.findById(adminId);
-        const faculty = await Faculty.findById(facultyId).populate('createdBy');
+        const faculty = await User.findById(facultyId);
 
-        if (!admin || !faculty || admin.role !== 'admin') {
+        if (!admin || !faculty || admin.role !== 'admin' || faculty.role !== 'faculty') {
             return false;
         }
 
@@ -136,7 +130,7 @@ export const getAdminData = async (adminId) => {
         return {
             currentAdmin: admin,
             createdAdmins: admins,
-            createdFaculty: faculty,
+            createdFaculty: faculty, // Faculty users are stored in User model
             createdUsers: users,
             totalCreatedAdmins: admins.length,
             totalCreatedFaculty: faculty.length,
@@ -170,9 +164,8 @@ export const getAdminStats = async (adminId) => {
             role: 'faculty'
         });
 
-        const createdFaculty = await Faculty.countDocuments({
-            createdBy: adminId
-        });
+        // Faculty users are stored in User model, not Faculty model
+        const createdFaculty = createdUsers;
 
         return {
             adminName: admin.name,
@@ -180,7 +173,7 @@ export const getAdminStats = async (adminId) => {
             createdAdmins,
             createdUsers,
             createdFaculty,
-            totalCreated: createdAdmins + createdUsers + createdFaculty
+            totalCreated: createdAdmins + createdUsers
         };
     } catch (error) {
         throw new Error(`Error getting admin stats: ${error.message}`);

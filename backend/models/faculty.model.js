@@ -24,6 +24,17 @@ const facultySchema = new mongoose.Schema({
         uppercase: true,
         enum: ['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AUTO', 'CS & DS', 'ENGLISH', 'MATHS', 'PHYSICS', 'CHEMISTRY', 'OTHER']
     },
+    // College name field
+    collegeName: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    // Reference to the user account
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -33,10 +44,38 @@ const facultySchema = new mongoose.Schema({
     timestamps: true
 });
 
+// Add a pre-save hook to log the data being saved
+facultySchema.pre('save', function(next) {
+    console.log('Saving faculty with data:', {
+        title: this.title,
+        name: this.name,
+        initials: this.initials,
+        department: this.department,
+        collegeName: this.collegeName,
+        createdBy: this.createdBy
+    });
+    next();
+});
+
+// Add a post-save hook to log the saved data
+facultySchema.post('save', function(doc) {
+    console.log('Faculty saved with data:', {
+        _id: doc._id,
+        title: doc.title,
+        name: doc.name,
+        initials: doc.initials,
+        department: doc.department,
+        collegeName: doc.collegeName,
+        createdBy: doc.createdBy
+    });
+});
+
 // Indexes for better performance
 facultySchema.index({ name: 1 });
 facultySchema.index({ department: 1 });
 facultySchema.index({ initials: 1 });
+facultySchema.index({ collegeName: 1 });
+facultySchema.index({ user: 1 }); // Index for user field
 
 // Virtual for full name display
 facultySchema.virtual('fullName').get(function() {
@@ -47,6 +86,20 @@ facultySchema.virtual('fullName').get(function() {
 facultySchema.virtual('displayName').get(function() {
     return `${this.title} ${this.name} (${this.initials})`;
 });
+
+// Method to get associated user information
+facultySchema.methods.getUserInfo = async function() {
+    if (this.user) {
+        const User = mongoose.model('User');
+        return await User.findById(this.user).select('email name department role');
+    }
+    return null;
+};
+
+// Static method to find faculty by user ID
+facultySchema.statics.findByUserId = function(userId) {
+    return this.findOne({ user: userId });
+};
 
 // Static method to find faculty by department
 facultySchema.statics.findByDepartment = function(department) {

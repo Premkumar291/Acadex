@@ -72,6 +72,16 @@ export const createAdmin = async (adminData) => {
 // Alias for backward compatibility
 export const createSubAdmin = createAdmin;
 
+// Create faculty user
+export const createFacultyUser = async (facultyData) => {
+  try {
+    const response = await api.post('/faculty', facultyData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 // Update admin
 export const updateAdmin = async (id, updateData) => {
   try {
@@ -105,6 +115,7 @@ export default {
   getAdminCreationStatus,
   getSubAdminCreationStatus,
   createAdmin,
+  createFacultyUser,
   createSubAdmin,
   updateAdmin,
   updateSubAdmin,

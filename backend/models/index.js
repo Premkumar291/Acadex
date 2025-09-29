@@ -3,6 +3,7 @@
  */
 import { User } from './user.model.js';
 import { Subject } from './subject.model.js';
+// Faculty model is not used for faculty accounts, only for other purposes
 import { Faculty } from './faculty.model.js';
 
 /**
@@ -29,7 +30,7 @@ export const createIndexes = async () => {
     await Subject.collection.createIndex({ active: 1 });
     await Subject.collection.createIndex({ department: 1, semester: 1 });
 
-    // Faculty model indexes
+    // Faculty model indexes (for other purposes, not faculty accounts)
     await Faculty.collection.createIndex({ email: 1 }, { unique: true });
     await Faculty.collection.createIndex({ employeeId: 1 }, { unique: true });
     await Faculty.collection.createIndex({ department: 1 });
