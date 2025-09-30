@@ -102,39 +102,54 @@ facultySchema.statics.findByUserId = function(userId) {
 };
 
 // Static method to find faculty by department
-facultySchema.statics.findByDepartment = function(department) {
-    return this.find({ department: department.toUpperCase(), isActive: true });
+facultySchema.statics.findByDepartment = function(department, collegeName) {
+    const query = { department: department.toUpperCase() };
+    if (collegeName) {
+        query.collegeName = collegeName;
+    }
+    return this.find(query);
 };
 
 // Static method to search faculty
-facultySchema.statics.searchFaculty = function(searchTerm) {
+facultySchema.statics.searchFaculty = function(searchTerm, collegeName) {
     const regex = new RegExp(searchTerm, 'i');
-    return this.find({
+    const query = {
         $or: [
             { name: regex },
             { initials: regex }
-        ],
-        isActive: true
-    });
+        ]
+    };
+    
+    if (collegeName) {
+        query.collegeName = collegeName;
+    }
+    
+    return this.find(query);
 };
 
 // Static method to get faculty visible to an admin
-facultySchema.statics.getVisibleFaculty = async function(adminId) {
+facultySchema.statics.getVisibleFaculty = async function(adminId, collegeName) {
     const User = mongoose.model('User');
     
     // Get all users visible to this admin
     const visibleUsers = await User.getVisibleUsers(adminId);
     const visibleUserIds = visibleUsers.map(user => user._id);
     
+    // Build query with createdBy and collegeName filters
+    const query = {
+        createdBy: { $in: visibleUserIds }
+    };
+    
+    if (collegeName) {
+        query.collegeName = collegeName;
+    }
+    
     // Return faculty created by visible users
-    return this.find({
-        createdBy: { $in: visibleUserIds },
-        isActive: true
-    }).populate('createdBy', 'name email role adminLevel');
+    return this.find(query).populate('createdBy', 'name email role adminLevel');
 };
 
 // Static method to check if admin can see specific faculty
-facultySchema.statics.canAdminSeeFaculty = async function(adminId, facultyId) {
+facultySchema.statics.canAdminSeeFaculty = async function(adminId, facultyId, adminCollegeName) {
     const faculty = await this.findById(facultyId).populate('createdBy');
     if (!faculty) return false;
     
@@ -142,6 +157,11 @@ facultySchema.statics.canAdminSeeFaculty = async function(adminId, facultyId) {
     const admin = await User.findById(adminId);
     
     if (!admin || admin.role !== 'admin') return false;
+    
+    // Check if faculty belongs to the same college as the admin
+    if (adminCollegeName && faculty.collegeName !== adminCollegeName) {
+        return false;
+    }
     
     // Can see faculty they created
     if (faculty.createdBy && faculty.createdBy._id.equals(adminId)) {
