@@ -1,4 +1,5 @@
 import { Faculty } from "../../models/faculty.model.js";
+import { User } from "../../models/user.model.js";
 
 // Create a new faculty member
 export const createFaculty = async (req, res) => {
