@@ -1,151 +1,37 @@
-import { useState, useEffect } from "react"
-import { createAdmin, createFacultyUser, getHierarchy, deleteAdmin } from "../../../api/adminHierarchy"
+import { useState } from "react"
+import { createAdmin, createFacultyUser } from "../../../api/adminHierarchy"
+import { Search, Plus, User, Mail, Building, Lock, Eye, EyeOff, Users } from "lucide-react"
 
-// Icons from reference UI
+// Department options matching the backend validation
+const DEPARTMENT_OPTIONS = [
+  'CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 
+  'AUTO', 'CS & DS', 'ENGLISH', 'MATHS', 'PHYSICS', 'CHEMISTRY'
+]
 
-const UserIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-    <circle cx="12" cy="7" r="4"></circle>
-  </svg>
-)
-
-const MailIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-    <polyline points="22,6 12,13 2,6"></polyline>
-  </svg>
-)
-
-const DeptIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-  </svg>
-)
-
-const RoleIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-    <circle cx="9" cy="7" r="4"></circle>
-    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-  </svg>
-)
-
-const LockIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-    <circle cx="12" cy="16" r="1"></circle>
-    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-  </svg>
-)
+const ROLE_OPTIONS = [
+  { value: "faculty", label: "Faculty" },
+  { value: "admin", label: "Admin" }
+]
 
 const CreateFaculty = () => {
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [activeTab, setActiveTab] = useState('create') // 'create' or 'manage'
-  const [adminHierarchy, setAdminHierarchy] = useState([])
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     department: "",
-    role: "faculty" // Default to faculty
+    role: "faculty"
   })
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
+    const { name, value } = e.target
     
     setForm({
       ...form,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: value
     })
   }
-
-  const fetchAdminHierarchy = async () => {
-    try {
-      const response = await getHierarchy()
-      if (response.success && response.data) {
-        // New API returns createdAdmins array
-        const hierarchyData = response.data.createdAdmins || []
-        setAdminHierarchy(hierarchyData)
-      } else {
-        setAdminHierarchy([])
-      }
-    } catch {
-      setAdminHierarchy([]) // Set empty array on error
-    }
-  }
-
-  const handleDeleteAdmin = async (adminId) => {
-    if (window.confirm('Are you sure you want to delete this admin?')) {
-      try {
-        const response = await deleteAdmin(adminId)
-        if (response.success) {
-          fetchAdminHierarchy() // Refresh the list
-        }
-      } catch {
-        // Ignore deletion errors - user will see if operation failed
-      }
-    }
-  }
-
-  useEffect(() => {
-    if (activeTab === 'manage') {
-      fetchAdminHierarchy()
-    }
-  }, [activeTab])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -183,7 +69,7 @@ const CreateFaculty = () => {
       }
       
       if (response.success) {
-        // Reset form and refresh hierarchy if needed
+        // Reset form
         setForm({
           name: "",
           email: "",
@@ -191,10 +77,7 @@ const CreateFaculty = () => {
           department: "",
           role: "faculty"
         })
-        if (form.role === 'admin') {
-          fetchAdminHierarchy()
-        }
-        // Show success message or redirect
+        // Show success message
         alert(`${form.role === 'admin' ? 'Admin' : 'Faculty'} created successfully!`)
       } else {
         alert(`Failed to create ${form.role}: ${response.message}`)
@@ -208,210 +91,164 @@ const CreateFaculty = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-8 text-white">
-        Faculty & Admin Management
-      </h1>
-      
-      {/* Tab Navigation */}
-      <div className="flex justify-center mb-8">
-        <div className="bg-gray-800 rounded-lg p-1">
-          <button
-            onClick={() => setActiveTab('create')}
-            className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
-              activeTab === 'create'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            Create New User
-          </button>
-          <button
-            onClick={() => setActiveTab('manage')}
-            className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
-              activeTab === 'manage'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            Manage Admin Hierarchy
-          </button>
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Faculty & Admin Management</h1>
+            <p className="text-gray-600 mt-2">Create new faculty and admin accounts</p>
+          </div>
         </div>
       </div>
 
-      {/* Create New User Tab */}
-      {activeTab === 'create' && (
-        <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-6 text-white">
+      {/* Create New User Form */}
+      <div className="bg-white rounded-lg shadow overflow-hidden max-w-2xl mx-auto">
+        <div className="p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">
             {form.role === 'admin' ? 'Create New Admin Account' : 'Create New Faculty Account'}
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <UserIcon />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                <User className="mr-2" size={16} />
+                Full Name
+              </label>
               <input
                 type="text"
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                placeholder="Full Name"
+                placeholder="Enter full name"
                 required
-                className="w-full h-12 pl-12 pr-4 bg-gray-800/60 border border-gray-600/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
               />
             </div>
 
             {/* Email Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <MailIcon />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                <Mail className="mr-2" size={16} />
+                College Email
+              </label>
               <input
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                placeholder="College Email"
+                placeholder="Enter college email"
                 required
-                className="w-full h-12 pl-12 pr-4 bg-gray-800/60 border border-gray-600/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
               />
             </div>
 
             {/* Department Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <DeptIcon />
-              </div>
-              <input
-                type="text"
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                <Building className="mr-2" size={16} />
+                Department
+              </label>
+              <select
                 name="department"
                 value={form.department}
                 onChange={handleChange}
-                placeholder="Department"
                 required
-                className="w-full h-12 pl-12 pr-4 bg-gray-800/60 border border-gray-600/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-              />
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+              >
+                <option value="">Select Department</option>
+                {DEPARTMENT_OPTIONS.map((dept) => (
+                  <option key={dept} value={dept}>{dept}</option>
+                ))}
+              </select>
             </div>
 
             {/* Role Selection */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <RoleIcon />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                <Users className="mr-2" size={16} />
+                Role
+              </label>
               <select
                 name="role"
                 value={form.role}
                 onChange={handleChange}
                 required
-                className="w-full h-12 pl-12 pr-4 bg-gray-800/60 border border-gray-600/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
               >
-                <option value="faculty">Faculty</option>
-                <option value="admin">Admin</option>
+                {ROLE_OPTIONS.map((role) => (
+                  <option key={role.value} value={role.value}>{role.label}</option>
+                ))}
               </select>
             </div>
 
-
             {/* Password Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <LockIcon />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                <Lock className="mr-2" size={16} />
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="Enter password"
+                  required
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                placeholder="Password"
-                required
-                className="w-full h-12 pl-12 pr-12 bg-gray-800/60 border border-gray-600/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-4">
               <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400"
+                type="submit"
+                disabled={loading}
+                className={`w-full py-3 px-4 rounded-md font-medium text-white transition-all duration-200 flex items-center justify-center ${
+                  loading 
+                    ? "bg-blue-400 cursor-not-allowed" 
+                    : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02]"
+                }`}
               >
-                {showPassword ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
-                  </svg>
+                {loading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Creating Account...
+                  </>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                  `Create ${form.role === 'admin' ? 'Admin' : 'Faculty'} Account`
                 )}
               </button>
             </div>
-
-                {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full h-12 bg-blue-600 rounded-md font-medium text-white transition-all duration-200 ${
-                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
-              }`}
-            >
-              {loading ? "Creating Account..." : `Create ${form.role === 'admin' ? 'Admin' : 'Faculty'} Account`}
-            </button>
           </form>
         </div>
-      )}
+      </div>
 
-      {/* Manage Admin Hierarchy Tab */}
-      {activeTab === 'manage' && (
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-6">Admin Hierarchy Management</h2>
-          
-          {!Array.isArray(adminHierarchy) || adminHierarchy.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
-                <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 0 0-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 0 1 9.288 0M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm6 3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM7 10a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-300 mb-2">No Admins Found</h3>
-              <p className="text-gray-400">Create your first admin using the "Create New User" tab.</p>
-            </div>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {adminHierarchy.map((admin) => (
-                <div key={admin._id} className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">{admin.name}</h3>
-                      <p className="text-sm text-gray-400">{admin.email}</p>
-                    </div>
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-900/50 text-blue-300">
-                      ADMIN
-                    </span>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-300 mb-2">
-                      <span className="font-medium">Department:</span> {admin.department}
-                    </p>
-                    <p className="text-sm text-gray-300">
-                      <span className="font-medium">Created:</span> {new Date(admin.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-
-
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleDeleteAdmin(admin._id)}
-                      className="flex-1 bg-red-600 hover:bg-red-700 text-white text-sm py-2 px-3 rounded-md transition-colors duration-200"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+      {/* Information Section */}
+      <div className="mt-8 max-w-2xl mx-auto">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <h3 className="text-lg font-medium text-blue-900 mb-2">Account Creation Guidelines</h3>
+          <ul className="list-disc list-inside text-blue-800 space-y-1 text-sm">
+            <li>Faculty accounts will be created with the 'faculty' role in the system</li>
+            <li>Admin accounts will be created with the 'admin' role and can manage other users</li>
+            <li>All accounts will inherit the college name from the current admin's account</li>
+            <li>Passwords must be at least 8 characters long for security</li>
+          </ul>
         </div>
-      )}
+      </div>
     </div>
   )
 }

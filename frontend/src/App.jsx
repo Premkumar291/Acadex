@@ -11,7 +11,6 @@ import {
 import { ResultAnalysis } from "./components/Faculty - frontend/Analysis";
 import ReportGenerationPage from "./components/Faculty - frontend/ReportGenerationPage";
 import AdminDashboard from "./components/Admin - frontend/Dashboard/dashboard";
-import AddStudentPage from "./components/Admin - frontend/creatingPages/add-student-page";
 import CreateFaculty from "./components/Admin - frontend/creatingPages/create-faculty";
 import SubjectManagement from "./components/Admin - frontend/creatingPages/subject-management";
 import FacultyManagement from "./components/Admin - frontend/creatingPages/faculty-management";
@@ -22,7 +21,7 @@ import AdminLayout from "./components/Admin - frontend/Layout/AdminLayout";
 // Layout wrapper component that applies different styles based on route
 function AppLayout({ children }) {
   const location = useLocation();
-  const isFullWidthPage = location.pathname === '/faculty-dashboard' || location.pathname === '/admin-dashboard' || location.pathname.includes('/result-analysis') || location.pathname.includes('/add-student') || location.pathname.includes('/generate-report') || location.pathname.includes('/subject-management') || location.pathname.includes('/faculty-management') || location.pathname.includes('/admin-hierarchy');
+  const isFullWidthPage = location.pathname === '/faculty-dashboard' || location.pathname === '/admin-dashboard' || location.pathname.includes('/result-analysis') || location.pathname.includes('/generate-report') || location.pathname.includes('/subject-management') || location.pathname.includes('/faculty-management') || location.pathname.includes('/admin-hierarchy') || location.pathname.includes('/create-faculty');
   
   if (isFullWidthPage) {
     // Full-width layout for dashboard and result analysis pages
@@ -43,7 +42,7 @@ function AppLayout({ children }) {
   );
 }
 
- function App() {
+function App() {
   return (
     <Router>
       <AppLayout>
@@ -53,7 +52,6 @@ function AppLayout({ children }) {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/faculty-dashboard" element={<FacultyDashboard />} />
           <Route path="/admin-dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
-          <Route path="/admin-dashboard/add-student" element={<AdminLayout><AddStudentPage /></AdminLayout>} />
           <Route path="/admin-dashboard/create-faculty" element={<AdminLayout><CreateFaculty /></AdminLayout>} />
           <Route path="/admin-dashboard/subject-management" element={<AdminLayout><SubjectManagement /></AdminLayout>} />
           <Route path="/admin-dashboard/faculty-management" element={<AdminLayout><FacultyManagement /></AdminLayout>} />
@@ -91,4 +89,3 @@ function AppLayout({ children }) {
 }
 
 export default App
-

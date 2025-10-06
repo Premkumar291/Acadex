@@ -326,7 +326,7 @@ const SubjectManagement = () => {
                   required
                   value={formData.subjectName}
                   onChange={(e) => setFormData({...formData, subjectName: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                   placeholder="Enter subject name"
                 />
               </div>
@@ -341,7 +341,7 @@ const SubjectManagement = () => {
                     required
                     value={formData.subjectCode}
                     onChange={(e) => setFormData({...formData, subjectCode: e.target.value.toUpperCase()})}
-                    className={`w-full px-3 py-2 pr-10 border rounded-md focus:ring-2 focus:border-transparent uppercase font-mono tracking-wider ${
+                    className={`w-full px-3 py-2 pr-10 border rounded-md focus:ring-2 focus:border-transparent uppercase font-mono tracking-wider text-gray-900 placeholder-gray-500 ${
                       formData.subjectCode && !isValidSubjectCode(formData.subjectCode)
                         ? 'border-red-300 focus:ring-red-500'
                         : formData.subjectCode && isValidSubjectCode(formData.subjectCode)
@@ -401,7 +401,7 @@ const SubjectManagement = () => {
                           }}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <span className="text-sm text-gray-700">{dept}</span>
+                        <span className="text-sm text-gray-900">{dept}</span>
                       </label>
                     ))}
                   </div>
@@ -421,7 +421,7 @@ const SubjectManagement = () => {
                     required
                     value={formData.primaryDepartment}
                     onChange={(e) => setFormData({...formData, primaryDepartment: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   >
                     <option value="">Select Primary Department</option>
                     {formData.departments.map((dept) => (
@@ -442,7 +442,7 @@ const SubjectManagement = () => {
                   required
                   value={formData.semester}
                   onChange={(e) => setFormData({...formData, semester: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                 >
                   <option value="">Select Semester</option>
                   {SEMESTER_OPTIONS.map((sem) => (
@@ -462,7 +462,7 @@ const SubjectManagement = () => {
                   max="10"
                   value={formData.credits}
                   onChange={(e) => setFormData({...formData, credits: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                 />
               </div>
               
@@ -474,7 +474,7 @@ const SubjectManagement = () => {
                   required
                   value={formData.subjectType}
                   onChange={(e) => setFormData({...formData, subjectType: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                 >
                   <option value="">Select Type</option>
                   {SUBJECT_TYPE_OPTIONS.map((type) => (
@@ -491,7 +491,7 @@ const SubjectManagement = () => {
                   rows="3"
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                   placeholder="Brief description of the subject..."
                 />
               </div>
