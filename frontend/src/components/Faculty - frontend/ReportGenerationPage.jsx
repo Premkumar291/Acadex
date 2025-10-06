@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { pdfReportsApi } from '../../api/pdfReports';
-import SubjectNameInput from './ReportGeneration/SubjectNameInput';
+import EnhancedSubjectNameInput from './ReportGeneration/EnhancedSubjectNameInput';
 import FacultyNameInput from './ReportGeneration/FacultyNameInput';
 
 
@@ -83,10 +83,11 @@ function formReducer(state, action) {
       return { ...state, ui: { ...state.ui, generatedReport: action.payload } };
     
     case 'INITIALIZE_SUBJECTS':
+      // Merge with existing state to preserve any already fetched subject names
       return {
         ...state,
-        facultyAssignments: action.facultyAssignments,
-        subjectNames: action.subjectNames,
+        facultyAssignments: { ...state.facultyAssignments, ...action.facultyAssignments },
+        subjectNames: { ...state.subjectNames, ...action.subjectNames },
         departmentInfo: { ...state.departmentInfo, semester: action.semester }
       };
     
@@ -102,6 +103,28 @@ function ReportGenerationPage() {
   
   const { reportData, departmentInfo, facultyAssignments, subjectNames, errors, ui } = state;
   const { loading, showPreview, generatedReport } = ui;
+
+  // Effect to initialize subject names when reportData is loaded
+  useEffect(() => {
+    if (reportData && reportData.analysisData && reportData.analysisData.subjectCodes) {
+      // Initialize faculty assignments and subject names
+      const initialAssignments = {};
+      const initialSubjectNames = {};
+      
+      reportData.analysisData.subjectCodes.forEach(subjectCode => {
+        initialAssignments[subjectCode] = '';
+        initialSubjectNames[subjectCode] = subjectCode; // Use subject code as default name
+      });
+      
+      // Dispatch initialization action
+      dispatch({
+        type: 'INITIALIZE_SUBJECTS',
+        facultyAssignments: initialAssignments,
+        subjectNames: initialSubjectNames,
+        semester: reportData.semester || ''
+      });
+    }
+  }, [reportData]);
 
   useEffect(() => {
     // Retrieve saved report generation data from session storage
@@ -119,7 +142,8 @@ function ReportGenerationPage() {
         if (parsedData.analysisData && parsedData.analysisData.subjectCodes) {
           parsedData.analysisData.subjectCodes.forEach(subjectCode => {
             initialAssignments[subjectCode] = '';
-            initialSubjectNames[subjectCode] = subjectCode; // Use subject code as default name
+            // Initialize with subject code as default, will be updated by EnhancedSubjectNameInput
+            initialSubjectNames[subjectCode] = subjectCode;
           });
         }
         
@@ -186,15 +210,13 @@ function ReportGenerationPage() {
       newErrors.monthsAndYear = 'Months/Year is required';
     }
 
-    // Validate faculty assignments and subject names
+    // Validate faculty assignments (subject names are optional now)
     if (reportData && reportData.analysisData && reportData.analysisData.subjectCodes) {
       reportData.analysisData.subjectCodes.forEach(subjectCode => {
         if (!facultyAssignments[subjectCode] || !facultyAssignments[subjectCode].trim()) {
           newErrors[`faculty_${subjectCode}`] = 'Faculty name is required';
         }
-        if (!subjectNames[subjectCode] || !subjectNames[subjectCode].trim()) {
-          newErrors[`subject_${subjectCode}`] = 'Subject name is required';
-        }
+        // Subject names are now optional - they will be populated automatically if available in DB
       });
     }
 
@@ -242,7 +264,7 @@ function ReportGenerationPage() {
         
         // Faculty assignments and subject names - ensure objects exist
         facultyAssignments: facultyAssignments || {},
-        subjectNames: subjectNames || {},
+        subjectNames: subjectNames || {}, // This will now contain either DB names or user-entered names
         
         // Optional fields with defaults
         facultyId: null, // Will use req.user?.id from backend
@@ -524,11 +546,12 @@ function ReportGenerationPage() {
                         </div>
                       </td>
                                             <td className="px-6 py-4">
-                        <SubjectNameInput
+                        <EnhancedSubjectNameInput
                           subjectCode={subjectCode}
                           value={subjectNames[subjectCode] || ''}
                           onChange={handleSubjectNameChange}
                           error={errors[`subject_${subjectCode}`]}
+                          department={departmentInfo.department}
                         />
                       </td>
                       <td className="px-6 py-4">

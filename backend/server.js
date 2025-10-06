@@ -68,7 +68,12 @@ app.use(errorHandler);
 
 // Start server
 app.listen(PORT, async () => {
-  await connectDb();
+  try {
+     await connectDb();
+  } catch (error) {
+    console.log("Database connection error:")
+  }
+  
   if (process.env.NODE_ENV !== 'production') {
     console.log(`Server is running on http://localhost:${PORT}`);
   }
