@@ -7,12 +7,11 @@ import { DEPARTMENT_OPTIONS } from "../../../config/subjects.config.js"
 const SEMESTER_OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8"]
 const SUBJECT_TYPE_OPTIONS = ["Theory", "Practical", "Inbuilt","Project"]
 
-// Subject code validation regex
-const SUBJECT_CODE_REGEX = /^[A-Z]{2,4}\d{3,4}[A-Z]?$/
 
 // Validate subject code format
 const isValidSubjectCode = (code) => {
-  return SUBJECT_CODE_REGEX.test(code)
+  // Allow any non-empty string as a valid subject code
+  return code && code.trim().length > 0;
 }
 
 const SubjectManagement = () => {
@@ -333,9 +332,7 @@ const SubjectManagement = () => {
                         ? 'border-green-700 focus:ring-green-500 bg-gray-700 text-white'
                         : 'border-gray-700 focus:ring-blue-500 bg-gray-700 text-white'
                     }`}
-                    placeholder="e.g., CS101, MATH201"
-                    pattern="^[A-Z]{2,4}\d{3,4}[A-Z]?$"
-                    title="Subject code format: 2-4 letters + 3-4 digits + optional letter (e.g., CS101, MATH201A)"
+                    placeholder="Enter subject code"
                   />
                   {formData.subjectCode && (
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -352,7 +349,7 @@ const SubjectManagement = () => {
                     ? 'text-red-400'
                     : 'text-gray-400'
                 }`}>
-                  Format: 2-4 letters + 3-4 digits + optional letter (automatically converted to uppercase)
+                  Subject code (automatically converted to uppercase)
                 </p>
               </div>
               

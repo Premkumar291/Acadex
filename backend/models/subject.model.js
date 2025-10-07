@@ -6,8 +6,7 @@ const subjectSchema = new mongoose.Schema({
         required: true,
         unique: true,
         trim: true,
-        uppercase: true,
-        match: [/^[A-Z]{2,4}\d{3,4}[A-Z]?$/, 'Subject code must be in format like CS101, MATH201, etc.']
+        uppercase: true
     },
     subjectName: {
         type: String,
