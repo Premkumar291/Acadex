@@ -8,10 +8,11 @@ export const generalLimiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
   message: {
     success: false,
-    message: 'Too many requests from this IP, please try again later.'
+    message: 'Too many requests, please try again later.'
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => true // Skip rate limiting for all requests
 });
 
 /**
@@ -26,6 +27,7 @@ export const authLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => true // Skip rate limiting for all requests
 });
 
 /**
@@ -36,8 +38,9 @@ export const uploadLimiter = rateLimit({
   max: 100, // limit each IP to 10 file uploads per hour
   message: {
     success: false,
-    message: 'Too many file uploads from this IP, please try again later.'
+    message: 'Too many file uploads, please try again later.'
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => true // Skip rate limiting for all requests
 });

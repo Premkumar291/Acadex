@@ -8,13 +8,11 @@ import {
   BookOpen, 
   ShieldCheckIcon,
   ChevronLeft,
-  ChevronRight,
-  Sun,
-  Moon
+  ChevronRight
 } from "lucide-react"
 import { logout } from "@/api/auth"
 
-const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
+const AdminNavbar = ({ isDarkMode, user }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     const savedState = localStorage.getItem('sidebarCollapsed')
@@ -22,7 +20,7 @@ const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
   })
   const [activeItem, setActiveItem] = useState(() => {
     const savedItem = localStorage.getItem('activeItem')
-    return savedItem || "Faculty Creation"
+    return savedItem || ""
   })
   const navigate = useNavigate()
   const location = useLocation()
@@ -78,6 +76,18 @@ const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
   // Close mobile menu when location changes
   useEffect(() => {
     setIsMobileMenuOpen(false)
+    
+    // Update active item based on current location
+    const currentPath = location.pathname;
+    const currentItem = navItems.find(item => item.url === currentPath);
+    if (currentItem) {
+      setActiveItem(currentItem.name);
+      localStorage.setItem('activeItem', currentItem.name);
+    } else {
+      // If not on a nav item page, clear active item
+      setActiveItem("");
+      localStorage.removeItem('activeItem');
+    }
   }, [location])
 
   return (
@@ -105,8 +115,8 @@ const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
             )}
           </button>
           
-          {/* Brand */}
-          <div className="flex items-center space-x-2">
+          {/* Brand - Clicking navigates to dashboard */}
+          <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
               isDarkMode 
                 ? "bg-gradient-to-r from-purple-600 to-blue-500" 
@@ -119,7 +129,7 @@ const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
             }`}>
               ACADEX
             </span>
-          </div>
+          </Link>
         </div>
 
         {/* Navigation Links - Only show when sidebar is collapsed */}
@@ -127,7 +137,7 @@ const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
           <div className="hidden lg:flex items-center space-x-1">
             {navItems.map((item) => {
               const Icon = item.icon
-              const isActive = activeItem === item.name
+              const isActive = activeItem === item.name && activeItem !== ""
               
               return (
                 <Link
@@ -154,21 +164,7 @@ const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
 
         {/* Right Section */}
         <div className="flex items-center space-x-4">
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className={`p-2 rounded-lg ${
-              isDarkMode 
-                ? "hover:bg-gray-800 text-gray-300" 
-                : "hover:bg-gray-100 text-gray-700"
-            } transition-colors`}
-          >
-            {isDarkMode ? (
-              <Sun className="w-5 h-5" />
-            ) : (
-              <Moon className="w-5 h-5" />
-            )}
-          </button>
+          {/* Removed theme toggle button */}
           
           {/* User Menu */}
           <div className="relative">
@@ -228,8 +224,8 @@ const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
             <Menu className="w-5 h-5" />
           </button>
           
-          {/* Brand */}
-          <div className="flex items-center space-x-2">
+          {/* Brand - Clicking navigates to dashboard */}
+          <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
               isDarkMode 
                 ? "bg-gradient-to-r from-purple-600 to-blue-500" 
@@ -242,26 +238,12 @@ const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
             }`}>
               ACADEX
             </span>
-          </div>
+          </Link>
         </div>
 
         {/* Right Section */}
         <div className="flex items-center space-x-2">
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className={`p-2 rounded-lg ${
-              isDarkMode 
-                ? "hover:bg-gray-800 text-gray-300" 
-                : "hover:bg-gray-100 text-gray-700"
-            } transition-colors`}
-          >
-            {isDarkMode ? (
-              <Sun className="w-5 h-5" />
-            ) : (
-              <Moon className="w-5 h-5" />
-            )}
-          </button>
+          {/* Removed theme toggle button */}
           
           {/* Logout Button */}
           <button
@@ -294,7 +276,8 @@ const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
             <div className={`flex items-center justify-between h-16 px-4 border-b ${
               isDarkMode ? "border-gray-700" : "border-gray-200"
             }`}>
-              <div className="flex items-center space-x-2">
+              {/* Brand - Clicking navigates to dashboard */}
+              <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer" onClick={() => setIsMobileMenuOpen(false)}>
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
                   isDarkMode 
                     ? "bg-gradient-to-r from-purple-600 to-blue-500" 
@@ -307,7 +290,7 @@ const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
                 }`}>
                   ACADEX
                 </span>
-              </div>
+              </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`p-2 rounded-lg ${
@@ -324,7 +307,8 @@ const AdminNavbar = ({ isDarkMode, toggleTheme, user }) => {
             <nav className="mt-4 px-2">
               {navItems.map((item) => {
                 const Icon = item.icon
-                const isActive = activeItem === item.name
+                // Changed to only show active state when item is explicitly selected
+                const isActive = activeItem === item.name && activeItem !== ""
                 
                 return (
                   <Link

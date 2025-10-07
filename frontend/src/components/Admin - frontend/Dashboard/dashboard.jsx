@@ -160,7 +160,7 @@ const Dashboard = () => {
               <div className="flex items-center">
                 <Users className={`w-8 h-8 mr-3 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} />
                 <div>
-                  <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Total Faculty</p>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Total Faculties</p>
                   <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>24</p>
                 </div>
               </div>
@@ -180,7 +180,7 @@ const Dashboard = () => {
               <div className="flex items-center">
                 <ShieldCheckIcon className={`w-8 h-8 mr-3 ${isDarkMode ? "text-purple-400" : "text-purple-600"}`} />
                 <div>
-                  <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Total Admins</p>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Total Users created by you</p>
                   <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>5</p>
                 </div>
               </div>

@@ -6,21 +6,12 @@ import AdminNavbar from "./AdminNavbar"
 const AdminLayout = ({ children }) => {
   const [userLoading, setUserLoading] = useState(true)
   const [user, setUser] = useState(null)
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Get saved theme from localStorage or default to false (light mode)
-    const savedTheme = localStorage.getItem('darkMode')
-    return savedTheme !== null ? JSON.parse(savedTheme) : false
-  })
+  // Lock dark mode to true
+  const [isDarkMode] = useState(true)
 
   const navigate = useNavigate()
 
-  // Toggle theme function
-  const toggleTheme = () => {
-    const newTheme = !isDarkMode
-    setIsDarkMode(newTheme)
-    // Save to localStorage
-    localStorage.setItem('darkMode', JSON.stringify(newTheme))
-  }
+  // Removed toggleTheme function since we're locking dark mode
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -46,11 +37,12 @@ const AdminLayout = ({ children }) => {
   }
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"}`}>
+    // Always use dark mode classes
+    <div className="min-h-screen bg-gray-900 text-white">
       {/* Navbar */}
       <AdminNavbar 
         isDarkMode={isDarkMode} 
-        toggleTheme={toggleTheme} 
+        // Removed toggleTheme prop since we're locking dark mode
         user={user} 
       />
       

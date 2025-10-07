@@ -30,12 +30,8 @@ const production = {
     jwtSecret: process.env.JWT_SECRET,
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
     bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS) || 12,
-    sessionSecret: process.env.SESSION_SECRET,
-    rateLimiting: {
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100, // limit each IP to 100 requests per windowMs
-      message: 'Too many requests from this IP, please try again later.'
-    }
+    sessionSecret: process.env.SESSION_SECRET
+    // Removed rateLimiting configuration to disable IP logging and limits
   },
 
   // File Upload Configuration

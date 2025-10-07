@@ -105,13 +105,13 @@ const FacultyManagement = () => {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-900 p-6">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Faculty Management</h1>
-            <p className="text-gray-600 mt-2">Manage faculty members and their academic credentials</p>
+            <h1 className="text-3xl font-bold text-white">Faculty Management</h1>
+            <p className="text-gray-300 mt-2">Manage faculty members and their academic credentials</p>
           </div>
           <button
             onClick={() => setShowModal(true)}
@@ -132,7 +132,7 @@ const FacultyManagement = () => {
             placeholder="Search faculty members..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-800 text-white"
           />
         </div>
         <div className="relative">
@@ -140,7 +140,7 @@ const FacultyManagement = () => {
           <select
             value={departmentFilter}
             onChange={(e) => setDepartmentFilter(e.target.value)}
-            className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+            className="pl-10 pr-8 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-gray-800 text-white"
           >
             <option value="">All Departments</option>
             {DEPARTMENT_OPTIONS.map((dept) => (
@@ -151,52 +151,52 @@ const FacultyManagement = () => {
       </div>
 
       {/* Faculty Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-gray-800 rounded-lg shadow overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-700">
+              <thead className="bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Title
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Initials
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Department
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-gray-800 divide-y divide-gray-700">
                 {filteredFaculty.map((facultyMember) => (
                   <tr
                     key={facultyMember._id}
-                    className="hover:bg-gray-50"
+                    className="hover:bg-gray-700"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-900 text-blue-200">
                         {facultyMember.title}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                       {facultyMember.name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       {facultyMember.initials}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                      <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-gray-700 text-gray-300">
                         {facultyMember.department}
                       </span>
                     </td>
@@ -204,13 +204,13 @@ const FacultyManagement = () => {
                       <div className="flex justify-end space-x-2">
                         <button
                           onClick={() => openEditModal(facultyMember)}
-                          className="text-indigo-600 hover:text-indigo-900 p-1 rounded"
+                          className="text-blue-400 hover:text-blue-300 p-1 rounded"
                         >
                           <Edit2 size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(facultyMember._id)}
-                          className="text-red-600 hover:text-red-900 p-1 rounded"
+                          className="text-red-400 hover:text-red-300 p-1 rounded"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -222,9 +222,9 @@ const FacultyManagement = () => {
             </table>
             {filteredFaculty.length === 0 && (
               <div className="text-center py-12">
-                <Users size={48} className="mx-auto text-gray-300" />
-                <h3 className="text-lg font-medium text-gray-900 mt-2">No faculty members found</h3>
-                <p className="text-gray-500 mt-1">
+                <Users size={48} className="mx-auto text-gray-600" />
+                <h3 className="text-lg font-medium text-white mt-2">No faculty members found</h3>
+                <p className="text-gray-400 mt-1">
                   {searchTerm || departmentFilter 
                     ? "No faculty members match your search criteria." 
                     : "Start by adding your first faculty member to the system."}
@@ -238,9 +238,9 @@ const FacultyManagement = () => {
       {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b">
-              <h3 className="text-lg font-medium text-gray-900">
+          <div className="bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-gray-700">
+              <h3 className="text-lg font-medium text-white">
                 {editingFaculty ? 'Edit Faculty' : 'Add New Faculty'}
               </h3>
               <button
@@ -248,7 +248,7 @@ const FacultyManagement = () => {
                   setShowModal(false)
                   resetForm()
                 }}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-white"
               >
                 <X size={24} />
               </button>
@@ -256,14 +256,14 @@ const FacultyManagement = () => {
             
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Title *
                 </label>
                 <select
                   required
                   value={formData.title}
                   onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
                 >
                   <option value="">Select Title</option>
                   {TITLE_OPTIONS.map((title) => (
@@ -273,7 +273,7 @@ const FacultyManagement = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Full Name *
                 </label>
                 <input
@@ -281,13 +281,13 @@ const FacultyManagement = () => {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
                   placeholder="Enter full name"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Initials *
                 </label>
                 <input
@@ -295,20 +295,20 @@ const FacultyManagement = () => {
                   required
                   value={formData.initials}
                   onChange={(e) => setFormData({...formData, initials: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
                   placeholder="e.g., A.B.C"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Department *
                 </label>
                 <select
                   required
                   value={formData.department}
                   onChange={(e) => setFormData({...formData, department: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
                 >
                   <option value="">Select Department</option>
                   {DEPARTMENT_OPTIONS.map((dept) => (
@@ -324,7 +324,7 @@ const FacultyManagement = () => {
                     setShowModal(false)
                     resetForm()
                   }}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:ring-2 focus:ring-gray-500"
+                  className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-md hover:bg-gray-600 focus:ring-2 focus:ring-gray-500"
                 >
                   Cancel
                 </button>

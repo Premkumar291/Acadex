@@ -33,9 +33,9 @@ app.use(cors(corsOptions));
 // Security middleware
 app.use(securityMiddleware);
 
-// Rate limiting
-app.use('/api/auth', authLimiter);
-app.use('/api', generalLimiter);
+// Commented out rate limiting to remove IP logging and limits
+// app.use('/api/auth', authLimiter);
+// app.use('/api', generalLimiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: '50mb' }));

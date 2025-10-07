@@ -5,7 +5,7 @@ import { subjectAPI } from "../../../api/subjects.js"
 import { DEPARTMENT_OPTIONS } from "../../../config/subjects.config.js"
 
 const SEMESTER_OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8"]
-const SUBJECT_TYPE_OPTIONS = ["Theory", "Practical", "Project"]
+const SUBJECT_TYPE_OPTIONS = ["Theory", "Practical", "Inbuilt","Project"]
 
 // Subject code validation regex
 const SUBJECT_CODE_REGEX = /^[A-Z]{2,4}\d{3,4}[A-Z]?$/
@@ -141,13 +141,13 @@ const SubjectManagement = () => {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-900 p-6">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Subject Management</h1>
-            <p className="text-gray-600 mt-2">Manage academic subjects and their details</p>
+            <h1 className="text-3xl font-bold text-white">Subject Management</h1>
+            <p className="text-gray-300 mt-2">Manage academic subjects and their details</p>
           </div>
           <button
             onClick={() => setShowModal(true)}
@@ -168,7 +168,7 @@ const SubjectManagement = () => {
             placeholder="Search subjects..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-800 text-white"
           />
         </div>
         <div className="relative">
@@ -176,7 +176,7 @@ const SubjectManagement = () => {
           <select
             value={departmentFilter}
             onChange={(e) => setDepartmentFilter(e.target.value)}
-            className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+            className="pl-10 pr-8 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-gray-800 text-white"
           >
             <option value="">All Departments</option>
             {DEPARTMENT_OPTIONS.map((dept) => (
@@ -187,84 +187,84 @@ const SubjectManagement = () => {
       </div>
 
       {/* Subjects Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-gray-800 rounded-lg shadow overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-700">
+              <thead className="bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Subject
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Code
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Department
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Semester
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Credits
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Type
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-gray-800 divide-y divide-gray-700">
                 {filteredSubjects.map((subject) => (
                   <tr
                     key={subject._id}
-                    className="hover:bg-gray-50"
+                    className="hover:bg-gray-700"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{subject.subjectName}</div>
+                      <div className="text-sm font-medium text-white">{subject.subjectName}</div>
                       {subject.description && (
-                        <div className="text-sm text-gray-500">{subject.description}</div>
+                        <div className="text-sm text-gray-300">{subject.description}</div>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {subject.subjectCode}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       <div className="flex flex-wrap gap-1">
                         {(subject.departments || [subject.department]).map((dept) => (
                           <span 
                             key={dept} 
                             className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
                               dept === (subject.primaryDepartment || subject.department) 
-                                ? 'bg-blue-100 text-blue-800 border border-blue-200' 
-                                : 'bg-gray-100 text-gray-700'
+                                ? 'bg-blue-900 text-blue-200 border border-blue-700' 
+                                : 'bg-gray-700 text-gray-300'
                             }`}
                           >
                             {dept}
                             {dept === (subject.primaryDepartment || subject.department) && 
-                              <span className="ml-1 text-blue-600">★</span>
+                              <span className="ml-1 text-blue-400">★</span>
                             }
                           </span>
                         ))}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {subject.semester}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {subject.credits}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        subject.subjectType === 'Theory' ? 'bg-blue-100 text-blue-800' :
-                        subject.subjectType === 'Practical' ? 'bg-green-100 text-green-800' :
-                        'bg-purple-100 text-purple-800'
+                        subject.subjectType === 'Theory' ? 'bg-blue-900 text-blue-200' :
+                        subject.subjectType === 'Practical' ? 'bg-green-900 text-green-200' :
+                        'bg-purple-900 text-purple-200'
                       }`}>
                         {subject.subjectType}
                       </span>
@@ -273,13 +273,13 @@ const SubjectManagement = () => {
                       <div className="flex justify-end space-x-2">
                         <button
                           onClick={() => handleEdit(subject)}
-                          className="text-indigo-600 hover:text-indigo-900 p-1 rounded"
+                          className="text-blue-400 hover:text-blue-300 p-1 rounded"
                         >
                           <Edit2 size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(subject._id)}
-                          className="text-red-600 hover:text-red-900 p-1 rounded"
+                          className="text-red-400 hover:text-red-300 p-1 rounded"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -291,7 +291,7 @@ const SubjectManagement = () => {
             </table>
             {filteredSubjects.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-gray-500">No subjects found</p>
+                <p className="text-gray-400">No subjects found</p>
               </div>
             )}
           </div>
@@ -302,15 +302,15 @@ const SubjectManagement = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div
-            className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-in fade-in-0 zoom-in-95 duration-200"
+            className="bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-in fade-in-0 zoom-in-95 duration-200"
           >
-            <div className="flex items-center justify-between p-6 border-b">
-              <h3 className="text-lg font-medium text-gray-900">
+            <div className="flex items-center justify-between p-6 border-b border-gray-700">
+              <h3 className="text-lg font-medium text-white">
                 {editingSubject ? 'Edit Subject' : 'Add New Subject'}
               </h3>
               <button
                 onClick={resetForm}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-white"
               >
                 <X size={24} />
               </button>
@@ -318,7 +318,7 @@ const SubjectManagement = () => {
             
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Subject Name
                 </label>
                 <input
@@ -326,13 +326,13 @@ const SubjectManagement = () => {
                   required
                   value={formData.subjectName}
                   onChange={(e) => setFormData({...formData, subjectName: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
                   placeholder="Enter subject name"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Subject Code
                 </label>
                 <div className="relative">
@@ -341,12 +341,12 @@ const SubjectManagement = () => {
                     required
                     value={formData.subjectCode}
                     onChange={(e) => setFormData({...formData, subjectCode: e.target.value.toUpperCase()})}
-                    className={`w-full px-3 py-2 pr-10 border rounded-md focus:ring-2 focus:border-transparent uppercase font-mono tracking-wider text-gray-900 placeholder-gray-500 ${
+                    className={`w-full px-3 py-2 pr-10 border rounded-md focus:ring-2 focus:border-transparent uppercase font-mono tracking-wider placeholder-gray-400 ${
                       formData.subjectCode && !isValidSubjectCode(formData.subjectCode)
-                        ? 'border-red-300 focus:ring-red-500'
+                        ? 'border-red-700 focus:ring-red-500 bg-gray-700 text-white'
                         : formData.subjectCode && isValidSubjectCode(formData.subjectCode)
-                        ? 'border-green-300 focus:ring-green-500'
-                        : 'border-gray-300 focus:ring-blue-500'
+                        ? 'border-green-700 focus:ring-green-500 bg-gray-700 text-white'
+                        : 'border-gray-700 focus:ring-blue-500 bg-gray-700 text-white'
                     }`}
                     placeholder="e.g., CS101, MATH201"
                     pattern="^[A-Z]{2,4}\d{3,4}[A-Z]?$"
@@ -364,8 +364,8 @@ const SubjectManagement = () => {
                 </div>
                 <p className={`mt-1 text-xs ${
                   formData.subjectCode && !isValidSubjectCode(formData.subjectCode)
-                    ? 'text-red-500'
-                    : 'text-gray-500'
+                    ? 'text-red-400'
+                    : 'text-gray-400'
                 }`}>
                   Format: 2-4 letters + 3-4 digits + optional letter (automatically converted to uppercase)
                 </p>
@@ -373,11 +373,11 @@ const SubjectManagement = () => {
               
               {/* Multiple Departments Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Departments <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
+                  Departments <span className="text-red-400">*</span>
                 </label>
                 <div className="space-y-2">
-                  <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto border border-gray-300 rounded-md p-2">
+                  <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto border border-gray-700 rounded-md p-2 bg-gray-700">
                     {DEPARTMENT_OPTIONS.map((dept) => (
                       <label key={dept} className="flex items-center space-x-2 cursor-pointer">
                         <input
@@ -399,13 +399,13 @@ const SubjectManagement = () => {
                               })
                             }
                           }}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          className="rounded border-gray-600 text-blue-600 focus:ring-blue-500 bg-gray-600"
                         />
-                        <span className="text-sm text-gray-900">{dept}</span>
+                        <span className="text-sm text-white">{dept}</span>
                       </label>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-400">
                     Select one or more departments that can access this subject
                   </p>
                 </div>
@@ -414,35 +414,35 @@ const SubjectManagement = () => {
               {/* Primary Department Selection */}
               {formData.departments.length > 1 && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Primary Department <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Primary Department <span className="text-red-400">*</span>
                   </label>
                   <select
                     required
                     value={formData.primaryDepartment}
                     onChange={(e) => setFormData({...formData, primaryDepartment: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
                   >
                     <option value="">Select Primary Department</option>
                     {formData.departments.map((dept) => (
                       <option key={dept} value={dept}>{dept}</option>
                     ))}
                   </select>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-400 mt-1">
                     The primary department will be shown first in lists and reports
                   </p>
                 </div>
               )}
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Semester
                 </label>
                 <select
                   required
                   value={formData.semester}
                   onChange={(e) => setFormData({...formData, semester: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
                 >
                   <option value="">Select Semester</option>
                   {SEMESTER_OPTIONS.map((sem) => (
@@ -452,7 +452,7 @@ const SubjectManagement = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Credits
                 </label>
                 <input
@@ -462,19 +462,19 @@ const SubjectManagement = () => {
                   max="10"
                   value={formData.credits}
                   onChange={(e) => setFormData({...formData, credits: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Subject Type
                 </label>
                 <select
                   required
                   value={formData.subjectType}
                   onChange={(e) => setFormData({...formData, subjectType: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
                 >
                   <option value="">Select Type</option>
                   {SUBJECT_TYPE_OPTIONS.map((type) => (
@@ -484,14 +484,14 @@ const SubjectManagement = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Description (Optional)
                 </label>
                 <textarea
                   rows="3"
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
                   placeholder="Brief description of the subject..."
                 />
               </div>
@@ -500,7 +500,7 @@ const SubjectManagement = () => {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:ring-2 focus:ring-gray-500"
+                  className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-md hover:bg-gray-600 focus:ring-2 focus:ring-gray-500"
                 >
                   Cancel
                 </button>
