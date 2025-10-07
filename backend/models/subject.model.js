@@ -20,12 +20,6 @@ const subjectSchema = new mongoose.Schema({
         trim: true,
         uppercase: true
     }],
-    primaryDepartment: {
-        type: String,
-        required: true,
-        trim: true,
-        uppercase: true
-    },
     semester: {
         type: Number,
         required: false,
@@ -40,12 +34,8 @@ const subjectSchema = new mongoose.Schema({
     },
     subjectType: {
         type: String,
-        enum: ['Theory', 'Practical', 'Lab', 'Project'],
+        enum: ['Theory', 'Practical', 'Inbuilt', 'Project'],
         default: 'Theory'
-    },
-    isActive: {
-        type: Boolean,
-        default: true
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -59,7 +49,6 @@ const subjectSchema = new mongoose.Schema({
 // Indexes for better performance
 subjectSchema.index({ subjectCode: 1 });
 subjectSchema.index({ departments: 1 });
-subjectSchema.index({ primaryDepartment: 1 });
 subjectSchema.index({ subjectName: 1 });
 
 // Virtual for full subject display
@@ -67,12 +56,17 @@ subjectSchema.virtual('displayName').get(function() {
     return `${this.subjectCode} - ${this.subjectName}`;
 });
 
+// Virtual for department display - use first department as primary
+subjectSchema.virtual('primaryDepartment').get(function() {
+    return this.departments.length > 0 ? this.departments[0] : null;
+});
+
 // Virtual for department display
 subjectSchema.virtual('departmentDisplay').get(function() {
     if (this.departments.length === 1) {
         return this.departments[0];
     }
-    return `${this.primaryDepartment} (+${this.departments.length - 1} more)`;
+    return `${this.departments[0]} (+${this.departments.length - 1} more)`;
 });
 
 // Static method to find subjects by department (supports multiple departments)

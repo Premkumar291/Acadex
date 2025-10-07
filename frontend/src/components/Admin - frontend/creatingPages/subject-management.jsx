@@ -26,12 +26,11 @@ const SubjectManagement = () => {
     subjectName: "",
     subjectCode: "",
     departments: [],
-    primaryDepartment: "",
     semester: "",
     credits: "",
-    subjectType: "",
-    description: ""
+    subjectType: ""
   })
+
   useEffect(() => {
     fetchSubjects()
   }, [])
@@ -53,12 +52,10 @@ const SubjectManagement = () => {
     setFormData({
       subjectName: subject.subjectName,
       subjectCode: subject.subjectCode,
-      departments: subject.departments || [subject.department], // Handle legacy data
-      primaryDepartment: subject.primaryDepartment || subject.department, // Handle legacy data
+      departments: (subject.departments || [subject.department]).map(dept => dept.toUpperCase()), // Ensure uppercase
       semester: subject.semester,
       credits: subject.credits.toString(),
-      subjectType: subject.subjectType,
-      description: subject.description || ""
+      subjectType: subject.subjectType
     })
     setEditingSubject(subject)
     setShowModal(true)
@@ -73,17 +70,15 @@ const SubjectManagement = () => {
       return
     }
     
-    // Validate primary department for multiple departments
-    if (formData.departments.length > 1 && !formData.primaryDepartment) {
-      toast.error("Please select a primary department when multiple departments are selected")
-      return
-    }
-    
     try {
+      // Prepare subject data
       const subjectData = {
-        ...formData,
+        subjectName: formData.subjectName,
+        subjectCode: formData.subjectCode,
+        departments: formData.departments,
+        semester: formData.semester,
         credits: Number.parseInt(formData.credits),
-        primaryDepartment: formData.departments.length === 1 ? formData.departments[0] : formData.primaryDepartment
+        subjectType: formData.subjectType
       }
 
       if (editingSubject) {
@@ -118,11 +113,9 @@ const SubjectManagement = () => {
       subjectName: "",
       subjectCode: "",
       departments: [],
-      primaryDepartment: "",
       semester: "",
       credits: "",
-      subjectType: "",
-      description: ""
+      subjectType: ""
     })
     setEditingSubject(null)
     setShowModal(false)
@@ -228,9 +221,6 @@ const SubjectManagement = () => {
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-white">{subject.subjectName}</div>
-                      {subject.description && (
-                        <div className="text-sm text-gray-300">{subject.description}</div>
-                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {subject.subjectCode}
@@ -240,16 +230,9 @@ const SubjectManagement = () => {
                         {(subject.departments || [subject.department]).map((dept) => (
                           <span 
                             key={dept} 
-                            className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                              dept === (subject.primaryDepartment || subject.department) 
-                                ? 'bg-blue-900 text-blue-200 border border-blue-700' 
-                                : 'bg-gray-700 text-gray-300'
-                            }`}
+                            className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-gray-700 text-gray-300"
                           >
                             {dept}
-                            {dept === (subject.primaryDepartment || subject.department) && 
-                              <span className="ml-1 text-blue-400">★</span>
-                            }
                           </span>
                         ))}
                       </div>
@@ -264,7 +247,9 @@ const SubjectManagement = () => {
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         subject.subjectType === 'Theory' ? 'bg-blue-900 text-blue-200' :
                         subject.subjectType === 'Practical' ? 'bg-green-900 text-green-200' :
-                        'bg-purple-900 text-purple-200'
+                        subject.subjectType === 'Inbuilt' ? 'bg-yellow-900 text-yellow-200' :
+                        subject.subjectType === 'Project' ? 'bg-purple-900 text-purple-200' :
+                        'bg-gray-900 text-gray-200'
                       }`}>
                         {subject.subjectType}
                       </span>
@@ -384,18 +369,17 @@ const SubjectManagement = () => {
                           type="checkbox"
                           checked={formData.departments.includes(dept)}
                           onChange={(e) => {
+                            const upperDept = dept.toUpperCase();
                             if (e.target.checked) {
                               setFormData({
                                 ...formData,
-                                departments: [...formData.departments, dept],
-                                primaryDepartment: formData.primaryDepartment || dept // Set first selected as primary if none set
+                                departments: [...formData.departments, upperDept]
                               })
                             } else {
-                              const newDepartments = formData.departments.filter(d => d !== dept)
+                              const newDepartments = formData.departments.filter(d => d !== upperDept)
                               setFormData({
                                 ...formData,
-                                departments: newDepartments,
-                                primaryDepartment: formData.primaryDepartment === dept ? newDepartments[0] || "" : formData.primaryDepartment
+                                departments: newDepartments
                               })
                             }
                           }}
@@ -410,29 +394,6 @@ const SubjectManagement = () => {
                   </p>
                 </div>
               </div>
-
-              {/* Primary Department Selection */}
-              {formData.departments.length > 1 && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
-                    Primary Department <span className="text-red-400">*</span>
-                  </label>
-                  <select
-                    required
-                    value={formData.primaryDepartment}
-                    onChange={(e) => setFormData({...formData, primaryDepartment: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
-                  >
-                    <option value="">Select Primary Department</option>
-                    {formData.departments.map((dept) => (
-                      <option key={dept} value={dept}>{dept}</option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-gray-400 mt-1">
-                    The primary department will be shown first in lists and reports
-                  </p>
-                </div>
-              )}
               
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -481,19 +442,6 @@ const SubjectManagement = () => {
                     <option key={type} value={type}>{type}</option>
                   ))}
                 </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Description (Optional)
-                </label>
-                <textarea
-                  rows="3"
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
-                  placeholder="Brief description of the subject..."
-                />
               </div>
               
               <div className="flex justify-end space-x-3 pt-4">

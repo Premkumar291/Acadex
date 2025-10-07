@@ -8,10 +8,12 @@ export const DEPARTMENT_OPTIONS = [
     'MECH',
     'CIVIL',
     'IT',
-    'AIDS',
-    'AIML',
-    'CSBS',
-    'OTHER'
+    'AUTO',
+    'CS & DS',
+    'ENGLISH',
+    'MATHS',
+    'PHYSICS',
+    'CHEMISTRY'
 ];
 
 // Get all departments

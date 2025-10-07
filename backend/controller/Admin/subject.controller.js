@@ -3,7 +3,7 @@ import { Subject } from "../../models/subject.model.js";
 // Create a new subject
 export const createSubject = async (req, res) => {
     try {
-        const { subjectCode, subjectName, departments, primaryDepartment, semester, credits, subjectType } = req.body;
+        const { subjectCode, subjectName, departments, semester, credits, subjectType } = req.body;
         const userId = req.user?.id || req.user?._id || req.user?.userId;
 
         // Validate user authentication for protected route
@@ -15,10 +15,10 @@ export const createSubject = async (req, res) => {
         }
 
         // Validate required fields
-        if (!subjectCode || !subjectName || !departments || !primaryDepartment) {
+        if (!subjectCode || !subjectName || !departments) {
             return res.status(400).json({
                 success: false,
-                message: 'Subject code, subject name, departments, and primary department are required'
+                message: 'Subject code, subject name, and departments are required'
             });
         }
 
@@ -27,14 +27,6 @@ export const createSubject = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: 'At least one department must be selected'
-            });
-        }
-
-        // Validate primary department is in departments array
-        if (!departments.includes(primaryDepartment)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Primary department must be one of the selected departments'
             });
         }
 
@@ -55,7 +47,6 @@ export const createSubject = async (req, res) => {
             subjectCode: subjectCode.toUpperCase(),
             subjectName,
             departments: departments.map(dept => dept.toUpperCase()),
-            primaryDepartment: primaryDepartment.toUpperCase(),
             semester,
             credits,
             subjectType: subjectType || 'Theory',
@@ -70,6 +61,8 @@ export const createSubject = async (req, res) => {
             data: subject
         });
     } catch (error) {
+        console.error('Error creating subject:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).json({
             success: false,
             message: 'Error creating subject',
@@ -88,6 +81,8 @@ export const getSubjects = async (req, res) => {
             semester, 
             search 
         } = req.query;
+        
+        console.log('Fetching subjects with filters:', { page, limit, department, semester, search });
 
         let filter = { isActive: true };
 
@@ -109,6 +104,8 @@ export const getSubjects = async (req, res) => {
                 { subjectName: regex }
             ];
         }
+        
+        console.log('Applied filter:', JSON.stringify(filter, null, 2));
 
         const skip = (parseInt(page) - 1) * parseInt(limit);
 
@@ -118,9 +115,13 @@ export const getSubjects = async (req, res) => {
             .limit(parseInt(limit))
             .sort({ subjectCode: 1 })
             .lean();
+        
+        console.log('Found subjects count:', subjects.length);
 
         const totalSubjects = await Subject.countDocuments(filter);
         const totalPages = Math.ceil(totalSubjects / parseInt(limit));
+        
+        console.log('Total subjects:', totalSubjects, 'Total pages:', totalPages);
 
         res.status(200).json({
             success: true,
@@ -134,6 +135,8 @@ export const getSubjects = async (req, res) => {
             }
         });
     } catch (error) {
+        console.error('Error fetching subjects:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).json({
             success: false,
             message: 'Error fetching subjects',
@@ -146,12 +149,16 @@ export const getSubjects = async (req, res) => {
 export const getSubjectById = async (req, res) => {
     try {
         const { id } = req.params;
+        console.log('Fetching subject with ID:', id);
 
         const subject = await Subject.findById(id)
             .populate('createdBy', 'name email')
             .lean();
+        
+        console.log('Found subject:', subject);
 
         if (!subject) {
+            console.log('Subject not found');
             return res.status(404).json({
                 success: false,
                 message: 'Subject not found'
@@ -163,6 +170,8 @@ export const getSubjectById = async (req, res) => {
             data: subject
         });
     } catch (error) {
+        console.error('Error fetching subject by ID:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).json({
             success: false,
             message: 'Error fetching subject',
@@ -176,6 +185,9 @@ export const updateSubject = async (req, res) => {
     try {
         const { id } = req.params;
         const updates = req.body;
+        
+        console.log('Updating subject with ID:', id);
+        console.log('Updates:', JSON.stringify(updates, null, 2));
 
         // Remove fields that shouldn't be updated directly
         delete updates._id;
@@ -183,25 +195,12 @@ export const updateSubject = async (req, res) => {
         delete updates.createdAt;
         delete updates.updatedAt;
 
-        // Convert departments, primaryDepartment and subjectCode to uppercase if provided
+        // Convert departments and subjectCode to uppercase if provided
         if (updates.departments && Array.isArray(updates.departments)) {
             updates.departments = updates.departments.map(dept => dept.toUpperCase());
         }
-        if (updates.primaryDepartment) {
-            updates.primaryDepartment = updates.primaryDepartment.toUpperCase();
-        }
         if (updates.subjectCode) {
             updates.subjectCode = updates.subjectCode.toUpperCase();
-        }
-
-        // Validate primary department is in departments array if both are being updated
-        if (updates.departments && updates.primaryDepartment) {
-            if (!updates.departments.includes(updates.primaryDepartment)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Primary department must be one of the selected departments'
-                });
-            }
         }
 
         const subject = await Subject.findByIdAndUpdate(
@@ -209,8 +208,11 @@ export const updateSubject = async (req, res) => {
             updates,
             { new: true, runValidators: true }
         ).populate('createdBy', 'name email');
+        
+        console.log('Updated subject:', subject);
 
         if (!subject) {
+            console.log('Subject not found');
             return res.status(404).json({
                 success: false,
                 message: 'Subject not found'
@@ -223,6 +225,8 @@ export const updateSubject = async (req, res) => {
             data: subject
         });
     } catch (error) {
+        console.error('Error updating subject:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).json({
             success: false,
             message: 'Error updating subject',
