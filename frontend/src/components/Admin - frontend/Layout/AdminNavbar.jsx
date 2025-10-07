@@ -6,18 +6,12 @@ import {
   LogOut, 
   Users, 
   BookOpen, 
-  ShieldCheckIcon,
-  ChevronLeft,
-  ChevronRight
+  ShieldCheckIcon
 } from "lucide-react"
 import { logout } from "@/api/auth"
 
-const AdminNavbar = ({ isDarkMode, user }) => {
+const AdminNavbar = ({ user }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
-    const savedState = localStorage.getItem('sidebarCollapsed')
-    return savedState !== null ? JSON.parse(savedState) : true
-  })
   const [activeItem, setActiveItem] = useState(() => {
     const savedItem = localStorage.getItem('activeItem')
     return savedItem || ""
@@ -28,7 +22,7 @@ const AdminNavbar = ({ isDarkMode, user }) => {
   // Navigation items (without Add Student)
   const navItems = [
     {
-      name: "Faculty Creation",
+      name: "User Creation",
       icon: Users,
       url: "/admin-dashboard/create-faculty",
     },
@@ -48,13 +42,6 @@ const AdminNavbar = ({ isDarkMode, user }) => {
       url: "/admin-dashboard/admin-hierarchy",
     },
   ]
-
-  // Toggle sidebar collapse state
-  const toggleSidebar = () => {
-    const newState = !isSidebarCollapsed
-    setIsSidebarCollapsed(newState)
-    localStorage.setItem('sidebarCollapsed', JSON.stringify(newState))
-  }
 
   // Handle navigation item click
   const handleItemClick = (itemName) => {
@@ -93,110 +80,64 @@ const AdminNavbar = ({ isDarkMode, user }) => {
   return (
     <>
       {/* Desktop Navbar */}
-      <header className={`hidden md:flex items-center justify-between h-16 px-4 border-b ${
-        isDarkMode 
-          ? "bg-gray-900 border-gray-700" 
-          : "bg-white border-gray-200"
-      }`}>
+      <header className="hidden md:flex items-center justify-between h-16 px-4 border-b bg-gray-900 border-gray-700">
         <div className="flex items-center space-x-4">
-          {/* Sidebar Toggle Button */}
-          <button
-            onClick={toggleSidebar}
-            className={`p-2 rounded-lg ${
-              isDarkMode 
-                ? "hover:bg-gray-800 text-gray-300" 
-                : "hover:bg-gray-100 text-gray-700"
-            } transition-colors`}
-          >
-            {isSidebarCollapsed ? (
-              <ChevronRight className="w-5 h-5" />
-            ) : (
-              <ChevronLeft className="w-5 h-5" />
-            )}
-          </button>
-          
           {/* Brand - Clicking navigates to dashboard */}
           <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-              isDarkMode 
-                ? "bg-gradient-to-r from-purple-600 to-blue-500" 
-                : "bg-gradient-to-r from-purple-500 to-blue-400"
-            }`}>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-500">
               <span className="text-white font-bold text-sm">A</span>
             </div>
-            <span className={`font-bold text-lg ${
-              isDarkMode ? "text-white" : "text-gray-900"
-            }`}>
+            <span className="font-bold text-lg text-white">
               ACADEX
             </span>
           </Link>
         </div>
 
-        {/* Navigation Links - Only show when sidebar is collapsed */}
-        {isSidebarCollapsed && (
-          <div className="hidden lg:flex items-center space-x-1">
-            {navItems.map((item) => {
-              const Icon = item.icon
-              const isActive = activeItem === item.name && activeItem !== ""
-              
-              return (
-                <Link
-                  key={item.name}
-                  to={item.url}
-                  onClick={() => handleItemClick(item.name)}
-                  className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? isDarkMode
-                        ? "bg-gray-800 text-white"
-                        : "bg-gray-100 text-gray-900"
-                      : isDarkMode
-                        ? "text-gray-300 hover:bg-gray-800 hover:text-white"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  }`}
-                >
-                  <Icon className="w-4 h-4 mr-2" />
-                  <span className="hidden xl:inline">{item.name}</span>
-                </Link>
-              )
-            })}
-          </div>
-        )}
+        {/* Navigation Links */}
+        <div className="hidden lg:flex items-center space-x-1">
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const isActive = activeItem === item.name && activeItem !== ""
+            
+            return (
+              <Link
+                key={item.name}
+                to={item.url}
+                onClick={() => handleItemClick(item.name)}
+                className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-gray-800 text-white"
+                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                }`}
+              >
+                <Icon className="w-4 h-4 mr-2" />
+                <span>{item.name}</span>
+              </Link>
+            )
+          })}
+        </div>
 
         {/* Right Section */}
         <div className="flex items-center space-x-4">
-          {/* Removed theme toggle button */}
-          
           {/* User Menu */}
           <div className="relative">
             <div className="flex items-center space-x-3">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                isDarkMode ? "bg-gray-700" : "bg-gray-200"
-              }`}>
-                <span className={`font-medium text-sm ${
-                  isDarkMode ? "text-white" : "text-gray-900"
-                }`}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-700">
+                <span className="font-medium text-sm text-white">
                   {user?.name?.charAt(0).toUpperCase() || "A"}
                 </span>
               </div>
               <div className="hidden lg:block">
-                <p className={`text-sm font-medium ${
-                  isDarkMode ? "text-white" : "text-gray-900"
-                }`}>
+                <p className="text-sm font-medium text-white">
                   {user?.name || "Admin"}
                 </p>
-                <p className={`text-xs ${
-                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                }`}>
+                <p className="text-xs text-gray-400">
                   Administrator
                 </p>
               </div>
               <button
                 onClick={handleLogout}
-                className={`p-2 rounded-lg ${
-                  isDarkMode 
-                    ? "hover:bg-gray-800 text-gray-300" 
-                    : "hover:bg-gray-100 text-gray-700"
-                } transition-colors`}
+                className="p-2 rounded-lg hover:bg-gray-800 text-gray-300 transition-colors"
               >
                 <LogOut className="w-5 h-5" />
               </button>
@@ -206,36 +147,22 @@ const AdminNavbar = ({ isDarkMode, user }) => {
       </header>
 
       {/* Mobile Navbar */}
-      <header className={`md:hidden flex items-center justify-between h-16 px-4 border-b ${
-        isDarkMode 
-          ? "bg-gray-900 border-gray-700" 
-          : "bg-white border-gray-200"
-      }`}>
+      <header className="md:hidden flex items-center justify-between h-16 px-4 border-b bg-gray-900 border-gray-700">
         <div className="flex items-center space-x-2">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className={`p-2 rounded-lg ${
-              isDarkMode 
-                ? "hover:bg-gray-800 text-gray-300" 
-                : "hover:bg-gray-100 text-gray-700"
-            } transition-colors`}
+            className="p-2 rounded-lg hover:bg-gray-800 text-gray-300 transition-colors"
           >
             <Menu className="w-5 h-5" />
           </button>
           
           {/* Brand - Clicking navigates to dashboard */}
           <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-              isDarkMode 
-                ? "bg-gradient-to-r from-purple-600 to-blue-500" 
-                : "bg-gradient-to-r from-purple-500 to-blue-400"
-            }`}>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-500">
               <span className="text-white font-bold text-sm">A</span>
             </div>
-            <span className={`font-bold text-lg ${
-              isDarkMode ? "text-white" : "text-gray-900"
-            }`}>
+            <span className="font-bold text-lg text-white">
               ACADEX
             </span>
           </Link>
@@ -243,16 +170,10 @@ const AdminNavbar = ({ isDarkMode, user }) => {
 
         {/* Right Section */}
         <div className="flex items-center space-x-2">
-          {/* Removed theme toggle button */}
-          
           {/* Logout Button */}
           <button
             onClick={handleLogout}
-            className={`p-2 rounded-lg ${
-              isDarkMode 
-                ? "hover:bg-gray-800 text-gray-300" 
-                : "hover:bg-gray-100 text-gray-700"
-            } transition-colors`}
+            className="p-2 rounded-lg hover:bg-gray-800 text-gray-300 transition-colors"
           >
             <LogOut className="w-5 h-5" />
           </button>
@@ -269,35 +190,21 @@ const AdminNavbar = ({ isDarkMode, user }) => {
           />
           
           {/* Sidebar */}
-          <div className={`fixed top-0 left-0 bottom-0 w-64 transform transition-transform duration-300 ease-in-out ${
-            isDarkMode ? "bg-gray-900" : "bg-white"
-          }`}>
+          <div className="fixed top-0 left-0 bottom-0 w-64 transform transition-transform duration-300 ease-in-out bg-gray-900">
             {/* Header */}
-            <div className={`flex items-center justify-between h-16 px-4 border-b ${
-              isDarkMode ? "border-gray-700" : "border-gray-200"
-            }`}>
+            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700">
               {/* Brand - Clicking navigates to dashboard */}
               <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer" onClick={() => setIsMobileMenuOpen(false)}>
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                  isDarkMode 
-                    ? "bg-gradient-to-r from-purple-600 to-blue-500" 
-                    : "bg-gradient-to-r from-purple-500 to-blue-400"
-                }`}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-500">
                   <span className="text-white font-bold text-sm">A</span>
                 </div>
-                <span className={`font-bold text-lg ${
-                  isDarkMode ? "text-white" : "text-gray-900"
-                }`}>
+                <span className="font-bold text-lg text-white">
                   ACADEX
                 </span>
               </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`p-2 rounded-lg ${
-                  isDarkMode 
-                    ? "hover:bg-gray-800 text-gray-300" 
-                    : "hover:bg-gray-100 text-gray-700"
-                } transition-colors`}
+                className="p-2 rounded-lg hover:bg-gray-800 text-gray-300 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -317,12 +224,8 @@ const AdminNavbar = ({ isDarkMode, user }) => {
                     onClick={() => handleItemClick(item.name)}
                     className={`flex items-center w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? isDarkMode
-                          ? "bg-gray-800 text-white"
-                          : "bg-gray-100 text-gray-900"
-                        : isDarkMode
-                          ? "text-gray-300 hover:bg-gray-800 hover:text-white"
-                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        ? "bg-gray-800 text-white"
+                        : "text-gray-300 hover:bg-gray-800 hover:text-white"
                     }`}
                   >
                     <Icon className="w-5 h-5 mr-3" />
@@ -333,28 +236,18 @@ const AdminNavbar = ({ isDarkMode, user }) => {
             </nav>
             
             {/* User Info */}
-            <div className={`absolute bottom-0 left-0 right-0 p-4 border-t ${
-              isDarkMode ? "border-gray-700" : "border-gray-200"
-            }`}>
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
               <div className="flex items-center space-x-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  isDarkMode ? "bg-gray-700" : "bg-gray-200"
-                }`}>
-                  <span className={`font-medium ${
-                    isDarkMode ? "text-white" : "text-gray-900"
-                  }`}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-700">
+                  <span className="font-medium text-white">
                     {user?.name?.charAt(0).toUpperCase() || "A"}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium truncate ${
-                    isDarkMode ? "text-white" : "text-gray-900"
-                  }`}>
+                  <p className="text-sm font-medium truncate text-white">
                     {user?.name || "Admin"}
                   </p>
-                  <p className={`text-xs truncate ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}>
+                  <p className="text-xs truncate text-gray-400">
                     Administrator
                   </p>
                 </div>

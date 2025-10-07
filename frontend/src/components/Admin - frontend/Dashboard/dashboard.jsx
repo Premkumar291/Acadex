@@ -8,18 +8,13 @@ const Dashboard = () => {
   const [error, setError] = useState("")
   const [user, setUser] = useState(null)
   const [userLoading, setUserLoading] = useState(true)
-  const [isDarkMode] = useState(() => {
-    // Get saved theme from localStorage or default to false (light mode)
-    const savedTheme = localStorage.getItem('darkMode')
-    return savedTheme !== null ? JSON.parse(savedTheme) : false
-  })
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const navigate = useNavigate()
 
   // Navigation items (without Add Student)
   const navItems = [
     {
-      name: "Faculty Creation",
+      name: "Users Creation",
       icon: Users,
       description: "Create faculty & admin accounts",
       url: "/admin-dashboard/create-faculty",
@@ -33,13 +28,13 @@ const Dashboard = () => {
     {
       name: "Faculty Management",
       icon: Users,
-      description: "Manage faculty profiles",
+      description: "Manage faculties in your college ",
       url: "/admin-dashboard/faculty-management",
     },
     {
-      name: "Admin Management",
+      name: "User Management",
       icon: ShieldCheckIcon,
-      description: "Manage administrators",
+      description: "Manage admins and Faculties accounts",
       url: "/admin-dashboard/admin-hierarchy",
     },
   ]
@@ -75,26 +70,26 @@ const Dashboard = () => {
 
   if (userLoading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? "bg-gray-900" : "bg-white"}`}>
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
         <div className="text-center">
           <div className="relative w-24 h-24 mx-auto mb-8">
-            <div className={`absolute inset-0 border-4 ${isDarkMode ? "border-purple-500" : "border-blue-200"} rounded-full animate-ping opacity-20`}></div>
-            <div className={`absolute inset-2 border-4 ${isDarkMode ? "border-purple-400" : "border-blue-400"} rounded-full animate-spin`}></div>
-            <div className={`absolute inset-4 border-4 ${isDarkMode ? "border-purple-600" : "border-blue-600"} rounded-full animate-pulse`}></div>
-            <div className={`absolute inset-6 ${isDarkMode ? "bg-gradient-to-r from-purple-500 to-pink-600" : "bg-gradient-to-r from-blue-500 to-indigo-600"} rounded-full flex items-center justify-center`}>
+            <div className="absolute inset-0 border-4 border-purple-500 rounded-full animate-ping opacity-20"></div>
+            <div className="absolute inset-2 border-4 border-purple-400 rounded-full animate-spin"></div>
+            <div className="absolute inset-4 border-4 border-purple-600 rounded-full animate-pulse"></div>
+            <div className="absolute inset-6 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
               <svg className="w-8 h-8 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
           </div>
-          <h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+          <h2 className="text-3xl font-bold mb-4 text-white">
             Initializing ACADEX Portal
           </h2>
           <div className="flex justify-center space-x-2">
             {[...Array(5)].map((_, i) => (
               <div
                 key={i}
-                className={`w-3 h-3 rounded-full ${isDarkMode ? "bg-purple-600" : "bg-blue-600"} animate-bounce`}
+                className="w-3 h-3 rounded-full bg-purple-600 animate-bounce"
                 style={{ animationDelay: `${i * 0.1}s` }}
               />
             ))}
@@ -105,15 +100,15 @@ const Dashboard = () => {
   }
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}>
+    <div className="min-h-screen bg-gray-900 text-white">
       {/* Main Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="text-center mb-12">
-          <h1 className={`text-3xl md:text-4xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">
             Welcome back, <span className="text-blue-600">{user?.name?.split(" ")[0] || "Admin"}</span>
           </h1>
-          <p className={`text-lg ${isDarkMode ? "text-gray-300" : "text-gray-600"} max-w-3xl mx-auto`}>
+          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
             Your administrative dashboard is ready. Manage your institution's faculty, students, and subjects.
           </p>
         </div>
@@ -126,23 +121,17 @@ const Dashboard = () => {
               <div 
                 key={index}
                 onClick={() => navigate(item.url)}
-                className={`rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 ${
-                  isDarkMode 
-                    ? "bg-gray-800 hover:bg-gray-700 border border-gray-700" 
-                    : "bg-white hover:bg-gray-50 border border-gray-200 shadow-sm"
-                }`}
+                className="rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 bg-gray-800 hover:bg-gray-700 border border-gray-700"
               >
                 <div className="flex items-center mb-4">
-                  <div className={`p-3 rounded-lg ${
-                    isDarkMode ? "bg-gray-700" : "bg-blue-50"
-                  }`}>
-                    <Icon className={`w-6 h-6 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} />
+                  <div className="p-3 rounded-lg bg-gray-700">
+                    <Icon className="w-6 h-6 text-blue-400" />
                   </div>
                 </div>
-                <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                <h3 className="text-lg font-semibold mb-2 text-white">
                   {item.name}
                 </h3>
-                <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                <p className="text-sm text-gray-400">
                   {item.description}
                 </p>
               </div>
@@ -151,37 +140,37 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Section */}
-        <div className={`rounded-xl p-6 ${isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200 shadow-sm"}`}>
-          <h2 className={`text-xl font-semibold mb-6 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+        <div className="rounded-xl p-6 bg-gray-800 border border-gray-700">
+          <h2 className="text-xl font-semibold mb-6 text-white">
             System Overview
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className={`p-4 rounded-lg ${isDarkMode ? "bg-gray-700" : "bg-blue-50"}`}>
+            <div className="p-4 rounded-lg bg-gray-700">
               <div className="flex items-center">
-                <Users className={`w-8 h-8 mr-3 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} />
+                <Users className="w-8 h-8 mr-3 text-blue-400" />
                 <div>
-                  <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Total Faculties</p>
-                  <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>24</p>
+                  <p className="text-sm text-gray-400">Total Faculties</p>
+                  <p className="text-2xl font-bold text-white">24</p>
                 </div>
               </div>
             </div>
             
-            <div className={`p-4 rounded-lg ${isDarkMode ? "bg-gray-700" : "bg-green-50"}`}>
+            <div className="p-4 rounded-lg bg-gray-700">
               <div className="flex items-center">
-                <BookOpen className={`w-8 h-8 mr-3 ${isDarkMode ? "text-green-400" : "text-green-600"}`} />
+                <BookOpen className="w-8 h-8 mr-3 text-green-400" />
                 <div>
-                  <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Total Subjects</p>
-                  <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>68</p>
+                  <p className="text-sm text-gray-400">Total Subjects</p>
+                  <p className="text-2xl font-bold text-white">68</p>
                 </div>
               </div>
             </div>
             
-            <div className={`p-4 rounded-lg ${isDarkMode ? "bg-gray-700" : "bg-purple-50"}`}>
+            <div className="p-4 rounded-lg bg-gray-700">
               <div className="flex items-center">
-                <ShieldCheckIcon className={`w-8 h-8 mr-3 ${isDarkMode ? "text-purple-400" : "text-purple-600"}`} />
+                <ShieldCheckIcon className="w-8 h-8 mr-3 text-purple-400" />
                 <div>
-                  <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Total Users created by you</p>
-                  <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>5</p>
+                  <p className="text-sm text-gray-400">Total Users created by you</p>
+                  <p className="text-2xl font-bold text-white">5</p>
                 </div>
               </div>
             </div>
@@ -192,14 +181,14 @@ const Dashboard = () => {
       {/* Logout Confirmation Dialog */}
       {showLogoutDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
-          <div className={`p-6 max-w-md w-full mx-auto rounded-lg ${isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200 shadow-sm"}`}>
+          <div className="p-6 max-w-md w-full mx-auto rounded-lg bg-gray-800 border border-gray-700">
             <div className="flex items-center space-x-4 mb-6">
               <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
                 <LogOut className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}>Confirm Logout</h3>
-                <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-slate-600"}`}>
+                <h3 className="text-xl font-bold text-white">Confirm Logout</h3>
+                <p className="text-sm text-gray-300">
                   Are you sure you want to sign out?
                 </p>
               </div>
@@ -208,9 +197,7 @@ const Dashboard = () => {
               <button
                 onClick={handleConfirmLogout}
                 disabled={isLoading}
-                className={`flex-1 px-4 py-2 ${
-                  isDarkMode ? "bg-white text-black hover:bg-gray-100" : "bg-black hover:bg-gray-800 text-white"
-                } font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed rounded`}
+                className="flex-1 px-4 py-2 bg-white text-black hover:bg-gray-100 font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed rounded"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center space-x-2">
@@ -224,9 +211,7 @@ const Dashboard = () => {
               <button
                 onClick={() => setShowLogoutDialog(false)}
                 disabled={isLoading}
-                className={`flex-1 px-4 py-2 ${
-                  isDarkMode ? "bg-gray-700 text-white hover:bg-gray-600" : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                } font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed rounded`}
+                className="flex-1 px-4 py-2 bg-gray-700 text-white hover:bg-gray-600 font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed rounded"
               >
                 Cancel
               </button>
@@ -237,7 +222,7 @@ const Dashboard = () => {
 
       {/* Error Notification */}
       {error && (
-        <div className={`fixed bottom-8 right-8 z-50 p-4 max-w-md rounded-lg shadow-lg ${isDarkMode ? "bg-red-900 border border-red-700" : "bg-red-50 border border-red-200"}`}>
+        <div className="fixed bottom-8 right-8 z-50 p-4 max-w-md rounded-lg shadow-lg bg-red-900 border border-red-700">
           <div className="flex items-start space-x-3">
             <div className="w-8 h-8 bg-red-500 flex items-center justify-center flex-shrink-0 rounded">
               <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -249,12 +234,12 @@ const Dashboard = () => {
               </svg>
             </div>
             <div className="flex-1">
-              <h4 className={`font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}>System Error</h4>
-              <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-slate-600"}`}>{error}</p>
+              <h4 className="font-bold text-white">System Error</h4>
+              <p className="text-sm text-gray-300">{error}</p>
             </div>
             <button
               onClick={() => setError("")}
-              className={`${isDarkMode ? "text-gray-300 hover:text-white" : "text-slate-600 hover:text-slate-800"} transition-colors`}
+              className="text-gray-300 hover:text-white transition-colors"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path
@@ -271,4 +256,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default Dashboard;

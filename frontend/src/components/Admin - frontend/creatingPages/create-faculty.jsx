@@ -91,28 +91,28 @@ const CreateFaculty = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-gray-900 p-4 sm:p-6">
       {/* Header */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Faculty & Admin Management</h1>
-            <p className="text-gray-600 mt-2">Create new faculty and admin accounts</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Faculty & Admin Management</h1>
+            <p className="text-gray-300 mt-2">Create new faculty and admin accounts</p>
           </div>
         </div>
       </div>
 
       {/* Create New User Form */}
-      <div className="bg-white rounded-lg shadow overflow-hidden max-w-2xl mx-auto">
+      <div className="bg-gray-800 rounded-lg shadow overflow-hidden max-w-2xl mx-auto">
         <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-6">
             {form.role === 'admin' ? 'Create New Admin Account' : 'Create New Faculty Account'}
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+              <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center">
                 <User className="mr-2" size={16} />
                 Full Name
               </label>
@@ -123,13 +123,13 @@ const CreateFaculty = () => {
                 onChange={handleChange}
                 placeholder="Enter full name"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
               />
             </div>
 
             {/* Email Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+              <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center">
                 <Mail className="mr-2" size={16} />
                 College Email
               </label>
@@ -140,13 +140,13 @@ const CreateFaculty = () => {
                 onChange={handleChange}
                 placeholder="Enter college email"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
               />
             </div>
 
             {/* Department Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+              <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center">
                 <Building className="mr-2" size={16} />
                 Department
               </label>
@@ -155,7 +155,7 @@ const CreateFaculty = () => {
                 value={form.department}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
               >
                 <option value="">Select Department</option>
                 {DEPARTMENT_OPTIONS.map((dept) => (
@@ -166,7 +166,7 @@ const CreateFaculty = () => {
 
             {/* Role Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+              <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center">
                 <Users className="mr-2" size={16} />
                 Role
               </label>
@@ -175,7 +175,7 @@ const CreateFaculty = () => {
                 value={form.role}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
               >
                 {ROLE_OPTIONS.map((role) => (
                   <option key={role.value} value={role.value}>{role.label}</option>
@@ -185,7 +185,7 @@ const CreateFaculty = () => {
 
             {/* Password Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+              <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center">
                 <Lock className="mr-2" size={16} />
                 Password
               </label>
@@ -197,12 +197,12 @@ const CreateFaculty = () => {
                   onChange={handleChange}
                   placeholder="Enter password"
                   required
-                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 pr-10 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-300"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -214,39 +214,14 @@ const CreateFaculty = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-3 px-4 rounded-md font-medium text-white transition-all duration-200 flex items-center justify-center ${
-                  loading 
-                    ? "bg-blue-400 cursor-not-allowed" 
-                    : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02]"
-                }`}
+                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                  loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
               >
-                {loading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Creating Account...
-                  </>
-                ) : (
-                  `Create ${form.role === 'admin' ? 'Admin' : 'Faculty'} Account`
-                )}
+                {loading ? "Creating..." : `Create ${form.role === 'admin' ? 'Admin' : 'Faculty'}`}
               </button>
             </div>
           </form>
-        </div>
-      </div>
-
-      {/* Information Section */}
-      <div className="mt-8 max-w-2xl mx-auto">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-lg font-medium text-blue-900 mb-2">Account Creation Guidelines</h3>
-          <ul className="list-disc list-inside text-blue-800 space-y-1 text-sm">
-            <li>Faculty accounts will be created with the 'faculty' role in the system</li>
-            <li>Admin accounts will be created with the 'admin' role and can manage other users</li>
-            <li>All accounts will inherit the college name from the current admin's account</li>
-            <li>Passwords must be at least 8 characters long for security</li>
-          </ul>
         </div>
       </div>
     </div>
