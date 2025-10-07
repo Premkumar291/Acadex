@@ -15,20 +15,24 @@ import {
 import {
   getHierarchy,
   getAdminStatistics,
-  getAdminCreationStatus,
-  createAdmin,
   updateAdmin,
-  deleteAdmin
+  deleteAdmin,
+  deleteFacultyUser
 } from '../api/adminHierarchy.js';
+
+// Helper function to format date as dd-mm-yyyy
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
 
 const AdminHierarchyPage = () => {
   const [hierarchyData, setHierarchyData] = useState(null);
   const [statistics, setStatistics] = useState(null);
-  const [creationStatus, setCreationStatus] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedFilter, setSelectedFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState(null);
   const [formData, setFormData] = useState({
@@ -45,15 +49,13 @@ const AdminHierarchyPage = () => {
   const loadHierarchyData = async () => {
     try {
       setLoading(true);
-      const [hierarchyRes, statsRes, statusRes] = await Promise.all([
+      const [hierarchyRes, statsRes] = await Promise.all([
         getHierarchy(),
-        getAdminStatistics(),
-        getAdminCreationStatus()
+        getAdminStatistics()
       ]);
       
       setHierarchyData(hierarchyRes.data);
       setStatistics(statsRes.data);
-      setCreationStatus(statusRes.data);
       
     } catch (error) {
       if (import.meta.env.DEV) {
@@ -62,20 +64,6 @@ const AdminHierarchyPage = () => {
       toast.error('Failed to load hierarchy data');
     } finally {
       setLoading(false);
-    }
-  };
-
-
-  const handleCreateAdmin = async (e) => {
-    e.preventDefault();
-    try {
-      await createAdmin(formData);
-      toast.success('Admin created successfully');
-      setShowCreateModal(false);
-      setFormData({ name: '', email: '', department: '', password: '' });
-      loadHierarchyData();
-    } catch (error) {
-      toast.error(error.message || 'Failed to create admin');
     }
   };
 
@@ -109,6 +97,18 @@ const AdminHierarchyPage = () => {
     }
   };
 
+  const handleDeleteFaculty = async (facultyId, facultyName) => {
+    if (window.confirm(`Are you sure you want to delete ${facultyName}? This action cannot be undone.`)) {
+      try {
+        await deleteFacultyUser(facultyId);
+        toast.success('Faculty deleted successfully');
+        loadHierarchyData();
+      } catch (error) {
+        toast.error(error.message || 'Failed to delete faculty');
+      }
+    }
+  };
+
   const openEditModal = (admin) => {
     setSelectedAdmin(admin);
     setFormData({
@@ -119,7 +119,6 @@ const AdminHierarchyPage = () => {
     });
     setShowEditModal(true);
   };
-
 
   if (loading) {
     return (
@@ -135,7 +134,7 @@ const AdminHierarchyPage = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Admin Management</h1>
-          <p className="text-gray-300">Manage administrators and view organizational structure</p>
+          <p className="text-gray-300">Manage admins & users  and view organizational structure</p>
         </div>
 
         {/* Statistics Cards */}
@@ -172,53 +171,6 @@ const AdminHierarchyPage = () => {
             </div>
           </div>
         )}
-
-        {/* Controls */}
-        <div className="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700 mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-            <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-              {/* Search */}
-              <input
-                type="text"
-                placeholder="Search by name, email, or department..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
-              />
-
-              {/* Filter */}
-              <select
-                value={selectedFilter}
-                onChange={(e) => setSelectedFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
-              >
-                <option value="all">All Users</option>
-                <option value="admins">Admins Only</option>
-                <option value="faculty">Faculty Only</option>
-              </select>
-            </div>
-
-            {/* Create Admin Button */}
-            {creationStatus?.canCreate && (
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <PlusIcon className="w-5 h-5 mr-2" />
-                Create Admin
-              </button>
-            )}
-          </div>
-
-          {/* Creation Status Info */}
-          {creationStatus && !creationStatus.canCreate && (
-            <div className="mt-4 p-3 bg-yellow-900 border border-yellow-700 rounded-lg">
-              <p className="text-sm text-yellow-200">
-                <strong>Cannot create admin:</strong> {creationStatus.reason}
-              </p>
-            </div>
-          )}
-        </div>
 
         {/* Admin List */}
         <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-6 mb-8">
@@ -269,7 +221,7 @@ const AdminHierarchyPage = () => {
           )}
         </div>
 
-        {/* Faculty List */}
+        {/* Faculty List with Delete Option */}
         <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-6">
           <h2 className="text-xl font-semibold text-white mb-6">Created Faculty</h2>
           
@@ -295,8 +247,19 @@ const AdminHierarchyPage = () => {
                       <p className="text-xs text-gray-400">📞 {faculty.phoneNumber}</p>
                     )}
                     <p className="text-xs text-gray-400">
-                      Created: {new Date(faculty.createdAt).toLocaleDateString()}
+                      Created: {formatDate(faculty.createdAt)}
                     </p>
+                  </div>
+                  
+                  {/* Delete Button for Faculty */}
+                  <div className="flex justify-end mt-2">
+                    <button
+                      onClick={() => handleDeleteFaculty(faculty.user?._id || faculty._id, faculty.name)}
+                      className="px-3 py-1 text-sm text-red-400 hover:bg-red-900 rounded transition-colors flex items-center"
+                    >
+                      <TrashIcon className="w-4 h-4 mr-1" />
+                      Delete
+                    </button>
                   </div>
                 </div>
               ))}
@@ -309,66 +272,6 @@ const AdminHierarchyPage = () => {
           )}
         </div>
       </div>
-
-      {/* Create Admin Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Create Admin</h3>
-            <form onSubmit={handleCreateAdmin}>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
-                  required
-                />
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Department"
-                  value={formData.department}
-                  onChange={(e) => setFormData({...formData, department: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
-                  required
-                />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
-                  required
-                />
-              </div>
-              <div className="flex justify-end space-x-4 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Create Admin
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Edit Admin Modal */}
       {showEditModal && selectedAdmin && (

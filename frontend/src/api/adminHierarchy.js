@@ -105,6 +105,16 @@ export const deleteAdmin = async (id) => {
   }
 };
 
+// Delete faculty user
+export const deleteFacultyUser = async (id) => {
+  try {
+    const response = await api.delete(`/faculty/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 // Alias for backward compatibility
 export const deleteSubAdmin = deleteAdmin;
 
@@ -120,5 +130,6 @@ export default {
   updateAdmin,
   updateSubAdmin,
   deleteAdmin,
+  deleteFacultyUser,
   deleteSubAdmin,
 };

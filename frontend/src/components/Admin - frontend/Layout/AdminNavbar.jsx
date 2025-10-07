@@ -37,7 +37,7 @@ const AdminNavbar = ({ user }) => {
       url: "/admin-dashboard/faculty-management",
     },
     {
-      name: "Admin Management",
+      name: "user Management",
       icon: ShieldCheckIcon,
       url: "/admin-dashboard/admin-hierarchy",
     },

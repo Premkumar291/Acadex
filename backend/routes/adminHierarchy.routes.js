@@ -9,6 +9,7 @@ import {
     getAdminStatistics,
     updateAdmin,
     deleteAdmin,
+    deleteFacultyUser,
     getAdminCreationStatus
 } from '../controller/Admin/adminHierarchy.controller.js';
 
@@ -41,5 +42,8 @@ router.put('/admin/:id', canSeeUser, updateAdmin);
 
 // Delete admin (with visibility check)
 router.delete('/admin/:id', canSeeUser, deleteAdmin);
+
+// Delete faculty user (with visibility check)
+router.delete('/faculty/:id', canSeeUser, deleteFacultyUser);
 
 export default router;

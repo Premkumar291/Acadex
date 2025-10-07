@@ -420,6 +420,58 @@ export const deleteAdmin = async (req, res) => {
 };
 
 /**
+ * Delete faculty user
+ */
+export const deleteFacultyUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const adminId = req.user.userId;
+
+        // Find the faculty user
+        const facultyUser = await User.findById(id);
+        if (!facultyUser) {
+            return res.status(404).json({
+                success: false,
+                message: "Faculty user not found"
+            });
+        }
+
+        // Check if the faculty user has the correct role
+        if (facultyUser.role !== 'faculty') {
+            return res.status(400).json({
+                success: false,
+                message: "User is not a faculty member"
+            });
+        }
+
+        // Check if current admin created this faculty user
+        const canDelete = facultyUser.createdBy?.equals(adminId);
+
+        if (!canDelete) {
+            return res.status(403).json({
+                success: false,
+                message: "You don't have permission to delete this faculty user"
+            });
+        }
+
+        // Delete the faculty user
+        await User.findByIdAndDelete(id);
+
+        res.status(200).json({
+            success: true,
+            message: "Faculty user deleted successfully"
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        });
+    }
+};
+
+/**
  * Get admin creation status
  */
 export const getAdminCreationStatus = async (req, res) => {

@@ -2,6 +2,9 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { logout, checkAuth } from "@/api/auth"
 import { LogOut, Users, BookOpen, ShieldCheckIcon } from "lucide-react"
+import { getAdminStatistics } from "@/api/adminHierarchy"
+import { facultyAPI } from "@/api/faculty"
+import { subjectAPI } from "@/api/subjects"
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -9,12 +12,18 @@ const Dashboard = () => {
   const [user, setUser] = useState(null)
   const [userLoading, setUserLoading] = useState(true)
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+  const [statistics, setStatistics] = useState({
+    totalFaculties: 0,
+    totalSubjects: 0,
+    totalUsersCreatedByYou: 0
+  })
+  const [statsLoading, setStatsLoading] = useState(true)
   const navigate = useNavigate()
 
   // Navigation items (without Add Student)
   const navItems = [
     {
-      name: "Users Creation",
+      name: "Faculty Creation",
       icon: Users,
       description: "Create faculty & admin accounts",
       url: "/admin-dashboard/create-faculty",
@@ -28,13 +37,13 @@ const Dashboard = () => {
     {
       name: "Faculty Management",
       icon: Users,
-      description: "Manage faculties in your college ",
+      description: "Manage faculty profiles",
       url: "/admin-dashboard/faculty-management",
     },
     {
-      name: "User Management",
+      name: "Admin Management",
       icon: ShieldCheckIcon,
-      description: "Manage admins and Faculties accounts",
+      description: "Manage administrators",
       url: "/admin-dashboard/admin-hierarchy",
     },
   ]
@@ -53,6 +62,42 @@ const Dashboard = () => {
     }
     fetchUserData()
   }, [navigate])
+
+  // Fetch statistics
+  useEffect(() => {
+    const fetchStatistics = async () => {
+      if (!user) return
+      
+      try {
+        setStatsLoading(true)
+        
+        // Fetch admin statistics (users created by you)
+        const adminStatsResponse = await getAdminStatistics()
+        const adminStats = adminStatsResponse.data
+        
+        // Fetch all faculty to get total count
+        const facultyResponse = await facultyAPI.getFaculty()
+        const totalFaculties = facultyResponse.data ? facultyResponse.data.length : 0
+        
+        // Fetch all subjects to get total count
+        const subjectResponse = await subjectAPI.getSubjects()
+        const totalSubjects = subjectResponse.pagination ? subjectResponse.pagination.totalSubjects : 0
+        
+        setStatistics({
+          totalFaculties,
+          totalSubjects,
+          totalUsersCreatedByYou: adminStats.createdUsers + adminStats.createdAdmins
+        })
+      } catch (err) {
+        console.error("Error fetching statistics:", err)
+        setError("Failed to load statistics")
+      } finally {
+        setStatsLoading(false)
+      }
+    }
+    
+    fetchStatistics()
+  }, [user])
 
   const handleConfirmLogout = async () => {
     setIsLoading(true)
@@ -144,37 +189,43 @@ const Dashboard = () => {
           <h2 className="text-xl font-semibold mb-6 text-white">
             System Overview
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-4 rounded-lg bg-gray-700">
-              <div className="flex items-center">
-                <Users className="w-8 h-8 mr-3 text-blue-400" />
-                <div>
-                  <p className="text-sm text-gray-400">Total Faculties</p>
-                  <p className="text-2xl font-bold text-white">24</p>
+          {statsLoading ? (
+            <div className="flex items-center justify-center h-24">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-4 rounded-lg bg-gray-700">
+                <div className="flex items-center">
+                  <Users className="w-8 h-8 mr-3 text-blue-400" />
+                  <div>
+                    <p className="text-sm text-gray-400">Total Faculties</p>
+                    <p className="text-2xl font-bold text-white">{statistics.totalFaculties}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-4 rounded-lg bg-gray-700">
+                <div className="flex items-center">
+                  <BookOpen className="w-8 h-8 mr-3 text-green-400" />
+                  <div>
+                    <p className="text-sm text-gray-400">Total Subjects</p>
+                    <p className="text-2xl font-bold text-white">{statistics.totalSubjects}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-4 rounded-lg bg-gray-700">
+                <div className="flex items-center">
+                  <ShieldCheckIcon className="w-8 h-8 mr-3 text-purple-400" />
+                  <div>
+                    <p className="text-sm text-gray-400">Total Users created by you</p>
+                    <p className="text-2xl font-bold text-white">{statistics.totalUsersCreatedByYou}</p>
+                  </div>
                 </div>
               </div>
             </div>
-            
-            <div className="p-4 rounded-lg bg-gray-700">
-              <div className="flex items-center">
-                <BookOpen className="w-8 h-8 mr-3 text-green-400" />
-                <div>
-                  <p className="text-sm text-gray-400">Total Subjects</p>
-                  <p className="text-2xl font-bold text-white">68</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="p-4 rounded-lg bg-gray-700">
-              <div className="flex items-center">
-                <ShieldCheckIcon className="w-8 h-8 mr-3 text-purple-400" />
-                <div>
-                  <p className="text-sm text-gray-400">Total Users created by you</p>
-                  <p className="text-2xl font-bold text-white">5</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -256,4 +307,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard;
+export default Dashboard
