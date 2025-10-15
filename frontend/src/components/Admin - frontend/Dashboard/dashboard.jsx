@@ -37,13 +37,13 @@ const Dashboard = () => {
     {
       name: "Faculty Management",
       icon: Users,
-      description: "Manage faculty profiles",
+      description: "Manage faculties in your college ",
       url: "/admin-dashboard/faculty-management",
     },
     {
-      name: "Admin Management",
+      name: "User Management",
       icon: ShieldCheckIcon,
-      description: "Manage administrators",
+      description: "Manage admins and Faculties accounts",
       url: "/admin-dashboard/admin-hierarchy",
     },
   ]
