@@ -18,7 +18,7 @@ import { toast } from 'react-hot-toast';
 import { pdfReportsApi } from '../../api/pdfReports';
 import EnhancedSubjectNameInput from './ReportGeneration/EnhancedSubjectNameInput';
 import FacultyNameInput from './ReportGeneration/FacultyNameInput';
-
+import ClassAdvisorDropdown from './ReportGeneration/ClassAdvisorDropdown';
 
 // Initial state for the form
 const initialFormState = {
@@ -470,14 +470,11 @@ function ReportGenerationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Class Advisor Name *
                 </label>
-                <input
-                  type="text"
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.classAdvisorName ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                  placeholder="Enter class advisor's name"
+                <ClassAdvisorDropdown
                   value={departmentInfo.classAdvisorName}
-                  onChange={(e) => handleDepartmentInfoChange('classAdvisorName', e.target.value)}
+                  onChange={handleDepartmentInfoChange}
+                  error={errors.classAdvisorName}
+                  department={departmentInfo.department}
                 />
                 {errors.classAdvisorName && (
                   <p className="mt-1 text-sm text-red-600 flex items-center">
@@ -560,6 +557,7 @@ function ReportGenerationPage() {
                           value={facultyAssignments[subjectCode] || ''}
                           onChange={handleFacultyAssignmentChange}
                           error={errors[`faculty_${subjectCode}`]}
+                          department={departmentInfo.department}
                         />
                       </td>
                     </tr>

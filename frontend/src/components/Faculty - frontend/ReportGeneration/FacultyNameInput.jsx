@@ -1,7 +1,22 @@
 import React from 'react';
 import { User, AlertCircle } from 'lucide-react';
+import FacultyDropdown from './FacultyDropdown';
 
-const FacultyNameInput = ({ subjectCode, value, onChange, error }) => {
+const FacultyNameInput = ({ subjectCode, value, onChange, error, department }) => {
+  // If department is provided, use the dropdown component
+  if (department) {
+    return (
+      <FacultyDropdown
+        subjectCode={subjectCode}
+        value={value}
+        onChange={onChange}
+        error={error}
+        department={department}
+      />
+    );
+  }
+
+  // Fallback to text input if no department is provided
   return (
     <div>
       <div className="relative">
@@ -25,6 +40,5 @@ const FacultyNameInput = ({ subjectCode, value, onChange, error }) => {
     </div>
   );
 };
-
 
 export default FacultyNameInput;
