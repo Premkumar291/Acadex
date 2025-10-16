@@ -98,11 +98,11 @@ const SubjectManagement = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this subject?")) {
       try {
-        await subjectAPI.deleteSubject(id)
-        toast.success("Subject deleted successfully!")
-        fetchSubjects()
-      } catch {
-        toast.error("Failed to delete subject")
+        const response = await subjectAPI.deleteSubject(id);
+        toast.success(response.message || "Subject deleted successfully!");
+        fetchSubjects();
+      } catch (error) {
+        toast.error(error.message || "Failed to delete subject");
       }
     }
   }

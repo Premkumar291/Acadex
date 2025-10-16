@@ -151,14 +151,14 @@ export const getSubjectById = async (req, res) => {
         const { id } = req.params;
         console.log('Fetching subject with ID:', id);
 
-        const subject = await Subject.findById(id)
+        const subject = await Subject.findOne({ _id: id, isActive: true })
             .populate('createdBy', 'name email')
             .lean();
         
         console.log('Found subject:', subject);
 
         if (!subject) {
-            console.log('Subject not found');
+            console.log('Subject not found or inactive');
             return res.status(404).json({
                 success: false,
                 message: 'Subject not found'
@@ -203,8 +203,8 @@ export const updateSubject = async (req, res) => {
             updates.subjectCode = updates.subjectCode.toUpperCase();
         }
 
-        const subject = await Subject.findByIdAndUpdate(
-            id,
+        const subject = await Subject.findOneAndUpdate(
+            { _id: id, isActive: true },
             updates,
             { new: true, runValidators: true }
         ).populate('createdBy', 'name email');
@@ -212,7 +212,7 @@ export const updateSubject = async (req, res) => {
         console.log('Updated subject:', subject);
 
         if (!subject) {
-            console.log('Subject not found');
+            console.log('Subject not found or inactive');
             return res.status(404).json({
                 success: false,
                 message: 'Subject not found'
@@ -235,16 +235,12 @@ export const updateSubject = async (req, res) => {
     }
 };
 
-// Delete subject (soft delete)
+// Delete subject
 export const deleteSubject = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const subject = await Subject.findByIdAndUpdate(
-            id,
-            { isActive: false },
-            { new: true }
-        );
+        const subject = await Subject.findByIdAndDelete(id);
 
         if (!subject) {
             return res.status(404).json({
@@ -258,6 +254,8 @@ export const deleteSubject = async (req, res) => {
             message: 'Subject deleted successfully'
         });
     } catch (error) {
+        console.error('Error deleting subject:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).json({
             success: false,
             message: 'Error deleting subject',

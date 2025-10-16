@@ -34,12 +34,16 @@ const subjectSchema = new mongoose.Schema({
     subjectType: {
         type: String,
         enum: ['Theory', 'Practical', 'Inbuilt', 'Project'],
-        default: 'Theory'
+        default: ''
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     }
 }, {
     timestamps: true
