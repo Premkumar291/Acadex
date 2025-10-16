@@ -113,7 +113,7 @@ function ReportGenerationPage() {
       
       reportData.analysisData.subjectCodes.forEach(subjectCode => {
         initialAssignments[subjectCode] = '';
-        initialSubjectNames[subjectCode] = subjectCode; // Use subject code as default name
+        initialSubjectNames[subjectCode] = ''; // Use empty string as default name
       });
       
       // Dispatch initialization action
@@ -142,8 +142,8 @@ function ReportGenerationPage() {
         if (parsedData.analysisData && parsedData.analysisData.subjectCodes) {
           parsedData.analysisData.subjectCodes.forEach(subjectCode => {
             initialAssignments[subjectCode] = '';
-            // Initialize with subject code as default, will be updated by EnhancedSubjectNameInput
-            initialSubjectNames[subjectCode] = subjectCode;
+            // Initialize with empty string as default, will be updated by EnhancedSubjectNameInput
+            initialSubjectNames[subjectCode] = '';
           });
         }
         
@@ -264,7 +264,7 @@ function ReportGenerationPage() {
         
         // Faculty assignments and subject names - ensure objects exist
         facultyAssignments: facultyAssignments || {},
-        subjectNames: subjectNames || {}, // This will now contain either DB names or user-entered names
+        subjectNames: subjectNames || {}, // This will now contain either DB names or dash icons
         
         // Optional fields with defaults
         facultyId: null, // Will use req.user?.id from backend
@@ -545,7 +545,7 @@ function ReportGenerationPage() {
                           {subjectCode}
                         </div>
                       </td>
-                                            <td className="px-6 py-4">
+                      <td className="px-6 py-4">
                         <EnhancedSubjectNameInput
                           subjectCode={subjectCode}
                           value={subjectNames[subjectCode] || ''}

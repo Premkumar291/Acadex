@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Book, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { Book, AlertCircle, CheckCircle, Loader, Minus } from 'lucide-react';
 import { subjectAPI } from '../../../api/subjects';
 
 const EnhancedSubjectNameInput = ({ subjectCode, value, onChange, error, department }) => {
@@ -14,7 +14,7 @@ const EnhancedSubjectNameInput = ({ subjectCode, value, onChange, error, departm
       if (!subjectCode) return;
       
       // If we already have a value that's not the subject code itself, don't override it
-      if (value && value !== subjectCode) {
+      if (value && value !== subjectCode && value !== '--') {
         // Check if this value matches a database subject
         setIsFetching(true);
         setFetchError(null);
@@ -120,15 +120,18 @@ const EnhancedSubjectNameInput = ({ subjectCode, value, onChange, error, departm
           onChange(subjectCode, exactMatch.subjectName);
           setShowInput(false);
         } else {
-          // If no match found in database, show input field
+          // If no match found in database, use dash icon as default value
           setDbSubjectName(null);
-          setShowInput(true);
+          onChange(subjectCode, '--'); // Set default value to dash icon
+          setShowInput(false); // Hide input field and show readonly display
         }
       } catch (err) {
         console.error('Error fetching subject name:', err);
         setFetchError('Failed to fetch subject name');
         setDbSubjectName(null);
-        setShowInput(true);
+        // Even on error, use dash icon as default value
+        onChange(subjectCode, '--');
+        setShowInput(false); // Hide input field and show readonly display
       } finally {
         setIsFetching(false);
       }
@@ -142,7 +145,7 @@ const EnhancedSubjectNameInput = ({ subjectCode, value, onChange, error, departm
   };
 
   // If we have a database subject name and it matches the current value, show a readonly field
-  const shouldShowReadOnly = dbSubjectName && (value === dbSubjectName) && !showInput;
+  const shouldShowReadOnly = !showInput;
 
   if (isFetching) {
     return (
@@ -169,22 +172,24 @@ const EnhancedSubjectNameInput = ({ subjectCode, value, onChange, error, departm
   }
 
   if (shouldShowReadOnly) {
+    // Show readonly display with either database name or dash icon
+    const displayValue = dbSubjectName || value || '--';
+    
     return (
       <div className="relative">
         <div className="flex items-center">
-          <Book className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-500" />
-          <div className="w-full pl-10 pr-3 py-2 text-sm border border-green-300 rounded bg-green-50 text-gray-800">
-            {dbSubjectName}
+          {dbSubjectName ? (
+            <Book className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-500" />
+          ) : (
+            <Minus className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          )}
+          <div className="w-full pl-10 pr-3 py-2 text-sm border rounded bg-gray-50 text-gray-800">
+            {displayValue}
           </div>
-          <CheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-500" />
+          {dbSubjectName && (
+            <CheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-500" />
+          )}
         </div>
-        <button
-          type="button"
-          onClick={() => setShowInput(true)}
-          className="mt-1 text-xs text-blue-600 hover:text-blue-800"
-        >
-          Edit subject name
-        </button>
         {error && (
           <p className="mt-1 text-sm text-red-600 flex items-center">
             <AlertCircle className="h-4 w-4 mr-1" />
@@ -215,18 +220,6 @@ const EnhancedSubjectNameInput = ({ subjectCode, value, onChange, error, departm
               error ? 'border-red-300' : 'border-gray-300'
             }`}
           />
-          {dbSubjectName && (
-            <button
-              type="button"
-              onClick={() => {
-                onChange(subjectCode, dbSubjectName);
-                setShowInput(false);
-              }}
-              className="ml-2 px-2 py-1 text-xs bg-green-100 text-green-800 rounded hover:bg-green-200"
-            >
-              Use Default
-            </button>
-          )}
         </div>
       </div>
       {error && (
