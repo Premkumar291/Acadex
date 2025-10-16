@@ -3,16 +3,14 @@ import { User, AlertCircle, Loader } from 'lucide-react';
 import { facultyAPI } from '../../../api/faculty';
 import { getCurrentUserCollegeName } from '../../../utils/userUtils';
 
-const FacultyDropdown = ({ subjectCode, value, onChange, error, department }) => {
+const FacultyDropdown = ({ subjectCode, value, onChange, error }) => {
   const [facultyList, setFacultyList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState(null);
 
-  // Fetch faculty members when department changes
+  // Fetch all faculty members (no department filter)
   useEffect(() => {
     const fetchFaculty = async () => {
-      if (!department) return;
-      
       setLoading(true);
       setFetchError(null);
       
@@ -20,8 +18,9 @@ const FacultyDropdown = ({ subjectCode, value, onChange, error, department }) =>
         // Get current user's college name (for future use or debugging)
         await getCurrentUserCollegeName();
         
-        // Fetch faculty by department (backend will automatically filter by college)
-        const response = await facultyAPI.getFacultyByDepartment(department);
+        // Fetch all faculty (no department filter)
+        // The backend will automatically filter by college
+        const response = await facultyAPI.getFaculty();
         
         if (response.success && response.data) {
           setFacultyList(response.data);
@@ -38,13 +37,49 @@ const FacultyDropdown = ({ subjectCode, value, onChange, error, department }) =>
     };
 
     fetchFaculty();
-  }, [department]);
+  }, []); // Remove department dependency
 
   const handleChange = (e) => {
-    const selectedValue = e.target.value;
-    // If "No Staff" is selected, pass dash symbol
-    const facultyName = selectedValue === '-' ? '-' : selectedValue;
-    onChange(subjectCode, facultyName);
+    const selectedFacultyId = e.target.value;
+    
+    // If "No Staff" is selected, pass dash symbol for both name and department
+    if (selectedFacultyId === 'NO_STAFF') {
+      onChange(subjectCode, '-', '-'); // Pass dash for both name and department
+      return;
+    }
+    
+    // If clearing selection
+    if (selectedFacultyId === '') {
+      onChange(subjectCode, '', ''); // Pass empty strings
+      return;
+    }
+    
+    // Find the selected faculty member
+    const selectedFaculty = facultyList.find(faculty => faculty._id === selectedFacultyId);
+    
+    if (selectedFaculty) {
+      // Pass the faculty name with title and initials, and the department
+      onChange(subjectCode, `${selectedFaculty.title} ${selectedFaculty.name} (${selectedFaculty.initials})`, selectedFaculty.department);
+    } else {
+      // Clear selection
+      onChange(subjectCode, '', '');
+    }
+  };
+
+  // Find the faculty ID that matches the current value (display name)
+  const getSelectedFacultyId = () => {
+    // Special case for "No Staff"
+    if (value === '-') return 'NO_STAFF';
+    
+    // If no value or empty value
+    if (!value) return '';
+    
+    // Find faculty by matching the display name
+    const matchedFaculty = facultyList.find(faculty => 
+      `${faculty.title} ${faculty.name} (${faculty.initials})` === value
+    );
+    
+    return matchedFaculty ? matchedFaculty._id : '';
   };
 
   if (loading) {
@@ -74,17 +109,17 @@ const FacultyDropdown = ({ subjectCode, value, onChange, error, department }) =>
       <div className="relative">
         <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
         <select
-          value={value || ''}
+          value={getSelectedFacultyId()}
           onChange={handleChange}
           className={`w-full pl-10 pr-3 py-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
             error ? 'border-red-300' : 'border-gray-300'
           }`}
         >
           <option value="">Select faculty member...</option>
-          <option value="-">No Staff</option>
+          <option value="NO_STAFF">No Staff</option>
           {facultyList.map((faculty) => (
-            <option key={faculty._id} value={faculty.name}>
-              {faculty.name}
+            <option key={faculty._id} value={faculty._id}>
+              {faculty.title} {faculty.name} ({faculty.initials}) - {faculty.department}
             </option>
           ))}
         </select>

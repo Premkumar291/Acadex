@@ -31,6 +31,7 @@ const initialFormState = {
     monthsAndYear: ''
   },
   facultyAssignments: {},
+  facultyDepartments: {}, // New state to store faculty departments
   subjectNames: {},
   errors: {},
   ui: {
@@ -57,6 +58,13 @@ function formReducer(state, action) {
       return {
         ...state,
         facultyAssignments: { ...state.facultyAssignments, [action.subjectCode]: action.value },
+        errors: { ...state.errors, [`faculty_${action.subjectCode}`]: '' }
+      };
+    
+    case 'UPDATE_FACULTY_DEPARTMENT':
+      return {
+        ...state,
+        facultyDepartments: { ...state.facultyDepartments, [action.subjectCode]: action.value },
         errors: { ...state.errors, [`faculty_${action.subjectCode}`]: '' }
       };
     
@@ -87,6 +95,7 @@ function formReducer(state, action) {
       return {
         ...state,
         facultyAssignments: { ...state.facultyAssignments, ...action.facultyAssignments },
+        facultyDepartments: { ...state.facultyDepartments, ...action.facultyDepartments },
         subjectNames: { ...state.subjectNames, ...action.subjectNames },
         departmentInfo: { ...state.departmentInfo, semester: action.semester }
       };
@@ -101,7 +110,7 @@ function ReportGenerationPage() {
   const navigate = useNavigate();
   const [state, dispatch] = useReducer(formReducer, initialFormState);
   
-  const { reportData, departmentInfo, facultyAssignments, subjectNames, errors, ui } = state;
+  const { reportData, departmentInfo, facultyAssignments, facultyDepartments, subjectNames, errors, ui } = state;
   const { loading, showPreview, generatedReport } = ui;
 
   // Effect to initialize subject names when reportData is loaded
@@ -109,10 +118,12 @@ function ReportGenerationPage() {
     if (reportData && reportData.analysisData && reportData.analysisData.subjectCodes) {
       // Initialize faculty assignments and subject names
       const initialAssignments = {};
+      const initialDepartments = {};
       const initialSubjectNames = {};
       
       reportData.analysisData.subjectCodes.forEach(subjectCode => {
         initialAssignments[subjectCode] = '';
+        initialDepartments[subjectCode] = '';
         initialSubjectNames[subjectCode] = ''; // Use empty string as default name
       });
       
@@ -120,6 +131,7 @@ function ReportGenerationPage() {
       dispatch({
         type: 'INITIALIZE_SUBJECTS',
         facultyAssignments: initialAssignments,
+        facultyDepartments: initialDepartments,
         subjectNames: initialSubjectNames,
         semester: reportData.semester || ''
       });
@@ -137,11 +149,13 @@ function ReportGenerationPage() {
 
         // Initialize faculty assignments and subject names
         const initialAssignments = {};
+        const initialDepartments = {};
         const initialSubjectNames = {};
         
         if (parsedData.analysisData && parsedData.analysisData.subjectCodes) {
           parsedData.analysisData.subjectCodes.forEach(subjectCode => {
             initialAssignments[subjectCode] = '';
+            initialDepartments[subjectCode] = '';
             // Initialize with empty string as default, will be updated by EnhancedSubjectNameInput
             initialSubjectNames[subjectCode] = '';
           });
@@ -150,6 +164,7 @@ function ReportGenerationPage() {
         dispatch({
           type: 'INITIALIZE_SUBJECTS',
           facultyAssignments: initialAssignments,
+          facultyDepartments: initialDepartments,
           subjectNames: initialSubjectNames,
           semester: parsedData.semester || ''
         });
@@ -174,20 +189,44 @@ function ReportGenerationPage() {
     });
   }, []);
 
-  const handleFacultyAssignmentChange = useCallback((subjectCode, facultyName) => {
+  const handleFacultyAssignmentChange = useCallback((subjectCode, facultyName, facultyDepartment) => {
     dispatch({
       type: 'UPDATE_FACULTY_ASSIGNMENT',
       subjectCode,
       value: facultyName
     });
+    
+    // Store faculty department
+    dispatch({
+      type: 'UPDATE_FACULTY_DEPARTMENT',
+      subjectCode,
+      value: facultyDepartment || ''
+    });
+    
+    // If facultyDepartment is provided, you can use it as needed
+    // For example, you might want to store it in state or use it for other purposes
+    if (facultyDepartment) {
+      // Handle faculty department if needed
+      console.log(`Faculty ${facultyName} is from department: ${facultyDepartment}`);
+    }
   }, []);
 
   const handleDepartmentInfoChange = useCallback((field, value) => {
-    dispatch({
-      type: 'UPDATE_DEPARTMENT_INFO',
-      field,
-      value
-    });
+    // Special handling for class advisor name to maintain consistency
+    if (field === 'classAdvisorName') {
+      // For now, we'll just store the name part and handle department separately if needed
+      dispatch({
+        type: 'UPDATE_DEPARTMENT_INFO',
+        field,
+        value
+      });
+    } else {
+      dispatch({
+        type: 'UPDATE_DEPARTMENT_INFO',
+        field,
+        value
+      });
+    }
   }, []);
 
   const validateForm = () => {
@@ -264,6 +303,7 @@ function ReportGenerationPage() {
         
         // Faculty assignments and subject names - ensure objects exist
         facultyAssignments: facultyAssignments || {},
+        facultyDepartments: facultyDepartments || {}, // Include faculty departments
         subjectNames: subjectNames || {}, // This will now contain either DB names or dash icons
         
         // Optional fields with defaults
@@ -472,9 +512,16 @@ function ReportGenerationPage() {
                 </label>
                 <ClassAdvisorDropdown
                   value={departmentInfo.classAdvisorName}
-                  onChange={handleDepartmentInfoChange}
+                  onChange={(field, value, department) => {
+                    // Handle the class advisor name update
+                    handleDepartmentInfoChange(field, value);
+                    
+                    // If department is provided, you might want to store it
+                    if (department) {
+                      console.log(`Class advisor is from department: ${department}`);
+                    }
+                  }}
                   error={errors.classAdvisorName}
-                  department={departmentInfo.department}
                 />
                 {errors.classAdvisorName && (
                   <p className="mt-1 text-sm text-red-600 flex items-center">
@@ -557,8 +604,7 @@ function ReportGenerationPage() {
                           value={facultyAssignments[subjectCode] || ''}
                           onChange={handleFacultyAssignmentChange}
                           error={errors[`faculty_${subjectCode}`]}
-                          department={departmentInfo.department}
-                        />
+                        /> 
                       </td>
                     </tr>
                   ))}
