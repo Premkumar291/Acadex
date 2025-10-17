@@ -46,7 +46,7 @@ export const subjectAPI = {
             const response = await api.post('/', subjectData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(error.response?.data?.message || error.response?.data || error.message || 'Failed to create subject');
         }
     },
 
@@ -56,7 +56,8 @@ export const subjectAPI = {
             const response = await api.get('/', { params });
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            console.error('Error in getSubjects:', error);
+            throw new Error(error.response?.data?.message || error.response?.data || error.message || 'Failed to fetch subjects');
         }
     },
 
@@ -66,7 +67,7 @@ export const subjectAPI = {
             const response = await api.get(`/${id}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(error.response?.data?.message || error.response?.data || error.message || 'Failed to fetch subject');
         }
     },
 
@@ -76,7 +77,7 @@ export const subjectAPI = {
             const response = await api.put(`/${id}`, updateData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(error.response?.data?.message || error.response?.data || error.message || 'Failed to update subject');
         }
     },
 
@@ -86,17 +87,21 @@ export const subjectAPI = {
             const response = await api.delete(`/${id}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(error.response?.data?.message || error.response?.data || error.message || 'Failed to delete subject');
         }
     },
 
     // Get subjects by department
     getSubjectsByDepartment: async (department) => {
         try {
-            const response = await api.get(`/department/${department}`);
+            if (!department) {
+                throw new Error('Department is required');
+            }
+            const response = await api.get(`/department/${encodeURIComponent(department)}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            console.error('Error in getSubjectsByDepartment:', error);
+            throw new Error(error.response?.data?.message || error.response?.data || error.message || `Failed to fetch subjects for department: ${department}`);
         }
     },
 

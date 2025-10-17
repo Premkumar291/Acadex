@@ -138,7 +138,7 @@ export const createFaculty = async (req, res) => {
     }
 };
 
-// Get all faculty with pagination and filters
+// Get all faculty with pagination and filters (accessible to both admin and faculty users)
 export const getFaculty = async (req, res) => {
     try {
         const { 
@@ -148,27 +148,27 @@ export const getFaculty = async (req, res) => {
             search 
         } = req.query;
         
-        // Get the admin user ID from the request
+        // Get the user ID from the request
         const userId = req.user.userId || req.user._id || req.userId;
 
         console.log('Faculty API called with params:', { page, limit, department, search });
         console.log('User ID from token:', userId);
 
-        // Get the admin user to retrieve their college name
-        const adminUser = await User.findById(userId);
-        if (!adminUser) {
+        // Get the user to retrieve their college name
+        const user = await User.findById(userId);
+        if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'Admin user not found'
+                message: 'User not found'
             });
         }
 
-        // Get the college name from the admin user
-        const collegeName = await adminUser.getCollegeName();
+        // Get the college name from the user
+        const collegeName = await user.getCollegeName();
         if (!collegeName) {
             return res.status(400).json({
                 success: false,
-                message: 'Admin user does not have a college name assigned'
+                message: 'User does not have a college name assigned'
             });
         }
 
@@ -237,29 +237,29 @@ export const getFaculty = async (req, res) => {
     }
 };
 
-// Get faculty by ID
+// Get faculty by ID (accessible to both admin and faculty users)
 export const getFacultyById = async (req, res) => {
     try {
         const { id } = req.params;
         
-        // Get the admin user ID from the request
+        // Get the user ID from the request
         const userId = req.user.userId || req.user._id || req.userId;
 
-        // Get the admin user to retrieve their college name
-        const adminUser = await User.findById(userId);
-        if (!adminUser) {
+        // Get the user to retrieve their college name
+        const user = await User.findById(userId);
+        if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'Admin user not found'
+                message: 'User not found'
             });
         }
 
-        // Get the college name from the admin user
-        const adminCollegeName = await adminUser.getCollegeName();
-        if (!adminCollegeName) {
+        // Get the college name from the user
+        const userCollegeName = await user.getCollegeName();
+        if (!userCollegeName) {
             return res.status(400).json({
                 success: false,
-                message: 'Admin user does not have a college name assigned'
+                message: 'User does not have a college name assigned'
             });
         }
 
@@ -273,8 +273,8 @@ export const getFacultyById = async (req, res) => {
             });
         }
 
-        // Check if the faculty belongs to the same college as the admin
-        if (faculty.collegeName !== adminCollegeName) {
+        // Check if the faculty belongs to the same college as the user
+        if (faculty.collegeName !== userCollegeName) {
             return res.status(403).json({
                 success: false,
                 message: 'You do not have permission to access this faculty member'
@@ -451,29 +451,29 @@ export const deleteFaculty = async (req, res) => {
     }
 };
 
-// Get faculty by department
+// Get faculty by department (accessible to both admin and faculty users)
 export const getFacultyByDepartment = async (req, res) => {
     try {
         const { department } = req.params;
         
-        // Get the admin user ID from the request
+        // Get the user ID from the request
         const userId = req.user.userId || req.user._id || req.userId;
 
-        // Get the admin user to retrieve their college name
-        const adminUser = await User.findById(userId);
-        if (!adminUser) {
+        // Get the user to retrieve their college name
+        const user = await User.findById(userId);
+        if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'Admin user not found'
+                message: 'User not found'
             });
         }
 
-        // Get the college name from the admin user
-        const collegeName = await adminUser.getCollegeName();
+        // Get the college name from the user
+        const collegeName = await user.getCollegeName();
         if (!collegeName) {
             return res.status(400).json({
                 success: false,
-                message: 'Admin user does not have a college name assigned'
+                message: 'User does not have a college name assigned'
             });
         }
 

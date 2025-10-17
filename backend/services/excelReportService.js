@@ -912,6 +912,8 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       if (i < (reportData.subjectResults || []).length) {
         const subject = reportData.subjectResults[i];
         const facultyName = reportData.facultyAssignments?.[subject.subjectCode] || '';
+        // Use individual faculty department if available, otherwise fallback to overall department
+        const facultyDepartment = reportData.facultyDepartments?.[subject.subjectCode] || reportData.facultyDepartment || reportData.department || '';
         
         // Course Code
         row.getCell(2).value = subject.subjectCode || '';
@@ -923,7 +925,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
         row.getCell(4).value = facultyName;
         
         // Department (editable)
-        row.getCell(5).value = reportData.facultyDepartment || reportData.department || '';
+        row.getCell(5).value = facultyDepartment; // Use faculty's individual department
         
         // Appeared
         row.getCell(6).value = subject.totalStudents || '';
@@ -1196,11 +1198,13 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       if (i < (reportData.subjectResults || []).length) {
         const subject = reportData.subjectResults[i];
         const facultyName = reportData.facultyAssignments?.[subject.subjectCode] || '';
+        // Use individual faculty department if available, otherwise fallback to overall department
+        const facultyDepartment = reportData.facultyDepartments?.[subject.subjectCode] || reportData.department || '';
         
         row.getCell(2).value = subject.subjectCode;
         row.getCell(3).value = subject.subjectName || subject.subjectCode;
         row.getCell(4).value = facultyName;
-        row.getCell(5).value = reportData.department;
+        row.getCell(5).value = facultyDepartment; // Use faculty's individual department
         row.getCell(6).value = subject.totalStudents;
         row.getCell(7).value = subject.passedStudents;
         row.getCell(8).value = ''; // PASSED AFTER - leave empty

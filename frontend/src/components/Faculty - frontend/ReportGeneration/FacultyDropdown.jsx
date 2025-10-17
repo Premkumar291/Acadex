@@ -29,7 +29,14 @@ const FacultyDropdown = ({ subjectCode, value, onChange, error }) => {
         }
       } catch (err) {
         console.error('Error fetching faculty:', err);
-        setFetchError('Failed to fetch faculty members');
+        // Provide more descriptive error messages
+        if (err.message && err.message.includes('Access denied')) {
+          setFetchError('You do not have permission to view faculty information. Please contact your administrator.');
+        } else if (err.message) {
+          setFetchError(`Failed to fetch faculty members: ${err.message}`);
+        } else {
+          setFetchError('Failed to fetch faculty members. Please try again later.');
+        }
         setFacultyList([]);
       } finally {
         setLoading(false);

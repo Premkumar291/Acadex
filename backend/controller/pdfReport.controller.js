@@ -91,6 +91,7 @@ export class PDFReportController {
         monthsAndYear,    // Added
         analysisData,
         facultyAssignments,
+        facultyDepartments, // Added to capture individual faculty departments
         subjectNames, // Added
         instituteName,
         instituteLocation,
@@ -100,7 +101,7 @@ export class PDFReportController {
       const processedData = PDFReportController.processAnalysisData(analysisData || { students: [], subjectCodes: [] }, subjectNames);
       
       const reportData = {
-        instituteName: instituteName || 'INSTITUTE OF ROAD AND TRANSPORT TECHNOLOGY',
+        instituteName: instituteName || 'Government Engineering College, Erode',
         instituteLocation: instituteLocation || 'ERODE - 638 316',
         department: department,
         semester: semester,
@@ -109,6 +110,7 @@ export class PDFReportController {
         monthsAndYear: monthsAndYear,
         reportGeneratedAt: reportGeneratedAt || new Date().toLocaleDateString('en-GB'),
         facultyAssignments: facultyAssignments || {},
+        facultyDepartments: facultyDepartments || {}, // Include faculty departments in report data
         subjectNames: subjectNames || {},
         ...processedData
       };

@@ -24,12 +24,14 @@ const EnhancedSubjectNameInput = ({ subjectCode, value, onChange, error, departm
           let exactMatch = null;
           
           try {
-            const departmentResponse = await subjectAPI.getSubjectsByDepartment(department);
-            
-            if (departmentResponse.success && departmentResponse.data && departmentResponse.data.length > 0) {
-              exactMatch = departmentResponse.data.find(subject => 
-                subject.subjectCode === subjectCode
-              );
+            if (department) {
+              const departmentResponse = await subjectAPI.getSubjectsByDepartment(department);
+              
+              if (departmentResponse.success && departmentResponse.data && departmentResponse.data.length > 0) {
+                exactMatch = departmentResponse.data.find(subject => 
+                  subject.subjectCode === subjectCode
+                );
+              }
             }
           } catch (deptError) {
             console.warn('Department-specific search failed:', deptError);
@@ -68,7 +70,7 @@ const EnhancedSubjectNameInput = ({ subjectCode, value, onChange, error, departm
           }
         } catch (err) {
           console.error('Error checking subject name:', err);
-          setFetchError('Failed to verify subject name');
+          setFetchError(err.message || 'Failed to verify subject name');
           setDbSubjectName(null);
           setShowInput(true);
         } finally {
@@ -87,12 +89,14 @@ const EnhancedSubjectNameInput = ({ subjectCode, value, onChange, error, departm
         let exactMatch = null;
         
         try {
-          const departmentResponse = await subjectAPI.getSubjectsByDepartment(department);
-          
-          if (departmentResponse.success && departmentResponse.data && departmentResponse.data.length > 0) {
-            exactMatch = departmentResponse.data.find(subject => 
-              subject.subjectCode === subjectCode
-            );
+          if (department) {
+            const departmentResponse = await subjectAPI.getSubjectsByDepartment(department);
+            
+            if (departmentResponse.success && departmentResponse.data && departmentResponse.data.length > 0) {
+              exactMatch = departmentResponse.data.find(subject => 
+                subject.subjectCode === subjectCode
+              );
+            }
           }
         } catch (deptError) {
           console.warn('Department-specific search failed:', deptError);
@@ -127,7 +131,7 @@ const EnhancedSubjectNameInput = ({ subjectCode, value, onChange, error, departm
         }
       } catch (err) {
         console.error('Error fetching subject name:', err);
-        setFetchError('Failed to fetch subject name');
+        setFetchError(err.message || 'Failed to fetch subject name');
         setDbSubjectName(null);
         // Even on error, use dash icon as default value
         onChange(subjectCode, '--');
