@@ -2,7 +2,7 @@ import { Users, BookOpen, TrendingUp, Award, ArrowLeft, Zap, RefreshCw, UserRoun
 import { useEffect, useState, Fragment } from "react"
 import { useSearchParams, useNavigate, Link } from "react-router-dom"
 import { toast } from "react-hot-toast"
-
+import { motion } from "framer-motion"
 
 // Internal dependencies
 import { analyzePDFWithPdfCo } from "@/api/analyzePdfCo"
@@ -18,27 +18,37 @@ export default function ResultAnalysis() {
   };
 
   const SubjectPerformanceItem = ({ subject }) => (
-    <div className="flex flex-col p-4 bg-gray-50 rounded-lg hover:shadow-md transition-shadow duration-200">
-      <div className="flex items-center justify-between mb-2">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-col p-5 bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl border border-gray-700 hover:border-purple-500 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300"
+    >
+      <div className="flex items-center justify-between mb-3">
         <div className="flex-1">
-          <h3 className="font-semibold text-gray-900 text-lg">{subject.subject}</h3>
-          <p className="text-sm text-gray-600">
-            <span className="font-medium">{subject.passedStudents}</span>/<span>{subject.totalStudents}</span> students passed
+          <h3 className="font-bold text-white text-lg flex items-center">
+            <BookOpen className="w-4 h-4 mr-2 text-purple-400" />
+            {subject.subject}
+          </h3>
+          <p className="text-sm text-gray-400">
+            <span className="font-semibold text-green-400">{subject.passedStudents}</span>/<span className="text-gray-300">{subject.totalStudents}</span> students passed
             {subject.emptyGrades > 0 && (
-              <span className="ml-2 text-amber-600">
+              <span className="ml-2 text-amber-400">
                 ({subject.emptyGrades} students with empty grades)
               </span>
             )}
           </p>
         </div>
         <div className="flex items-center space-x-4">
-          <div className="w-32 bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
-            <div
-              className={`h-3 rounded-full ${getPassPercentageColor(subject.passPercentage)}`}
-              style={{ width: `${subject.passPercentage}%`, transition: 'width 1s ease-in-out' }}
-            ></div>
+          <div className="w-32 bg-gray-700 rounded-full h-2.5 overflow-hidden shadow-inner">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${subject.passPercentage}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className={`h-2.5 rounded-full ${getPassPercentageColor(subject.passPercentage)}`}
+            />
           </div>
-          <span className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-bold ${getPassPercentageColor(subject.passPercentage)} text-white shadow-sm`}>
+          <span className={`inline-flex items-center rounded-full px-3 py-1.5 text-sm font-bold ${getPassPercentageColor(subject.passPercentage)} text-white shadow-lg`}>
             {subject.passPercentage.toFixed(1)}%
           </span>
         </div>
@@ -47,24 +57,24 @@ export default function ResultAnalysis() {
 
       {/* Students with grades section */}
       {subject.studentsWithGrades && subject.studentsWithGrades.length > 0 && (
-        <div className="mt-2 pt-2 border-t border-gray-200">
-          <p className="text-sm font-medium text-gray-700 mb-2">Students with grades:</p>
-          <div className="max-h-40 overflow-y-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-100">
+        <div className="mt-3 pt-3 border-t border-gray-700">
+          <p className="text-sm font-semibold text-gray-300 mb-2">Students with grades:</p>
+          <div className="max-h-40 overflow-y-auto custom-scrollbar">
+            <table className="min-w-full divide-y divide-gray-700">
+              <thead className="bg-gray-800">
                 <tr>
-                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reg No</th>
-                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Reg No</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Name</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Grade</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-gray-900 divide-y divide-gray-700">
                 {subject.studentsWithGrades.map((student, idx) => (
-                  <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-900">{student.regNo}</td>
-                    <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-900">{student.name}</td>
+                  <tr key={idx} className={idx % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800/50'} >
+                    <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-300 font-mono">{student.regNo}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-200">{student.name}</td>
                     <td className="px-3 py-2 whitespace-nowrap text-xs">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${isArrearGrade(student.grade) ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-bold ${isArrearGrade(student.grade) ? 'bg-red-500/20 text-red-400 border border-red-500/50' : 'bg-green-500/20 text-green-400 border border-green-500/50'}`}>
                         {student.grade}
                       </span>
                     </td>
@@ -75,16 +85,26 @@ export default function ResultAnalysis() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
   
   const SummaryStatItem = ({ count, label, bgColor, textColor, labelColor }) => (
-    <div className={`text-center p-5 ${bgColor} rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200`}>
-      <div className={`text-3xl font-bold ${textColor} mb-2`}>
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4 }}
+      className={`text-center p-6 ${bgColor} rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-700 hover:border-purple-500 hover:-translate-y-1`}
+    >
+      <motion.div 
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className={`text-4xl font-black ${textColor} mb-2`}
+      >
         {count}
-      </div>
-      <p className={`text-sm font-medium ${labelColor}`}>{label}</p>
-    </div>
+      </motion.div>
+      <p className={`text-sm font-semibold ${labelColor} uppercase tracking-wide`}>{label}</p>
+    </motion.div>
   );
 
 
@@ -327,10 +347,14 @@ export default function ResultAnalysis() {
 
 
   const LoadingSpinner = ({ message = "Loading analysis data..." }) => (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
-        <p className="mt-2 text-gray-600">{message}</p>
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-16 h-16 border-4 border-purple-500/30 border-t-purple-500 rounded-full mx-auto"
+        />
+        <p className="mt-4 text-gray-300 font-semibold">{message}</p>
       </div>
     </div>
   );
@@ -346,12 +370,18 @@ export default function ResultAnalysis() {
    * Renders the entire Result Analysis Dashboard with all its sections
    */
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Navigation and controls */}
-      <div className="flex justify-between items-center mb-6">
-        <Link to="/faculty-dashboard" className="text-blue-600 hover:text-blue-800 flex items-center">
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Back to Dashboard
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex justify-between items-center mb-8"
+      >
+        <Link to="/faculty-dashboard" className="text-purple-400 hover:text-purple-300 flex items-center group transition-all">
+          <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+          <span className="font-semibold">Back to Dashboard</span>
         </Link>
         <div className="flex gap-3">
           {/* Generate Report Button - only show when we have result data */}
@@ -395,23 +425,27 @@ export default function ResultAnalysis() {
           )}
           <button
             onClick={refreshAnalysis}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center"
+            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all flex items-center shadow-lg hover:shadow-xl font-semibold"
             disabled={pdfCoLoading}
           >
             {pdfCoLoading ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span className="ml-2">Processing...</span>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full mr-2"
+                />
+                <span>Processing...</span>
               </>
             ) : (
               <>
-                <RefreshCw className="h-4 w-4 mr-1" />
+                <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh Analysis
               </>
             )}
           </button>
         </div>
-      </div>
+      </motion.div>
 
 
       {/* Page header */}
@@ -788,6 +822,7 @@ export default function ResultAnalysis() {
           </div>
         </>
       )}
+      </div>
     </div>
   );
 }
