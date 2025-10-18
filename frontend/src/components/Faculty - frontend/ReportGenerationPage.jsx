@@ -565,6 +565,23 @@ function ReportGenerationPage() {
               Please assign a faculty member for each subject detected in the analysis. This information will be included in the institutional report.
             </p>
             
+            {/* Info notice for filtered subjects */}
+            {reportData.analysisData.subjectCodes.length < reportData.resultData.totalSubjects && (
+              <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                <div className="flex items-start">
+                  <AlertCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-yellow-800 font-medium">
+                      Note: Subjects with 0 students have been automatically excluded
+                    </p>
+                    <p className="text-xs text-yellow-700 mt-1">
+                      Only subjects with enrolled students are shown below for report generation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div className="bg-gray-50 border border-gray-200 rounded-md overflow-hidden">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-100">
@@ -639,8 +656,18 @@ function ReportGenerationPage() {
             <p className="text-sm text-gray-600 mb-4">
               This is the analysis summary that will be included in the institutional report:
             </p>
+            {/* Show notice if subjects were filtered */}
+            {reportData.resultData.subjectWiseResults.filter(subject => subject.totalStudents === 0).length > 0 && (
+              <div className="mb-4 p-3 bg-gray-50 border border-gray-300 rounded-md">
+                <p className="text-sm text-gray-600">
+                  <strong>Note:</strong> {reportData.resultData.subjectWiseResults.filter(subject => subject.totalStudents === 0).length} subject(s) with 0 students are hidden from this preview.
+                </p>
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {reportData.resultData.subjectWiseResults.map((subject, index) => (
+              {reportData.resultData.subjectWiseResults
+                .filter(subject => subject.totalStudents > 0)
+                .map((subject, index) => (
                 <div 
                   key={index}
                   className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"

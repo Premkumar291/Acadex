@@ -469,7 +469,6 @@ export class PDFReportController {
     const arrearGrades = ['U', 'F', 'RA', 'UA', 'R', 'WH'];
 
     const totalStudents = students.length;
-    const totalSubjects = subjectCodes.length;
 
     const studentsPassedAll = students.filter(student =>
       subjectCodes.every(code => {
@@ -502,7 +501,11 @@ export class PDFReportController {
         totalStudents: totalStudentsForSubject,
         passedStudents
       };
-    });
+    }).filter(subject => subject.totalStudents > 0); // Filter out subjects with 0 students
+
+    // Filter subjectCodes to only include those with students
+    const validSubjectCodes = subjectResults.map(result => result.subjectCode);
+    const totalSubjects = validSubjectCodes.length;
 
     const studentsData = students.map(student => ({
       regNo: student.regNo,
