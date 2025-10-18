@@ -16,7 +16,7 @@ const Dashboard = () => {
   const [error, setError] = useState("")
   const [user, setUser] = useState(null)
   const [userLoading, setUserLoading] = useState(true)
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isDarkMode] = useState(true)
   const [isCollapsed, setIsCollapsed] = useState(true) // Changed to true - sidebar closed by default
   const [activeItem, setActiveItem] = useState("Analysis")
   const [isMobileOpen, setIsMobileOpen] = useState(false)
@@ -191,7 +191,7 @@ const Dashboard = () => {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
         <div
-          className={`${isDarkMode ? "dark-elevated-card" : "elevated-card"} p-6 max-w-md w-full mx-auto rounded-lg`}
+          className="dark-elevated-card p-6 max-w-md w-full mx-auto rounded-lg"
         >
           <div className="flex items-center space-x-4 mb-6">
             <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
@@ -368,15 +368,7 @@ const Dashboard = () => {
     setShowLogoutDialog(true)
   }
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode)
-    if (gsapRef.current) {
-      gsapRef.current.to(".theme-transition", {
-        duration: 0.6,
-        ease: "power2.inOut",
-      })
-    }
-  }
+  // Dark theme is now permanent
 
   const handleItemClick = (itemName) => {
     setActiveItem(itemName)
@@ -704,7 +696,7 @@ const Dashboard = () => {
           color: rgba(255, 255, 255, 0.6);
         }
       `}</style>
-      <div className={`min-h-screen theme-transition ${isDarkMode ? "dark-bg" : "bg-white"} flex`}>
+      <div className="min-h-screen theme-transition dark-bg flex">
         {/* Mobile Overlay */}
         {isMobileOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={handleSidebarToggle} />
@@ -719,7 +711,7 @@ const Dashboard = () => {
           transition={{ duration: 0.3, ease: "easeInOut" }}
           className={`
             fixed top-0 left-0 h-full z-50
-            ${isDarkMode ? "bg-black border-gray-800" : "bg-white border-gray-200"}
+            bg-black border-gray-800
             border-r shadow-lg
             flex flex-col
           `}
@@ -824,7 +816,7 @@ const Dashboard = () => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-h-screen">
           {/* Dynamic Navbar - ACADEX name hides when sidebar opens */}
-          <header className={`animate-header ${isDarkMode ? "dark-navbar" : "white-navbar"}`}>
+          <header className="animate-header dark-navbar">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16">
                 {/* Left Section - Single Unified Sidebar Toggle */}
@@ -880,29 +872,7 @@ const Dashboard = () => {
                 </div>
                 {/* Right Section - Controls */}
                 <div className="flex items-center space-x-4">
-                  {/* Theme Toggle */}
-                  <button
-                    onClick={toggleTheme}
-                    className={`p-2 rounded-lg ${
-                      isDarkMode
-                        ? "text-white hover:bg-gray-800 hover:text-purple-300"
-                        : "text-black hover:bg-gray-100 hover:text-gray-700"
-                    } transition-all duration-300`}
-                  >
-                    {isDarkMode ? (
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
-                      </svg>
-                    ) : (
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                          fillRule="evenodd"
-                          d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </button>
+                  {/* Dark theme is now permanent */}
                   {/* User Profile */}
                   <div className="flex items-center space-x-3">
                     <div className="relative">
@@ -916,7 +886,7 @@ const Dashboard = () => {
                       <div className="status-dot absolute -top-1 -right-1 w-3 h-3 rounded-full"></div>
                     </div>
                     <div className="hidden md:block">
-                      <p className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}>
+                      <p className={`font-semibold text-base text-white`}>
                         {user?.name || "User"}
                       </p>
                       <p className={`text-xs mono font-medium ${isDarkMode ? "text-purple-300" : "text-black"}`}>
