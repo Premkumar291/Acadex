@@ -152,13 +152,13 @@ export default function PDFProcessingCard() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer">
+    <div className="bg-black rounded-lg shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer">
 
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">Department Result PDF Splitter</h3>
-      <p className="text-gray-600 mb-4">Upload a department result PDF and split it into 8 semester files.</p>
+      <h3 className="text-lg font-semibold text-white mb-2">Department Result PDF Splitter</h3>
+      <p className="text-gray-300 mb-4">Upload a department result PDF and split it into 8 semester files.</p>
       
       {/* Files will be automatically deleted after 1 hour */}
-      <div className="mb-4 text-xs text-gray-500 flex items-center">
+      <div className="mb-4 text-xs text-gray-400 flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
@@ -171,7 +171,9 @@ export default function PDFProcessingCard() {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`mb-2 border-2 border-dashed rounded-lg p-8 text-center transition-colors ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-100'} ${uploading ? 'opacity-50 pointer-events-none' : 'hover:bg-gray-50'}`}
+        className={`mb-2 border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 transform hover:scale-[1.02] ${
+          dragActive ? 'border-purple-500 bg-gray-900' : 'border-gray-600 bg-gray-900'
+        } ${uploading ? 'opacity-50 pointer-events-none' : 'hover:border-purple-400'}`}
         style={{ cursor: uploading ? 'not-allowed' : 'pointer' }}
         onClick={() => !uploading && fileInputRef.current.click()}
       >
@@ -185,10 +187,10 @@ export default function PDFProcessingCard() {
         />
         <div className="flex flex-col items-center">
           {uploading ? (
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-3"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-3"></div>
           ) : (
             <svg
-              className={`w-12 h-12 mb-3 ${dragActive ? 'text-blue-500' : 'text-gray-400'}`}
+              className={`w-12 h-12 mb-3 ${dragActive ? 'text-purple-400' : 'text-gray-300'} transform transition-transform duration-300 hover:scale-110`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -202,16 +204,16 @@ export default function PDFProcessingCard() {
               ></path>
             </svg>
           )}
-          <p className="mb-2 text-sm text-gray-700">
+          <p className="mb-2 text-sm text-white">
             {uploading ? (
-              <span className="font-semibold">Uploading and processing PDF...</span>
+              <span className="font-semibold animate-pulse">Uploading and processing PDF...</span>
             ) : (
               <>
                 <span className="font-semibold">Click to upload</span> or drag and drop
               </>
             )}
           </p>
-          <p className="text-xs text-gray-500 mb-2">
+          <p className="text-xs text-gray-400 mb-2">
             {uploading ? (
               <span>This may take a moment depending on file size</span>
             ) : (
@@ -219,7 +221,7 @@ export default function PDFProcessingCard() {
             )}
           </p>
           {!uploading && (
-            <div className="mt-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs inline-flex items-center">
+            <div className="mt-2 bg-purple-900 text-purple-200 px-3 py-1 rounded-full text-xs inline-flex items-center transform transition-all duration-300 hover:scale-105 hover:bg-purple-800">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -247,22 +249,22 @@ export default function PDFProcessingCard() {
           </div>
         ) : semesterPDFs.length > 0 ? (
           /* List of semester PDFs with View icon */
-          <div className="mt-2 rounded-lg overflow-hidden shadow-lg bg-white">
+          <div className="mt-2 rounded-lg overflow-hidden shadow-lg bg-gray-900 border border-gray-800">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-800">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Semester</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Filename</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Semester</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Filename</th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white">
+              <tbody className="bg-gray-900">
                 {semesterPDFs.map((pdf) => (
-                  <tr key={pdf.id} className="hover:bg-gray-50 border-b border-gray-50">
+                  <tr key={pdf.id} className="hover:bg-gray-800 border-b border-gray-800 transition-colors duration-200">
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="font-medium">Semester {pdf.semester}</span>
+                      <span className="font-medium text-white">Semester {pdf.semester}</span>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
                       {pdf.filename}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-center">
@@ -270,7 +272,7 @@ export default function PDFProcessingCard() {
                         href={`${API_URL}/pdf/view/${pdf.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`inline-flex items-center px-3 py-1.5 ${viewingPdfId === pdf.id ? 'bg-blue-200' : 'bg-blue-100'} text-blue-700 rounded-md hover:bg-blue-200 mr-2 shadow-sm transition-all duration-200 ${viewingPdfId === pdf.id ? 'cursor-wait' : ''}`}
+                        className={`inline-flex items-center px-3 py-1.5 ${viewingPdfId === pdf.id ? 'bg-purple-700' : 'bg-purple-900'} text-white rounded-md hover:bg-purple-800 mr-2 shadow-sm transition-all duration-200 transform hover:scale-105 ${viewingPdfId === pdf.id ? 'cursor-wait' : ''}`}
                         title="View PDF"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -295,7 +297,7 @@ export default function PDFProcessingCard() {
                       </a>
                       <button
                         onClick={() => handleDownload(pdf.id, pdf.semester)}
-                        className={`inline-flex items-center px-3 py-1.5 ${downloadingPdfId === pdf.id ? 'bg-gray-200' : 'bg-gray-100'} text-gray-700 rounded-md hover:bg-gray-200 mr-2 shadow-sm transition-all duration-200 ${downloadingPdfId === pdf.id ? 'cursor-wait' : ''}`}
+                        className={`inline-flex items-center px-3 py-1.5 ${downloadingPdfId === pdf.id ? 'bg-gray-700' : 'bg-gray-800'} text-white rounded-md hover:bg-gray-700 mr-2 shadow-sm transition-all duration-200 transform hover:scale-105 ${downloadingPdfId === pdf.id ? 'cursor-wait' : ''}`}
                         title="Download PDF"
                         disabled={downloadingPdfId === pdf.id}
                       >
@@ -305,7 +307,7 @@ export default function PDFProcessingCard() {
                       <div className="relative inline-block">
                         <a 
                           href={`/result-analysis?id=${pdf.id}&semester=${pdf.semester}`}
-                          className="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 rounded-md hover:bg-green-200 shadow-sm transition-all duration-200"
+                          className="inline-flex items-center px-3 py-1.5 bg-purple-900 text-white rounded-md hover:bg-purple-800 shadow-sm transition-all duration-200 transform hover:scale-105"
                           title="Analyze this semester's results"
                         >
                           <TrendingUp size={16} className="mr-1" />
@@ -319,8 +321,8 @@ export default function PDFProcessingCard() {
             </table>
           </div>
         ) : (
-          <div className="bg-gray-50 rounded-lg p-6 text-center">
-            <p className="text-gray-500">No semester PDFs available. Upload a PDF to get started.</p>
+          <div className="bg-gray-900 rounded-lg p-6 text-center border border-gray-800">
+            <p className="text-gray-400">No semester PDFs available. Upload a PDF to get started.</p>
           </div>
         )}
       </div>
