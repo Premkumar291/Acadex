@@ -3,6 +3,7 @@ import { Faculty } from '../../models/faculty.model.js';
 import { getVisibleUsersForAdmin, getAdminData, getAdminStats, canCreateAdmin } from '../../utils/hierarchyUtils.js';
 import bcryptjs from 'bcryptjs';
 import { generateTokenAndSetCookie } from '../../utils/generateTokenAndSetCookie.js';
+import { generateVerificationCode } from '../../utils/generateVerificationCode.js';
 
 /**
  * Controller for hierarchical admin management
@@ -59,6 +60,15 @@ export const createAdmin = async (req, res) => {
             });
         }
 
+        // Get the college name from the creator admin
+        const collegeName = await creator.getCollegeName();
+        if (!collegeName) {
+            return res.status(400).json({
+                success: false,
+                message: "Admin does not have a college name assigned"
+            });
+        }
+
         // Check if creator can create admin
         const canCreate = await canCreateAdmin(creatorId);
         if (!canCreate.canCreate) {
@@ -71,15 +81,21 @@ export const createAdmin = async (req, res) => {
         // Hash password
         const hashedPassword = await bcryptjs.hash(password, 12);
 
+        // Generate verification code
+        const verificationToken = generateVerificationCode();
+
         // Create admin
         const newAdmin = new User({
             email,
             password: hashedPassword,
             name,
             department,
+            collegeName: collegeName, // Inherit college name from creator admin
             role: 'admin',
             createdBy: creatorId,
-            isVerified: true // Admins are auto-verified
+            isVerified: false, // Users must verify their email
+            verificationToken,
+            verificationTokenExpiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
         });
 
         await newAdmin.save();
@@ -89,7 +105,7 @@ export const createAdmin = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: "Admin created successfully",
+            message: "Admin account created successfully. User will receive verification code when they first login.",
             admin: adminData
         });
 
@@ -164,6 +180,9 @@ export const createFacultyUser = async (req, res) => {
         // Hash password
         const hashedPassword = await bcryptjs.hash(password, 12);
 
+        // Generate verification code
+        const verificationToken = generateVerificationCode();
+
         // Create faculty user with college name inherited from admin
         const newFacultyUser = new User({
             email,
@@ -173,17 +192,22 @@ export const createFacultyUser = async (req, res) => {
             collegeName: collegeName, // Inherit college name from admin
             role: 'faculty',
             createdBy: creatorId,
-            isVerified: true // Faculty users are auto-verified when created by admin
+            isVerified: false, // Users must verify their email
+            verificationToken,
+            verificationTokenExpiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
         });
 
         await newFacultyUser.save();
+        
+        // Don't send verification email during creation
+        // Email will be sent when user tries to login or clicks resend
         
         // Remove password from response
         const { password: _, ...facultyData } = newFacultyUser.toObject();
 
         res.status(201).json({
             success: true,
-            message: "Faculty user created successfully",
+            message: "Faculty account created successfully. User will receive verification code when they first login.",
             faculty: facultyData
         });
 

@@ -213,20 +213,27 @@ export const login = async (req,res) => {
 
         // Check if user is verified - send verification email if needed
         if (!user.isVerified) {
+            let shouldSendEmail = false;
+            let verificationCode = user.verificationToken;
             
-            // Generate new verification code if expired or doesn't exist
-            if (!user.verificationToken || user.verificationTokenExpiresAt < Date.now()) {
+            // Only generate new code if expired or doesn't exist
+            if (!user.verificationToken || !user.verificationTokenExpiresAt || user.verificationTokenExpiresAt < Date.now()) {
                 const newVerificationToken = generateVerificationCode();
                 user.verificationToken = newVerificationToken;
                 user.verificationTokenExpiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
                 await user.save();
-                
-                // Send verification email
+                verificationCode = newVerificationToken;
+                shouldSendEmail = true; // Only send email if code was regenerated
+            }
+            // If code is still valid, don't send another email
+            
+            // Send verification email only if new code was generated
+            if (shouldSendEmail) {
                 try {
                     await sendEmail(
                         user.email,
                         "Verify your account",
-                        `Your verification code is: ${newVerificationToken}. It is valid for 10 minutes.`
+                        `Your verification code is: ${verificationCode}. It is valid for 10 minutes.`
                     );
                 } catch (emailError) {
                     // Email sending failed - log internally if needed
@@ -235,7 +242,9 @@ export const login = async (req,res) => {
             
             return res.status(200).json({ 
                 success: false, 
-                message: "Please verify your email before logging in. A verification code has been sent to your email.",
+                message: shouldSendEmail 
+                    ? "Please verify your email before logging in. A verification code has been sent to your email."
+                    : "Please verify your email before logging in. Check your email for the verification code.",
                 needsVerification: true,
                 user: {
                     _id: user._id,
@@ -465,18 +474,31 @@ export const resendVerificationCode = async (req, res) => {
             });
         }
 
-        // Generate new verification code
-        const newVerificationToken = generateVerificationCode();
-        user.verificationToken = newVerificationToken;
-        user.verificationTokenExpiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
-        await user.save();
+        let verificationToken = user.verificationToken;
+        let isNewCode = false;
 
-        // Send verification email
+        // Check if existing code is expired or doesn't exist
+        if (!user.verificationToken || !user.verificationTokenExpiresAt || user.verificationTokenExpiresAt < Date.now()) {
+            // Generate new verification code only if expired or doesn't exist
+            verificationToken = generateVerificationCode();
+            user.verificationToken = verificationToken;
+            user.verificationTokenExpiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+            await user.save();
+            isNewCode = true;
+        }
+        // If code is still valid, use the existing one (no need to save)
+
+        // Send verification email with appropriate message
         try {
+            const emailSubject = isNewCode ? "New Verification Code" : "Verification Code Reminder";
+            const emailMessage = isNewCode 
+                ? `Your new verification code is: ${verificationToken}. It is valid for 10 minutes.`
+                : `Your verification code is: ${verificationToken}. It is still valid. Please use it to verify your account.`;
+            
             await sendEmail(
                 user.email,
-                "New Verification Code",
-                `Your new verification code is: ${newVerificationToken}. It is valid for 10 minutes.`
+                emailSubject,
+                emailMessage
             );
         } catch (emailError) {
             return res.status(500).json({ 
@@ -487,7 +509,9 @@ export const resendVerificationCode = async (req, res) => {
 
         res.status(200).json({ 
             success: true, 
-            message: "New verification code sent to your email." 
+            message: isNewCode 
+                ? "New verification code sent to your email." 
+                : "Verification code resent to your email." 
         });
     } catch (error) {
         res.status(500).json({ 

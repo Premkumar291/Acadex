@@ -23,7 +23,7 @@ const Dashboard = () => {
   // Navigation items (without Add Student)
   const navItems = [
     {
-      name: "Faculty Creation",
+      name: "User Creation",
       icon: Users,
       description: "Create faculty & admin accounts",
       url: "/admin-dashboard/create-faculty",

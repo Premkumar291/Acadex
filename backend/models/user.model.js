@@ -35,8 +35,8 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         enum: ['faculty', 'admin'],
-        required: true,
-        default: 'faculty'
+        required: true
+        // No default value - must be explicitly set
     },
     // Admin management fields
     createdBy: {

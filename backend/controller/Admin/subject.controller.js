@@ -38,7 +38,7 @@ export const createSubject = async (req, res) => {
         if (existingSubject) {
             return res.status(400).json({
                 success: false,
-                message: 'Subject with this code already exists'
+                message: `Subject code '${subjectCode.toUpperCase()}' already exists. Please use a different subject code.`
             });
         }
 
@@ -63,6 +63,15 @@ export const createSubject = async (req, res) => {
     } catch (error) {
         console.error('Error creating subject:', error);
         console.error('Error stack:', error.stack);
+        
+        // Handle duplicate key error (MongoDB unique constraint)
+        if (error.code === 11000 && error.keyPattern?.subjectCode) {
+            return res.status(400).json({
+                success: false,
+                message: `Subject code '${req.body.subjectCode?.toUpperCase()}' already exists. Please use a different subject code.`
+            });
+        }
+        
         res.status(500).json({
             success: false,
             message: 'Error creating subject',
