@@ -65,8 +65,8 @@ const FacultyDropdown = ({ subjectCode, value, onChange, error }) => {
     const selectedFaculty = facultyList.find(faculty => faculty._id === selectedFacultyId);
     
     if (selectedFaculty) {
-      // Pass the faculty name with title and initials, and the department
-      onChange(subjectCode, `${selectedFaculty.title} ${selectedFaculty.name} (${selectedFaculty.initials})`, selectedFaculty.department);
+      // Pass the faculty name with title, initials, and full name format
+      onChange(subjectCode, `${selectedFaculty.title} ${selectedFaculty.initials} ${selectedFaculty.name}`, selectedFaculty.department);
     } else {
       // Clear selection
       onChange(subjectCode, '', '');
@@ -83,7 +83,7 @@ const FacultyDropdown = ({ subjectCode, value, onChange, error }) => {
     
     // Find faculty by matching the display name
     const matchedFaculty = facultyList.find(faculty => 
-      `${faculty.title} ${faculty.name} (${faculty.initials})` === value
+      `${faculty.title} ${faculty.initials} ${faculty.name}` === value
     );
     
     return matchedFaculty ? matchedFaculty._id : '';
@@ -126,7 +126,7 @@ const FacultyDropdown = ({ subjectCode, value, onChange, error }) => {
           <option value="NO_STAFF">No Staff</option>
           {facultyList.map((faculty) => (
             <option key={faculty._id} value={faculty._id}>
-              {faculty.title} {faculty.name} ({faculty.initials}) - {faculty.department}
+              {faculty.title} {faculty.initials} {faculty.name} - {faculty.department}
             </option>
           ))}
         </select>

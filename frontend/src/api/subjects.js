@@ -119,7 +119,7 @@ export const TITLE_OPTIONS = [
 ];
 
 export const DEPARTMENT_OPTIONS = [
-    'CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AIDS', 'AIML', 'CSBS', 'OTHER'
+    'CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AIDS', 'AIML', 'CSBS'
 ];
 
 export default subjectAPI;
