@@ -105,22 +105,22 @@ const FacultyManagement = () => {
   })
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white">Faculty Management</h1>
-            <p className="text-gray-300 mt-2">Manage faculty members and their academic credentials</p>
-          </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 text-white shadow-lg transition-all hover:bg-blue-700 hover:scale-105 active:scale-95"
-          >
-            <Plus size={20} />
-            <span>Add Faculty</span>
-          </button>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-6">
+      {/* Header - Centered */}
+      <div className="mb-12 text-center">
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-700">Faculty Management</h1>
+        <p className="text-gray-600 mt-2">Manage faculty members and their academic credentials</p>
+      </div>
+
+      {/* Add Faculty Button */}
+      <div className="mb-8 flex justify-center">
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 text-white shadow-md transition-all hover:bg-blue-700 hover:scale-105 active:scale-95"
+        >
+          <Plus size={20} />
+          <span>Add Faculty</span>
+        </button>
       </div>
 
       {/* Search and Filter */}
@@ -132,7 +132,7 @@ const FacultyManagement = () => {
             placeholder="Search faculty members..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-800 text-white"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-neutral-900 placeholder-gray-400"
           />
         </div>
         <div className="relative">
@@ -140,7 +140,7 @@ const FacultyManagement = () => {
           <select
             value={departmentFilter}
             onChange={(e) => setDepartmentFilter(e.target.value)}
-            className="pl-10 pr-8 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-gray-800 text-white"
+            className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white text-neutral-900"
           >
             <option value="">All Departments</option>
             {DEPARTMENT_OPTIONS.map((dept) => (
@@ -151,52 +151,52 @@ const FacultyManagement = () => {
       </div>
 
       {/* Faculty Table */}
-      <div className="bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-700">
-              <thead className="bg-gray-700">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Title
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Initials
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Department
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-gray-800 divide-y divide-gray-700">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {filteredFaculty.map((facultyMember) => (
                   <tr
                     key={facultyMember._id}
-                    className="hover:bg-gray-700"
+                    className="hover:bg-gray-50"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-900 text-blue-200">
+                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                         {facultyMember.title}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">
                       {facultyMember.name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {facultyMember.initials}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-gray-700 text-gray-300">
+                      <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-gray-200 text-gray-800">
                         {facultyMember.department}
                       </span>
                     </td>
@@ -222,9 +222,9 @@ const FacultyManagement = () => {
             </table>
             {filteredFaculty.length === 0 && (
               <div className="text-center py-12">
-                <Users size={48} className="mx-auto text-gray-600" />
-                <h3 className="text-lg font-medium text-white mt-2">No faculty members found</h3>
-                <p className="text-gray-400 mt-1">
+                <Users size={48} className="mx-auto text-gray-300" />
+                <h3 className="text-lg font-medium text-neutral-900 mt-2">No faculty members found</h3>
+                <p className="text-gray-500 mt-1">
                   {searchTerm || departmentFilter 
                     ? "No faculty members match your search criteria." 
                     : "Start by adding your first faculty member to the system."}
@@ -238,9 +238,9 @@ const FacultyManagement = () => {
       {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-700">
-              <h3 className="text-lg font-medium text-white">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-neutral-900">
                 {editingFaculty ? 'Edit Faculty' : 'Add New Faculty'}
               </h3>
               <button
@@ -248,7 +248,7 @@ const FacultyManagement = () => {
                   setShowModal(false)
                   resetForm()
                 }}
-                className="text-gray-400 hover:text-white"
+                className="text-gray-500 hover:text-gray-700"
               >
                 <X size={24} />
               </button>
@@ -256,14 +256,14 @@ const FacultyManagement = () => {
             
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Title *
                 </label>
                 <select
                   required
                   value={formData.title}
                   onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-neutral-900"
                 >
                   <option value="">Select Title</option>
                   {TITLE_OPTIONS.map((title) => (
@@ -273,7 +273,7 @@ const FacultyManagement = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Full Name *
                 </label>
                 <input
@@ -281,13 +281,13 @@ const FacultyManagement = () => {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-neutral-900 placeholder-gray-400"
                   placeholder="Enter full name"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Initials *
                 </label>
                 <input
@@ -295,20 +295,20 @@ const FacultyManagement = () => {
                   required
                   value={formData.initials}
                   onChange={(e) => setFormData({...formData, initials: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-neutral-900 placeholder-gray-400"
                   placeholder="e.g., A.B.C"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Department *
                 </label>
                 <select
                   required
                   value={formData.department}
                   onChange={(e) => setFormData({...formData, department: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-neutral-900"
                 >
                   <option value="">Select Department</option>
                   {DEPARTMENT_OPTIONS.map((dept) => (
@@ -324,7 +324,7 @@ const FacultyManagement = () => {
                     setShowModal(false)
                     resetForm()
                   }}
-                  className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-md hover:bg-gray-600 focus:ring-2 focus:ring-gray-500"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:ring-2 focus:ring-gray-300"
                 >
                   Cancel
                 </button>
