@@ -129,43 +129,43 @@ const AdminHierarchyPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Admin Management</h1>
-          <p className="text-gray-300">Manage admins & users  and view organizational structure</p>
+        {/* Header - Centered */}
+        <div className="mb-12 text-center">
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-700 mb-2">Admin Management</h1>
+          <p className="text-gray-600">Manage admins & users and view organizational structure</p>
         </div>
 
         {/* Statistics Cards */}
         {statistics && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
+            <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
               <div className="flex items-center">
-                <UserGroupIcon className="w-8 h-8 text-green-500 mr-3" />
+                <UserGroupIcon className="w-8 h-8 text-green-600 mr-3" />
                 <div>
-                  <p className="text-sm text-gray-400">Created Admins</p>
-                  <p className="text-2xl font-bold text-white">{statistics.createdAdmins || 0}</p>
+                  <p className="text-sm text-gray-600">Created Admins</p>
+                  <p className="text-2xl font-bold text-neutral-900">{statistics.createdAdmins || 0}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
+            <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
               <div className="flex items-center">
-                <UserIcon className="w-8 h-8 text-purple-500 mr-3" />
+                <UserIcon className="w-8 h-8 text-purple-600 mr-3" />
                 <div>
-                  <p className="text-sm text-gray-400">Created Users</p>
-                  <p className="text-2xl font-bold text-white">{statistics.createdUsers || 0}</p>
+                  <p className="text-sm text-gray-600">Created Users</p>
+                  <p className="text-2xl font-bold text-neutral-900">{statistics.createdUsers || 0}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-700">
+            <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
               <div className="flex items-center">
-                <AcademicCapIcon className="w-8 h-8 text-green-500 mr-3" />
+                <AcademicCapIcon className="w-8 h-8 text-green-600 mr-3" />
                 <div>
-                  <p className="text-sm text-gray-400">Created Faculty</p>
-                  <p className="text-2xl font-bold text-white">{hierarchyData?.createdFaculty?.length || 0}</p>
+                  <p className="text-sm text-gray-600">Created Faculty</p>
+                  <p className="text-2xl font-bold text-neutral-900">{hierarchyData?.createdFaculty?.length || 0}</p>
                 </div>
               </div>
             </div>
@@ -173,25 +173,25 @@ const AdminHierarchyPage = () => {
         )}
 
         {/* Admin List */}
-        <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-white mb-6">Created Admins</h2>
+        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-8">
+          <h2 className="text-xl font-semibold text-neutral-900 mb-6">Created Admins</h2>
           
           {hierarchyData?.createdAdmins && hierarchyData.createdAdmins.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {hierarchyData.createdAdmins.map(admin => (
-                <div key={admin._id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                <div key={admin._id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center">
-                      <ShieldCheckIcon className="w-6 h-6 text-blue-500 mr-3" />
+                      <ShieldCheckIcon className="w-6 h-6 text-blue-600 mr-3" />
                       <div>
-                        <h3 className="font-semibold text-white">{admin.name}</h3>
-                        <p className="text-sm text-gray-300">{admin.email}</p>
+                        <h3 className="font-semibold text-neutral-900">{admin.name}</h3>
+                        <p className="text-sm text-gray-600">{admin.email}</p>
                       </div>
                     </div>
                   </div>
                   
                   <div className="mb-3">
-                    <span className="text-xs bg-blue-900 text-blue-200 px-2 py-1 rounded">
+                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
                       {admin.department}
                     </span>
                   </div>
@@ -199,13 +199,13 @@ const AdminHierarchyPage = () => {
                   <div className="flex space-x-2">
                     <button
                       onClick={() => openEditModal(admin)}
-                      className="flex-1 px-3 py-1 text-sm text-blue-400 hover:bg-blue-900 rounded transition-colors"
+                      className="flex-1 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDeleteAdmin(admin._id, admin.name)}
-                      className="flex-1 px-3 py-1 text-sm text-red-400 hover:bg-red-900 rounded transition-colors"
+                      className="flex-1 px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors"
                     >
                       Delete
                     </button>
@@ -215,38 +215,38 @@ const AdminHierarchyPage = () => {
             </div>
           ) : (
             <div className="text-center py-12">
-              <UserGroupIcon className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400">No admins created yet</p>
+              <UserGroupIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">No admins created yet</p>
             </div>
           )}
         </div>
 
         {/* Faculty List with Delete Option */}
-        <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-6">
-          <h2 className="text-xl font-semibold text-white mb-6">Created Faculty</h2>
+        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <h2 className="text-xl font-semibold text-neutral-900 mb-6">Created Faculty</h2>
           
           {hierarchyData?.createdFaculty && hierarchyData.createdFaculty.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {hierarchyData.createdFaculty.map(faculty => (
-                <div key={faculty._id} className="bg-green-900/20 rounded-lg p-4 border border-green-800/30">
+                <div key={faculty._id} className="bg-green-50 rounded-lg p-4 border border-green-200">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center">
-                      <AcademicCapIcon className="w-6 h-6 text-green-500 mr-3" />
+                      <AcademicCapIcon className="w-6 h-6 text-green-600 mr-3" />
                       <div>
-                        <h3 className="font-semibold text-white">{faculty.name}</h3>
-                        <p className="text-sm text-gray-300">{faculty.email}</p>
+                        <h3 className="font-semibold text-neutral-900">{faculty.name}</h3>
+                        <p className="text-sm text-gray-600">{faculty.email}</p>
                       </div>
                     </div>
                   </div>
                   
                   <div className="mb-3 space-y-1">
-                    <span className="text-xs bg-green-900/50 text-green-200 px-2 py-1 rounded mr-2">
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mr-2">
                       {faculty.department}
                     </span>
                     {faculty.phoneNumber && (
-                      <p className="text-xs text-gray-400">📞 {faculty.phoneNumber}</p>
+                      <p className="text-xs text-gray-600">📞 {faculty.phoneNumber}</p>
                     )}
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-600">
                       Created: {formatDate(faculty.createdAt)}
                     </p>
                   </div>
@@ -255,7 +255,7 @@ const AdminHierarchyPage = () => {
                   <div className="flex justify-end mt-2">
                     <button
                       onClick={() => handleDeleteFaculty(faculty.user?._id || faculty._id, faculty.name)}
-                      className="px-3 py-1 text-sm text-red-400 hover:bg-red-900 rounded transition-colors flex items-center"
+                      className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors flex items-center"
                     >
                       <TrashIcon className="w-4 h-4 mr-1" />
                       Delete
@@ -266,8 +266,8 @@ const AdminHierarchyPage = () => {
             </div>
           ) : (
             <div className="text-center py-12">
-              <AcademicCapIcon className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400">No faculty created yet</p>
+              <AcademicCapIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">No faculty created yet</p>
             </div>
           )}
         </div>
@@ -276,8 +276,8 @@ const AdminHierarchyPage = () => {
       {/* Edit Admin Modal */}
       {showEditModal && selectedAdmin && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Edit Admin</h3>
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4">Edit Admin</h3>
             <form onSubmit={handleUpdateAdmin}>
               <div className="space-y-4">
                 <input
@@ -285,7 +285,7 @@ const AdminHierarchyPage = () => {
                   placeholder="Full Name"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-neutral-900 placeholder-gray-500"
                   required
                 />
                 <input
@@ -293,7 +293,7 @@ const AdminHierarchyPage = () => {
                   placeholder="Email Address"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-neutral-900 placeholder-gray-500"
                   required
                 />
                 <input
@@ -301,7 +301,7 @@ const AdminHierarchyPage = () => {
                   placeholder="Department"
                   value={formData.department}
                   onChange={(e) => setFormData({...formData, department: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-neutral-900 placeholder-gray-500"
                   required
                 />
               </div>
@@ -309,7 +309,7 @@ const AdminHierarchyPage = () => {
                 <button
                   type="button"
                   onClick={() => setShowEditModal(false)}
-                  className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+                  className="px-4 py-2 text-gray-700 hover:text-neutral-900 transition-colors"
                 >
                   Cancel
                 </button>
