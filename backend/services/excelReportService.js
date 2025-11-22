@@ -1002,10 +1002,10 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       }
     };
     
-    // Box for student count
+    // Box for student count - Use studentsAppeared (max among subjects)
     sheet.mergeCells(`B${summaryStartRow}:C${summaryStartRow}`);
     const appearedCell = sheet.getCell(`B${summaryStartRow}`);
-    appearedCell.value = reportData.totalStudents || '';
+    appearedCell.value = reportData.studentsAppeared || 0;
     appearedCell.style = {
       font: { name: 'Arial', size: 11, bold: true },
       alignment: { vertical: 'middle', horizontal: 'center' },
@@ -1031,11 +1031,10 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       }
     };
     
-    // Box for passed count
+    // Box for passed count - Use studentsPassedAll (who passed ALL subjects)
     sheet.mergeCells(`B${summaryStartRow + 1}:C${summaryStartRow + 1}`);
     const passedCell = sheet.getCell(`B${summaryStartRow + 1}`);
-    const passedCount = reportData.totalStudents ? Math.round(reportData.totalStudents * (reportData.overallPassPercentage || 0) / 100) : '';
-    passedCell.value = passedCount;
+    passedCell.value = reportData.studentsPassedAll || 0;
     passedCell.style = {
       font: { name: 'Arial', size: 11, bold: true },
       alignment: { vertical: 'middle', horizontal: 'center' },
@@ -1061,10 +1060,10 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       }
     };
     
-    // Box for percentage
+    // Box for percentage - Already correctly calculated in controller
     sheet.mergeCells(`B${summaryStartRow + 2}:C${summaryStartRow + 2}`);
     const percentageCell = sheet.getCell(`B${summaryStartRow + 2}`);
-    percentageCell.value = reportData.overallPassPercentage ? `${reportData.overallPassPercentage.toFixed(1)}%` : '';
+    percentageCell.value = reportData.overallPassPercentage ? `${reportData.overallPassPercentage.toFixed(1)}%` : '0.0%';
     percentageCell.style = {
       font: { name: 'Arial', size: 11, bold: true },
       alignment: { vertical: 'middle', horizontal: 'center' },
@@ -1239,14 +1238,15 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
     afterCell.style = { ...this.headerStyle, font: { name: 'Arial', size: 10, bold: true }, alignment: { ...this.headerStyle.alignment, horizontal: 'center' } };
 
     // Re-evaluation table data
-    const totalStudents = reportData.analysisData?.totalStudents || 0;
-    const passedBefore = reportData.analysisData?.subjectWiseResults?.reduce((acc, subject) => acc + subject.passedStudents, 0) || 0; 
-    const passPercentageBefore = reportData.analysisData?.overallPassPercentage || 0;
+    // Use correct values: studentsAppeared (max among subjects), studentsPassedAll (passed all subjects)
+    const studentsAppeared = reportData.studentsAppeared || 0;
+    const studentsPassedAll = reportData.studentsPassedAll || 0;
+    const passPercentageBefore = reportData.overallPassPercentage || 0;
 
     const summaryData = [
-      ['NO. OF STUDENTS APPEARED', totalStudents, ''],
-      ['NO. OF STUDENTS PASSED', passedBefore, ''],
-      ['OVERALL PASS PERCENTAGE', `${passPercentageBefore.toFixed(2)}`, '']
+      ['NO. OF STUDENTS APPEARED', studentsAppeared, ''],
+      ['NO. OF STUDENTS PASSED', studentsPassedAll, ''],
+      ['OVERALL PASS PERCENTAGE', `${passPercentageBefore.toFixed(2)}%`, '']
     ];
 
     summaryData.forEach((data, index) => {
@@ -1304,8 +1304,8 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
     };
 
     const summaryData = [
-      ['Total Students Appeared:', reportData.totalStudents || 0],
-      ['Total Students Passed:', Math.round((reportData.totalStudents || 0) * (reportData.overallPassPercentage || 0) / 100)],
+      ['Total Students Appeared:', reportData.studentsAppeared || 0],
+      ['Total Students Passed:', reportData.studentsPassedAll || 0],
       ['Overall Pass Percentage:', `${(reportData.overallPassPercentage || 0).toFixed(1)}%`],
       ['Department:', reportData.department || 'N/A'],
       ['Semester:', reportData.semester || 'N/A'],

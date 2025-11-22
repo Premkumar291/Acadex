@@ -468,18 +468,7 @@ export class PDFReportController {
     const { students, subjectCodes } = analysisData;
     const arrearGrades = ['U', 'F', 'RA', 'UA', 'R', 'WH'];
 
-    const totalStudents = students.length;
-
-    const studentsPassedAll = students.filter(student =>
-      subjectCodes.every(code => {
-        const grade = student.grades[code];
-        return grade && !arrearGrades.includes(grade);
-      })
-    ).length;
-
-    const overallPassPercentage = totalStudents > 0 ?
-      (studentsPassedAll / totalStudents) * 100 : 0;
-
+    // Calculate subject-wise results first
     const subjectResults = subjectCodes.map(subjectCode => {
       const studentsWithGrade = students.filter(student =>
         student.grades[subjectCode] && student.grades[subjectCode] !== ''
@@ -507,6 +496,25 @@ export class PDFReportController {
     const validSubjectCodes = subjectResults.map(result => result.subjectCode);
     const totalSubjects = validSubjectCodes.length;
 
+    // Calculate students appeared: Maximum among all subjects (highest enrollment)
+    const studentsAppeared = subjectResults.length > 0 
+      ? Math.max(...subjectResults.map(subject => subject.totalStudents))
+      : 0;
+
+    // Calculate students who passed ALL subjects
+    const studentsPassedAll = students.filter(student => {
+      // Check if student has grades for all valid subjects and passed them all
+      return validSubjectCodes.every(code => {
+        const grade = student.grades[code];
+        // Student must have a grade and it must not be an arrear grade
+        return grade && grade !== '' && !arrearGrades.includes(grade);
+      });
+    }).length;
+
+    // Calculate overall pass percentage based on students who appeared vs students who passed all
+    const overallPassPercentage = studentsAppeared > 0 ?
+      (studentsPassedAll / studentsAppeared) * 100 : 0;
+
     const studentsData = students.map(student => ({
       regNo: student.regNo,
       name: student.name,
@@ -514,7 +522,9 @@ export class PDFReportController {
     }));
 
     return {
-      totalStudents,
+      studentsAppeared,        // Maximum students among all subjects
+      studentsPassedAll,       // Students who passed ALL subjects
+      totalStudents: students.length, // Total students in the list (kept for backward compatibility)
       totalSubjects,
       overallPassPercentage,
       subjectResults,

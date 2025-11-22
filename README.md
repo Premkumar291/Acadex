@@ -2,7 +2,7 @@
 
 A comprehensive web-based academic management system designed for educational institutions to manage student results, faculty assignments, and administrative tasks with modern security and user experience.
 
-## ✨ Features
+## ✨ Features /
 
 ### 🔐 Authentication & Authorization
 - **Role-based Access Control**: Admin and Faculty user roles with hierarchical permissions
