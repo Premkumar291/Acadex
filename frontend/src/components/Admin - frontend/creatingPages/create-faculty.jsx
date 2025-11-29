@@ -91,7 +91,7 @@ const CreateFaculty = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-4 sm:p-6 font-ubuntu">
       {/* Header - Centered */}
       <div className="mb-12 text-center">
         <h1 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-700 mb-2">Faculty & Admin Management</h1>
@@ -206,8 +206,8 @@ const CreateFaculty = () => {
                 type="submit"
                 disabled={loading}
                 className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-sm font-medium text-white ${
-                  loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
-                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+                  loading ? "bg-amber-700" : "bg-amber-800 hover:bg-amber-900"
+                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600`}
               >
                 {loading ? "Creating..." : `Create ${form.role === 'admin' ? 'Admin' : 'Faculty'}`}
               </button>

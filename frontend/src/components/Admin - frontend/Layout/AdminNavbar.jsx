@@ -80,7 +80,7 @@ const AdminNavbar = ({ user }) => {
   return (
     <>
       {/* Desktop Navbar */}
-      <header className="hidden md:flex items-center justify-between h-16 px-4 border-b bg-white border-gray-200 shadow-sm">
+      <header className="hidden md:flex items-center justify-between h-16 px-4 border-b bg-white border-amber-900 shadow-sm">
         <div className="flex items-center space-x-4">
           {/* Brand - Clicking navigates to dashboard */}
           <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer">
@@ -147,7 +147,7 @@ const AdminNavbar = ({ user }) => {
       </header>
 
       {/* Mobile Navbar */}
-      <header className="md:hidden flex items-center justify-between h-16 px-4 border-b bg-white border-gray-200 shadow-sm">
+      <header className="md:hidden flex items-center justify-between h-16 px-4 border-b bg-white border-amber-900 shadow-sm">
         <div className="flex items-center space-x-2">
           {/* Mobile Menu Button */}
           <button
@@ -192,7 +192,7 @@ const AdminNavbar = ({ user }) => {
           {/* Sidebar */}
           <div className="fixed top-0 left-0 bottom-0 w-64 transform transition-transform duration-300 ease-in-out bg-white">
             {/* Header */}
-            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+            <div className="flex items-center justify-between h-16 px-4 border-b border-amber-900">
               {/* Brand - Clicking navigates to dashboard */}
               <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer" onClick={() => setIsMobileMenuOpen(false)}>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-500">
@@ -236,7 +236,7 @@ const AdminNavbar = ({ user }) => {
             </nav>
             
             {/* User Info */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-amber-900">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-100">
                   <span className="font-medium text-blue-600">

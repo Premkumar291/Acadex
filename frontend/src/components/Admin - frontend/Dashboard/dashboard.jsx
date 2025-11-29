@@ -145,13 +145,13 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 font-ubuntu">
       {/* Main Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-700">
-            Welcome back, <span className="text-blue-600">{user?.name?.split(" ")[0] || "Admin"}</span>
+            Welcome back, <span className="text-amber-900">{user?.name?.split(" ")[0] || "Admin"}</span>
           </h1>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             Your administrative dashboard is ready. Manage your institution's faculty, students, and subjects.
@@ -166,17 +166,17 @@ const Dashboard = () => {
               <div 
                 key={index}
                 onClick={() => navigate(item.url)}
-                className="rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 bg-white hover:shadow-xl border border-gray-200"
+                className="rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 bg-amber-900 hover:shadow-xl border border-amber-800"
               >
                 <div className="flex items-center mb-4">
-                  <div className="p-3 rounded-lg bg-blue-50">
-                    <Icon className="w-6 h-6 text-blue-600" />
+                  <div className="p-3 rounded-lg bg-amber-800">
+                    <Icon className="w-6 h-6 text-amber-100" />
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold mb-2 text-neutral-900">
+                <h3 className="text-lg font-semibold mb-2 text-amber-50">
                   {item.name}
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-amber-200">
                   {item.description}
                 </p>
               </div>
@@ -185,8 +185,8 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="rounded-xl p-6 bg-white border border-gray-200 shadow-sm">
-          <h2 className="text-xl font-semibold mb-6 text-neutral-900">
+        <div className="rounded-xl p-6 bg-amber-900 border border-amber-800 shadow-sm">
+          <h2 className="text-xl font-semibold mb-6 text-amber-50">
             System Overview
           </h2>
           {statsLoading ? (
@@ -195,32 +195,32 @@ const Dashboard = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <div className="p-4 rounded-lg bg-amber-800 border border-amber-700">
                 <div className="flex items-center">
-                  <Users className="w-8 h-8 mr-3 text-blue-600" />
+                  <Users className="w-8 h-8 mr-3 text-amber-200" />
                   <div>
-                    <p className="text-sm text-gray-600">Total Faculties</p>
-                    <p className="text-2xl font-bold text-neutral-900">{statistics.totalFaculties}</p>
+                    <p className="text-sm text-amber-300">Total Faculties</p>
+                    <p className="text-2xl font-bold text-amber-50">{statistics.totalFaculties}</p>
                   </div>
                 </div>
               </div>
               
-              <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <div className="p-4 rounded-lg bg-amber-800 border border-amber-700">
                 <div className="flex items-center">
-                  <BookOpen className="w-8 h-8 mr-3 text-green-600" />
+                  <BookOpen className="w-8 h-8 mr-3 text-amber-200" />
                   <div>
-                    <p className="text-sm text-gray-600">Total Subjects</p>
-                    <p className="text-2xl font-bold text-neutral-900">{statistics.totalSubjects}</p>
+                    <p className="text-sm text-amber-300">Total Subjects</p>
+                    <p className="text-2xl font-bold text-amber-50">{statistics.totalSubjects}</p>
                   </div>
                 </div>
               </div>
               
-              <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <div className="p-4 rounded-lg bg-amber-800 border border-amber-700">
                 <div className="flex items-center">
-                  <ShieldCheckIcon className="w-8 h-8 mr-3 text-purple-600" />
+                  <ShieldCheckIcon className="w-8 h-8 mr-3 text-amber-200" />
                   <div>
-                    <p className="text-sm text-gray-600">Total Users created by you</p>
-                    <p className="text-2xl font-bold text-neutral-900">{statistics.totalUsersCreatedByYou}</p>
+                    <p className="text-sm text-amber-300">Total Users created by you</p>
+                    <p className="text-2xl font-bold text-amber-50">{statistics.totalUsersCreatedByYou}</p>
                   </div>
                 </div>
               </div>
@@ -248,7 +248,7 @@ const Dashboard = () => {
               <button
                 onClick={handleConfirmLogout}
                 disabled={isLoading}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                className="flex-1 px-4 py-2 bg-amber-800 text-white hover:bg-amber-900 font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed rounded"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center space-x-2">
