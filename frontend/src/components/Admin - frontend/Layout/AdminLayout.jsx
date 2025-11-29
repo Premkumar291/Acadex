@@ -33,8 +33,8 @@ const AdminLayout = ({ children }) => {
   }
 
   return (
-    // Always use dark mode classes
-    <div className="min-h-screen bg-gray-900 text-white">
+    // Always use light theme classes
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-neutral-900">
       {/* Navbar */}
       <AdminNavbar 
         user={user} 

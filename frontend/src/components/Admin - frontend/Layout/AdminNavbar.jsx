@@ -80,14 +80,14 @@ const AdminNavbar = ({ user }) => {
   return (
     <>
       {/* Desktop Navbar */}
-      <header className="hidden md:flex items-center justify-between h-16 px-4 border-b bg-gray-900 border-gray-700">
+      <header className="hidden md:flex items-center justify-between h-16 px-4 border-b bg-white border-gray-200 shadow-sm">
         <div className="flex items-center space-x-4">
           {/* Brand - Clicking navigates to dashboard */}
           <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-500">
               <span className="text-white font-bold text-sm">A</span>
             </div>
-            <span className="font-bold text-lg text-white">
+            <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-700">
               ACADEX
             </span>
           </Link>
@@ -106,8 +106,8 @@ const AdminNavbar = ({ user }) => {
                 onClick={() => handleItemClick(item.name)}
                 className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-gray-800 text-white"
-                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                    ? "bg-gray-100 text-neutral-900"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-neutral-900"
                 }`}
               >
                 <Icon className="w-4 h-4 mr-2" />
@@ -122,22 +122,22 @@ const AdminNavbar = ({ user }) => {
           {/* User Menu */}
           <div className="relative">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-700">
-                <span className="font-medium text-sm text-white">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100">
+                <span className="font-medium text-sm text-blue-600">
                   {user?.name?.charAt(0).toUpperCase() || "A"}
                 </span>
               </div>
               <div className="hidden lg:block">
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-neutral-900">
                   {user?.name || "Admin"}
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-600">
                   Administrator
                 </p>
               </div>
               <button
                 onClick={handleLogout}
-                className="p-2 rounded-lg hover:bg-gray-800 text-gray-300 transition-colors"
+                className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
               >
                 <LogOut className="w-5 h-5" />
               </button>
@@ -147,12 +147,12 @@ const AdminNavbar = ({ user }) => {
       </header>
 
       {/* Mobile Navbar */}
-      <header className="md:hidden flex items-center justify-between h-16 px-4 border-b bg-gray-900 border-gray-700">
+      <header className="md:hidden flex items-center justify-between h-16 px-4 border-b bg-white border-gray-200 shadow-sm">
         <div className="flex items-center space-x-2">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="p-2 rounded-lg hover:bg-gray-800 text-gray-300 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -162,7 +162,7 @@ const AdminNavbar = ({ user }) => {
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-500">
               <span className="text-white font-bold text-sm">A</span>
             </div>
-            <span className="font-bold text-lg text-white">
+            <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-700">
               ACADEX
             </span>
           </Link>
@@ -173,7 +173,7 @@ const AdminNavbar = ({ user }) => {
           {/* Logout Button */}
           <button
             onClick={handleLogout}
-            className="p-2 rounded-lg hover:bg-gray-800 text-gray-300 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
           >
             <LogOut className="w-5 h-5" />
           </button>
@@ -190,21 +190,21 @@ const AdminNavbar = ({ user }) => {
           />
           
           {/* Sidebar */}
-          <div className="fixed top-0 left-0 bottom-0 w-64 transform transition-transform duration-300 ease-in-out bg-gray-900">
+          <div className="fixed top-0 left-0 bottom-0 w-64 transform transition-transform duration-300 ease-in-out bg-white">
             {/* Header */}
-            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700">
+            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
               {/* Brand - Clicking navigates to dashboard */}
               <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer" onClick={() => setIsMobileMenuOpen(false)}>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-500">
                   <span className="text-white font-bold text-sm">A</span>
                 </div>
-                <span className="font-bold text-lg text-white">
+                <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-700">
                   ACADEX
                 </span>
               </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="p-2 rounded-lg hover:bg-gray-800 text-gray-300 transition-colors"
+                className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -224,8 +224,8 @@ const AdminNavbar = ({ user }) => {
                     onClick={() => handleItemClick(item.name)}
                     className={`flex items-center w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? "bg-gray-800 text-white"
-                        : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                        ? "bg-gray-100 text-neutral-900"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-neutral-900"
                     }`}
                   >
                     <Icon className="w-5 h-5 mr-3" />
@@ -236,18 +236,18 @@ const AdminNavbar = ({ user }) => {
             </nav>
             
             {/* User Info */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-700">
-                  <span className="font-medium text-white">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-100">
+                  <span className="font-medium text-blue-600">
                     {user?.name?.charAt(0).toUpperCase() || "A"}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate text-white">
+                  <p className="text-sm font-medium truncate text-neutral-900">
                     {user?.name || "Admin"}
                   </p>
-                  <p className="text-xs truncate text-gray-400">
+                  <p className="text-xs truncate text-gray-600">
                     Administrator
                   </p>
                 </div>
