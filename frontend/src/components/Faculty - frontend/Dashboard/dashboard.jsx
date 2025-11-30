@@ -16,7 +16,7 @@ const Dashboard = () => {
   const [error, setError] = useState("")
   const [user, setUser] = useState(null)
   const [userLoading, setUserLoading] = useState(true)
-  const [isDarkMode] = useState(true)
+  const [isDarkMode] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(true) // Changed to true - sidebar closed by default
   const [activeItem, setActiveItem] = useState("Analysis")
   const [isMobileOpen, setIsMobileOpen] = useState(false)
@@ -391,7 +391,7 @@ const Dashboard = () => {
     return (
       <div
         className={`min-h-screen flex items-center justify-center transition-all duration-700 ${
-          isDarkMode ? "bg-black" : "bg-white"
+          isDarkMode ? "bg-black" : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
         }`}
       >
         <div className="text-center">
@@ -696,7 +696,7 @@ const Dashboard = () => {
           color: rgba(255, 255, 255, 0.6);
         }
       `}</style>
-      <div className="min-h-screen theme-transition dark-bg flex">
+      <div className="min-h-screen theme-transition bg-gradient-to-br from-gray-50 via-white to-gray-100 flex">
         {/* Mobile Overlay */}
         {isMobileOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={handleSidebarToggle} />
@@ -711,7 +711,7 @@ const Dashboard = () => {
           transition={{ duration: 0.3, ease: "easeInOut" }}
           className={`
             fixed top-0 left-0 h-full z-50
-            bg-black border-gray-800
+            bg-white border-amber-200
             border-r shadow-lg
             flex flex-col
           `}
@@ -719,7 +719,7 @@ const Dashboard = () => {
           {/* Sidebar Header */}
           <div
             className={`
-              flex items-center ${isDarkMode ? "border-gray-800 bg-black" : "border-gray-100"} border-b p-4
+              flex items-center ${isDarkMode ? "border-gray-800 bg-black" : "border-amber-200 bg-white"} border-b p-4
               ${isMobileOpen || !isCollapsed ? "justify-between" : "justify-center"}
             `}
           >
@@ -748,18 +748,18 @@ const Dashboard = () => {
           </div>
           {/* Navigation */}
           <div className="flex-1 overflow-y-auto">
-            <div className={`p-3 space-y-1 ${isDarkMode ? "bg-black" : ""}`}>
+            <div className={`p-3 space-y-1 ${isDarkMode ? "bg-black" : "bg-white"}`}>
               {mainNavItems.map((item) => (
                 <NavItem key={item.name} item={item} isActive={activeItem === item.name} onClick={handleItemClick} />
               ))}
             </div>
             {/* Separator */}
-            <div className={`mx-4 my-4 border-t ${isDarkMode ? "border-gray-800" : "border-gray-200"}`}></div>
+            <div className={`mx-4 my-4 border-t ${isDarkMode ? "border-gray-800" : "border-amber-200"}`}></div>
           </div>
 
           {/* Logout Button */}
           {(isMobileOpen || !isCollapsed) && (
-            <div className={`p-3 ${isDarkMode ? "bg-black" : ""}`}>
+            <div className={`p-3 ${isDarkMode ? "bg-black" : "bg-white"}`}>
               <button
                 onClick={handleLogoutClick}
                 disabled={isLoading}
@@ -781,7 +781,7 @@ const Dashboard = () => {
 
           {/* Account Information Section */}
           {(isMobileOpen || !isCollapsed) && (
-            <div className={`${isDarkMode ? "border-gray-800 bg-black" : "border-gray-100"} border-t p-4`}>
+            <div className={`${isDarkMode ? "border-gray-800 bg-black" : "border-amber-200 bg-white"} border-t p-4`}>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div
@@ -816,7 +816,7 @@ const Dashboard = () => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-h-screen">
           {/* Dynamic Navbar - ACADEX name hides when sidebar opens */}
-          <header className="animate-header dark-navbar">
+          <header className="animate-header white-navbar">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16">
                 {/* Left Section - Single Unified Sidebar Toggle */}
@@ -929,10 +929,10 @@ const Dashboard = () => {
             <div className="max-w-7xl mx-auto px-8 pb-12">
               {/* PDF Processing Section */}
               <div className="animate-section mb-12">
-                <div className={`${isDarkMode ? "dark-elevated-card" : "elevated-card"} p-6 hover-lift`}>
+                <div className={`bg-amber-900 rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 cursor-pointer border border-amber-800 hover-lift`}>
                   <div className="flex items-center space-x-4 mb-6">
                     <svg
-                      className={`w-8 h-8 float-element ${isDarkMode ? "text-white" : "text-purple-600"}`}
+                      className={`w-8 h-8 float-element text-amber-200`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -945,15 +945,15 @@ const Dashboard = () => {
                       />
                     </svg>
                     <div>
-                      <h3 className={`text-2xl font-black ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+                      <h3 className={`text-2xl font-black text-amber-50`}>
                         Document Processing Engine
                       </h3>
-                      <p className={`text-base ${isDarkMode ? "text-gray-300" : "text-slate-600"} mt-1`}>
+                      <p className={`text-base text-amber-200 mt-1`}>
                         Advanced AI-powered PDF analysis, extraction, and processing capabilities
                       </p>
                     </div>
                   </div>
-                  <div className={`${isDarkMode ? "dark-section-divider" : "section-divider"} mb-6`}></div>
+                  <div className={`bg-gradient-to-r from-transparent via-amber-800 to-transparent h-px mb-6`}></div>
 {/* PDF Processing Component */}
                   <PDFProcessingCard />
 
