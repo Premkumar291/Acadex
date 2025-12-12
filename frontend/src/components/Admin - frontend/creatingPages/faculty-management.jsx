@@ -105,7 +105,7 @@ const FacultyManagement = () => {
   })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-6 font-ubuntu">
       {/* Header - Centered */}
       <div className="mb-12 text-center">
         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-700">Faculty Management</h1>
@@ -116,7 +116,7 @@ const FacultyManagement = () => {
       <div className="mb-8 flex justify-center">
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 text-white shadow-md transition-all hover:bg-blue-700 hover:scale-105 active:scale-95"
+          className="flex items-center space-x-2 rounded-lg bg-amber-800 px-4 py-2 text-white shadow-md transition-all hover:bg-amber-900 hover:scale-105 active:scale-95"
         >
           <Plus size={20} />
           <span>Add Faculty</span>
@@ -204,13 +204,13 @@ const FacultyManagement = () => {
                       <div className="flex justify-end space-x-2">
                         <button
                           onClick={() => openEditModal(facultyMember)}
-                          className="text-blue-400 hover:text-blue-300 p-1 rounded"
+                          className="text-amber-600 hover:text-amber-800 p-1 rounded"
                         >
                           <Edit2 size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(facultyMember._id)}
-                          className="text-red-400 hover:text-red-300 p-1 rounded"
+                          className="text-red-600 hover:text-red-800 p-1 rounded"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -331,8 +331,8 @@ const FacultyManagement = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md focus:ring-2 focus:ring-blue-500 ${
-                    loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                  className={`px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md focus:ring-2 focus:ring-amber-600 ${
+                    loading ? "bg-amber-700 cursor-not-allowed" : "bg-amber-800 hover:bg-amber-900"
                   }`}
                 >
                   {loading ? "Saving..." : editingFaculty ? "Update Faculty" : "Create Faculty"}
