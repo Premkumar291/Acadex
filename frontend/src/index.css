@@ -1,6 +1,33 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* ============================================
+   CSS CUSTOM PROPERTIES - PRIMARY COLOR THEME
+   ============================================
+  */
+
+:root {
+  /* Primary Color Palette - Full Spectrum */
+  --primary-50: #eefff5;    
+  --primary-100: #d8ffea;    
+  --primary-200: #b3ffd6;    
+  --primary-300: #70fcb1;    
+  --primary-400: #37f18e;   
+  --primary-500: #0ed96e;
+  --primary-600: #04b557;  
+  --primary-700: #088d48;
+  --primary-800: #0c6f3c; 
+  --primary-900: #0c5b33;   
+  --primary-950: #00331a;  
+  
+  /* Semantic Color Mappings for Easy Reference */
+  --color-primary: var(--primary-700);
+  --color-primary-dark: var(--primary-900);
+  --color-primary-light: var(--primary-100);
+  --color-primary-text: var(--primary-50);
+  --color-primary-border: var(--primary-800);
+}
+
 @layer components {
   .font-ubuntu {
     font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -8,6 +35,86 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* ============================================
+   UTILITY CLASSES - PRIMARY COLOR SYSTEM
+   ============================================ */
+
+@layer utilities {
+  /* Background Colors */
+  .bg-primary-50 { background-color: var(--primary-50); }
+  .bg-primary-100 { background-color: var(--primary-100); }
+  .bg-primary-200 { background-color: var(--primary-200); }
+  .bg-primary-300 { background-color: var(--primary-300); }
+  .bg-primary-400 { background-color: var(--primary-400); }
+  .bg-primary-500 { background-color: var(--primary-500); }
+  .bg-primary-600 { background-color: var(--primary-600); }
+  .bg-primary-700 { background-color: var(--primary-700); }
+  .bg-primary-800 { background-color: var(--primary-800); }
+  .bg-primary-900 { background-color: var(--primary-900); }
+  .bg-primary-950 { background-color: var(--primary-950); }
+  
+  /* Text Colors */
+  .text-primary-50 { color: var(--primary-50); }
+  .text-primary-100 { color: var(--primary-100); }
+  .text-primary-200 { color: var(--primary-200); }
+  .text-primary-300 { color: var(--primary-300); }
+  .text-primary-400 { color: var(--primary-400); }
+  .text-primary-500 { color: var(--primary-500); }
+  .text-primary-600 { color: var(--primary-600); }
+  .text-primary-700 { color: var(--primary-700); }
+  .text-primary-800 { color: var(--primary-800); }
+  .text-primary-900 { color: var(--primary-900); }
+  .text-primary-950 { color: var(--primary-950); }
+  
+  /* Border Colors */
+  .border-primary-50 { border-color: var(--primary-50); }
+  .border-primary-100 { border-color: var(--primary-100); }
+  .border-primary-200 { border-color: var(--primary-200); }
+  .border-primary-300 { border-color: var(--primary-300); }
+  .border-primary-400 { border-color: var(--primary-400); }
+  .border-primary-500 { border-color: var(--primary-500); }
+  .border-primary-600 { border-color: var(--primary-600); }
+  .border-primary-700 { border-color: var(--primary-700); }
+  .border-primary-800 { border-color: var(--primary-800); }
+  .border-primary-900 { border-color: var(--primary-900); }
+  .border-primary-950 { border-color: var(--primary-950); }
+  
+  /* Hover States - Background */
+  .hover\:bg-primary-50:hover { background-color: var(--primary-50); }
+  .hover\:bg-primary-100:hover { background-color: var(--primary-100); }
+  .hover\:bg-primary-200:hover { background-color: var(--primary-200); }
+  .hover\:bg-primary-300:hover { background-color: var(--primary-300); }
+  .hover\:bg-primary-400:hover { background-color: var(--primary-400); }
+  .hover\:bg-primary-500:hover { background-color: var(--primary-500); }
+  .hover\:bg-primary-600:hover { background-color: var(--primary-600); }
+  .hover\:bg-primary-700:hover { background-color: var(--primary-700); }
+  .hover\:bg-primary-800:hover { background-color: var(--primary-800); }
+  .hover\:bg-primary-900:hover { background-color: var(--primary-900); }
+  .hover\:bg-primary-950:hover { background-color: var(--primary-950); }
+  
+  /* Hover States - Text */
+  .hover\:text-primary-50:hover { color: var(--primary-50); }
+  .hover\:text-primary-100:hover { color: var(--primary-100); }
+  .hover\:text-primary-200:hover { color: var(--primary-200); }
+  .hover\:text-primary-300:hover { color: var(--primary-300); }
+  .hover\:text-primary-400:hover { color: var(--primary-400); }
+  .hover\:text-primary-500:hover { color: var(--primary-500); }
+  .hover\:text-primary-600:hover { color: var(--primary-600); }
+  .hover\:text-primary-700:hover { color: var(--primary-700); }
+  .hover\:text-primary-800:hover { color: var(--primary-800); }
+  .hover\:text-primary-900:hover { color: var(--primary-900); }
+  .hover\:text-primary-950:hover { color: var(--primary-950); }
+  
+  /* Gradient Utilities */
+  .from-primary-700 { --tw-gradient-from: var(--primary-700); }
+  .from-primary-800 { --tw-gradient-from: var(--primary-800); }
+  .from-primary-900 { --tw-gradient-from: var(--primary-900); }
+  .to-primary-700 { --tw-gradient-to: var(--primary-700); }
+  .to-primary-800 { --tw-gradient-to: var(--primary-800); }
+  .to-primary-900 { --tw-gradient-to: var(--primary-900); }
+  .via-primary-800 { --tw-gradient-via: var(--primary-800); }
 }
 
 body.dark {

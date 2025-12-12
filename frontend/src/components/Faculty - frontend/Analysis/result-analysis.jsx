@@ -22,18 +22,18 @@ export default function ResultAnalysis() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col p-5 bg-gradient-to-br from-white to-gray-50 rounded-xl border border-amber-200 hover:border-amber-400 hover:shadow-xl hover:shadow-amber-200/30 transition-all duration-300"
+      className="flex flex-col p-5 bg-gradient-to-br from-white to-gray-50 rounded-xl border border-primary-200 hover:border-primary-400 hover:shadow-xl hover:shadow-primary-200/30 transition-all duration-300"
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex-1">
-          <h3 className="font-bold text-amber-950 text-lg flex items-center">
-            <BookOpen className="w-4 h-4 mr-2 text-amber-600" />
+          <h3 className="font-bold text-primary-950 text-lg flex items-center">
+            <BookOpen className="w-4 h-4 mr-2 text-primary-600" />
             {subject.subject}
           </h3>
-          <p className="text-sm text-amber-700">
-            <span className="font-semibold text-green-600">{subject.passedStudents}</span>/<span className="text-amber-800">{subject.totalStudents}</span> students passed
+          <p className="text-sm text-primary-700">
+            <span className="font-semibold text-green-600">{subject.passedStudents}</span>/<span className="text-primary-800">{subject.totalStudents}</span> students passed
             {subject.emptyGrades > 0 && (
-              <span className="ml-2 text-amber-600">
+              <span className="ml-2 text-primary-600">
                 ({subject.emptyGrades} students with empty grades)
               </span>
             )}
@@ -57,22 +57,22 @@ export default function ResultAnalysis() {
 
       {/* Students with grades section */}
       {subject.studentsWithGrades && subject.studentsWithGrades.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-amber-200">
-          <p className="text-sm font-semibold text-amber-900 mb-2">Students with grades:</p>
+        <div className="mt-3 pt-3 border-t border-primary-200">
+          <p className="text-sm font-semibold text-primary-900 mb-2">Students with grades:</p>
           <div className="max-h-40 overflow-y-auto custom-scrollbar">
-            <table className="min-w-full divide-y divide-amber-200">
-              <thead className="bg-amber-50">
+            <table className="min-w-full divide-y divide-primary-200">
+              <thead className="bg-primary-50">
                 <tr>
-                  <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Reg No</th>
-                  <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
-                  <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Grade</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-primary-900 uppercase tracking-wider">Reg No</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-primary-900 uppercase tracking-wider">Name</th>
+                  <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-primary-900 uppercase tracking-wider">Grade</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-amber-200">
+              <tbody className="bg-white divide-y divide-primary-200">
                 {subject.studentsWithGrades.map((student, idx) => (
-                  <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-amber-50'} >
-                    <td className="px-3 py-2 whitespace-nowrap text-xs text-amber-900 font-mono">{student.regNo}</td>
-                    <td className="px-3 py-2 whitespace-nowrap text-xs text-amber-800">{student.name}</td>
+                  <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-primary-50'} >
+                    <td className="px-3 py-2 whitespace-nowrap text-xs text-primary-900 font-mono">{student.regNo}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs text-primary-800">{student.name}</td>
                     <td className="px-3 py-2 whitespace-nowrap text-xs">
                       <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-bold ${isArrearGrade(student.grade) ? 'bg-red-500/20 text-red-400 border border-red-500/50' : 'bg-green-500/20 text-green-400 border border-green-500/50'}`}>
                         {student.grade}
@@ -352,9 +352,9 @@ export default function ResultAnalysis() {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-16 h-16 border-4 border-amber-200 border-t-amber-700 rounded-full mx-auto"
+          className="w-16 h-16 border-4 border-primary-200 border-t-primary-700 rounded-full mx-auto"
         />
-        <p className="mt-4 text-amber-700 font-semibold">{message}</p>
+        <p className="mt-4 text-primary-700 font-semibold">{message}</p>
       </div>
     </div>
   );
@@ -379,7 +379,7 @@ export default function ResultAnalysis() {
         transition={{ duration: 0.5 }}
         className="flex justify-between items-center mb-8"
       >
-        <Link to="/faculty-dashboard" className="text-amber-700 hover:text-amber-800 flex items-center group transition-all">
+        <Link to="/faculty-dashboard" className="text-primary-700 hover:text-primary-800 flex items-center group transition-all">
           <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
           <span className="font-semibold">Back to Dashboard</span>
         </Link>
@@ -425,7 +425,7 @@ export default function ResultAnalysis() {
           )}
           <button
             onClick={refreshAnalysis}
-            className="px-5 py-2.5 bg-gradient-to-r from-amber-700 to-amber-800 text-white rounded-lg hover:from-amber-800 hover:to-amber-900 transition-all flex items-center shadow-lg hover:shadow-xl font-semibold"
+            className="px-5 py-2.5 bg-gradient-to-r from-primary-700 to-primary-800 text-white rounded-lg hover:from-primary-800 hover:to-primary-900 transition-all flex items-center shadow-lg hover:shadow-xl font-semibold"
             disabled={pdfCoLoading}
           >
             {pdfCoLoading ? (
@@ -450,13 +450,13 @@ export default function ResultAnalysis() {
 
       {/* Page header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-amber-950">Result Analysis</h1>
-        <p className="text-amber-700 mt-2">
+        <h1 className="text-3xl font-bold text-primary-950">Result Analysis</h1>
+        <p className="text-primary-700 mt-2">
           Analyzing semester {semester} results from PDF ID: {pdfId}
         </p>
         {selectedStartIndex !== null && students.length > 0 && (
-          <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-md">
-            <p className="text-sm text-amber-800 flex items-center">
+          <div className="mt-3 p-3 bg-primary-50 border border-primary-200 rounded-md">
+            <p className="text-sm text-primary-800 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
               </svg>
@@ -465,7 +465,7 @@ export default function ResultAnalysis() {
                 <strong>{students[selectedStartIndex]?.name}</strong> ({students[selectedStartIndex]?.regNo})
               </span>
             </p>
-            <p className="text-xs text-amber-700 mt-1 ml-7">
+            <p className="text-xs text-primary-700 mt-1 ml-7">
               Analyzing {students.length - selectedStartIndex} of {students.length} total students in the PDF
             </p>
           </div>
@@ -486,16 +486,16 @@ export default function ResultAnalysis() {
       {pdfCoLoading ? (
         <div className="flex flex-col items-center justify-center py-12">
           <LoadingSpinner />
-          <p className="mt-4 text-amber-700">Analyzing PDF results...</p>
+          <p className="mt-4 text-primary-700">Analyzing PDF results...</p>
         </div>
       ) : !resultData ? (
         <div className="bg-white shadow-md rounded-lg p-6 text-center">
-          <p className="text-amber-700">
+          <p className="text-primary-700">
             Select a starting student to view analysis
           </p>
           <button
             onClick={() => setShowModal(true)}
-            className="mt-4 px-4 py-2 bg-amber-700 text-white rounded hover:bg-amber-800 transition-colors flex items-center"
+            className="mt-4 px-4 py-2 bg-primary-700 text-white rounded hover:bg-primary-800 transition-colors flex items-center"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
@@ -548,25 +548,25 @@ export default function ResultAnalysis() {
 
           {/* Subject-wise Performance */}
           <div className="mb-8 bg-white shadow-md rounded-lg overflow-hidden">
-            <div className="px-6 py-4 bg-amber-700">
+            <div className="px-6 py-4 bg-primary-700">
               <h2 className="text-lg font-semibold text-white">Subject-wise Performance</h2>
-              <p className="text-amber-100 text-sm">
+              <p className="text-primary-100 text-sm">
                 Pass percentage for each subject
               </p>
             </div>
 
             {/* Info notice for subjects with 0 students */}
             {resultData.subjectWiseResults.some(subject => subject.totalStudents === 0) && (
-              <div className="mx-6 mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
+              <div className="mx-6 mt-4 p-3 bg-primary-50 border border-primary-200 rounded-md">
                 <div className="flex items-start">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-700 mr-2 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary-700 mr-2 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                   </svg>
                   <div>
-                    <p className="text-sm text-amber-900 font-medium">
+                    <p className="text-sm text-primary-900 font-medium">
                       Report Generation Notice
                     </p>
-                    <p className="text-xs text-amber-800 mt-1">
+                    <p className="text-xs text-primary-800 mt-1">
                       Subjects with 0 students will be automatically excluded from the generated report. Only subjects with enrolled students will appear in the final Excel file.
                     </p>
                   </div>
@@ -578,11 +578,11 @@ export default function ResultAnalysis() {
             <div className="p-6">
               {/* Subject Performance Table */}
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-amber-950">Detailed Subject Performance</h3>
+                <h3 className="text-lg font-semibold mb-4 text-primary-950">Detailed Subject Performance</h3>
                 {/* Show count of filtered subjects if any */}
                 {resultData.subjectWiseResults.filter(subject => subject.totalStudents === 0).length > 0 && (
-                  <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
-                    <p className="text-sm text-amber-800">
+                  <div className="mb-4 p-3 bg-primary-50 border border-primary-200 rounded-md">
+                    <p className="text-sm text-primary-800">
                       <strong>Note:</strong> {resultData.subjectWiseResults.filter(subject => subject.totalStudents === 0).length} subject(s) with 0 students are hidden from this view.
                     </p>
                   </div>
@@ -600,33 +600,33 @@ export default function ResultAnalysis() {
 
           {/* New Card: All Students From Selected Starting Index */}
           <div className="mb-8 bg-white shadow-md rounded-lg overflow-hidden">
-            <div className="px-6 py-4 bg-amber-700">
+            <div className="px-6 py-4 bg-primary-700">
               <h3 className="text-lg font-semibold text-white">All Students From Selected Start</h3>
-              <p className="text-amber-100 text-sm">
+              <p className="text-primary-100 text-sm">
                 Showing {students.slice(selectedStartIndex).length} students starting from {students[selectedStartIndex]?.name} ({students[selectedStartIndex]?.regNo})
               </p>
             </div>
             <div className="relative overflow-x-auto">
               <div className="max-h-96 overflow-y-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-amber-50 sticky top-0 z-10">
+                  <thead className="bg-primary-50 sticky top-0 z-10">
                     <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">Reg No</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">Name</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-primary-900 uppercase tracking-wider">Reg No</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-primary-900 uppercase tracking-wider">Name</th>
                       {/* Only show subjects with students */}
                       {subjectCodes.filter(code => {
                         const subjectResult = resultData.subjectWiseResults.find(s => s.subject === code);
                         return subjectResult && subjectResult.totalStudents > 0;
                       }).map(code => (
-                        <th key={code} scope="col" className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">{code}</th>
+                        <th key={code} scope="col" className="px-6 py-3 text-left text-xs font-medium text-primary-900 uppercase tracking-wider">{code}</th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-amber-200">
+                  <tbody className="bg-white divide-y divide-primary-200">
                     {students.slice(selectedStartIndex).map((student, idx) => (
-                      <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-amber-50'}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-amber-950">{student.regNo}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-amber-950">{student.name}</td>
+                      <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-primary-50'}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-primary-950">{student.regNo}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-primary-950">{student.name}</td>
                         {/* Only show subjects with students */}
                         {subjectCodes.filter(code => {
                           const subjectResult = resultData.subjectWiseResults.find(s => s.subject === code);
@@ -653,32 +653,32 @@ export default function ResultAnalysis() {
           {/* Display students with complete grade records */}
           {resultData && resultData.studentsWithCompleteGrades && resultData.studentsWithCompleteGrades.length > 0 && (
             <div className="mt-8 bg-white shadow-md rounded-lg overflow-hidden">
-              <div className="px-6 py-4 bg-amber-700">
+              <div className="px-6 py-4 bg-primary-700">
                 <h3 className="text-lg font-semibold text-white">Students With Complete Grade Records</h3>
-                <p className="text-amber-100 text-sm">
+                <p className="text-primary-100 text-sm">
                   {resultData.studentsWithCompleteGrades.length} students have grades for all subjects
                 </p>
               </div>
               <div className="p-4 max-h-96 overflow-y-auto">
-                <table className="min-w-full divide-y divide-amber-200">
-                  <thead className="bg-amber-50">
+                <table className="min-w-full divide-y divide-primary-200">
+                  <thead className="bg-primary-50">
                     <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">Reg No</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">Name</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-primary-900 uppercase tracking-wider">Reg No</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-primary-900 uppercase tracking-wider">Name</th>
                       {/* Only show subjects with students */}
                       {subjectCodes.filter(code => {
                         const subjectResult = resultData.subjectWiseResults.find(s => s.subject === code);
                         return subjectResult && subjectResult.totalStudents > 0;
                       }).map(code => (
-                        <th key={code} scope="col" className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">{code}</th>
+                        <th key={code} scope="col" className="px-6 py-3 text-left text-xs font-medium text-primary-900 uppercase tracking-wider">{code}</th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-amber-200">
+                  <tbody className="bg-white divide-y divide-primary-200">
                     {resultData.studentsWithCompleteGrades.map((student, idx) => (
-                      <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-amber-50'}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-amber-950">{student.regNo}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-amber-950">{student.name}</td>
+                      <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-primary-50'}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-primary-950">{student.regNo}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-primary-950">{student.name}</td>
                         {/* Only show subjects with students */}
                         {subjectCodes.filter(code => {
                           const subjectResult = resultData.subjectWiseResults.find(s => s.subject === code);
@@ -704,8 +704,8 @@ export default function ResultAnalysis() {
               <div className="p-6 pb-4">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h3 className="text-xl font-semibold text-amber-950">Raw Analysis Data</h3>
-                    <p className="text-sm text-amber-700">
+                    <h3 className="text-xl font-semibold text-primary-950">Raw Analysis Data</h3>
+                    <p className="text-sm text-primary-700">
                       Showing data from selected starting point onwards
                       <span className="ml-2 text-blue-600 font-medium">
                         (Starting from student {selectedStartIndex + 1} of {analysisData.students.length})
@@ -740,14 +740,14 @@ export default function ResultAnalysis() {
                   </button>
                 </div>
                 <div className="mt-4">
-                  <div className="bg-amber-50 p-3 mb-3 rounded-md border border-amber-200">
-                    <p className="text-sm text-amber-800">
+                  <div className="bg-primary-50 p-3 mb-3 rounded-md border border-primary-200">
+                    <p className="text-sm text-primary-800">
                       <strong>Note:</strong> This view shows only the students starting from your selected student (index {selectedStartIndex}).
                       The analysis results above are calculated using only these students, not the entire PDF.
                     </p>
                   </div>
                   <pre 
-                    className="text-xs font-mono bg-amber-50 p-4 rounded-lg overflow-x-auto whitespace-pre overflow-y-auto max-h-[500px]"
+                    className="text-xs font-mono bg-primary-50 p-4 rounded-lg overflow-x-auto whitespace-pre overflow-y-auto max-h-[500px]"
                     style={{
                       tabSize: 2,
                       WebkitTextSizeAdjust: "100%",
@@ -768,7 +768,7 @@ export default function ResultAnalysis() {
                     )
                       .split('\n')
                       .map((line, i) => (
-                        <div key={i} className="hover:bg-amber-100 py-0.5">
+                        <div key={i} className="hover:bg-primary-100 py-0.5">
                           {line}
                         </div>
                       ))
@@ -784,8 +784,8 @@ export default function ResultAnalysis() {
           <div className="mt-8 bg-white rounded-lg shadow-sm overflow-hidden">
             {/* Section header */}
             <div className="p-6 pb-2">
-              <h3 className="text-xl font-semibold text-amber-950">Performance Summary</h3>
-              <p className="text-sm text-amber-700">Key insights from the result analysis</p>
+              <h3 className="text-xl font-semibold text-primary-950">Performance Summary</h3>
+              <p className="text-sm text-primary-700">Key insights from the result analysis</p>
             </div>
             
             {/* Summary statistics cards */}

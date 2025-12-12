@@ -116,7 +116,7 @@ const FacultyManagement = () => {
       <div className="mb-8 flex justify-center">
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center space-x-2 rounded-lg bg-amber-800 px-4 py-2 text-white shadow-md transition-all hover:bg-amber-900 hover:scale-105 active:scale-95"
+          className="flex items-center space-x-2 rounded-lg bg-primary-800 px-4 py-2 text-white shadow-md transition-all hover:bg-primary-900 hover:scale-105 active:scale-95"
         >
           <Plus size={20} />
           <span>Add Faculty</span>
@@ -204,7 +204,7 @@ const FacultyManagement = () => {
                       <div className="flex justify-end space-x-2">
                         <button
                           onClick={() => openEditModal(facultyMember)}
-                          className="text-amber-600 hover:text-amber-800 p-1 rounded"
+                          className="text-primary-600 hover:text-primary-800 p-1 rounded"
                         >
                           <Edit2 size={16} />
                         </button>
@@ -331,8 +331,8 @@ const FacultyManagement = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md focus:ring-2 focus:ring-amber-600 ${
-                    loading ? "bg-amber-700 cursor-not-allowed" : "bg-amber-800 hover:bg-amber-900"
+                  className={`px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md focus:ring-2 focus:ring-primary-600 ${
+                    loading ? "bg-primary-700 cursor-not-allowed" : "bg-primary-800 hover:bg-primary-900"
                   }`}
                 >
                   {loading ? "Saving..." : editingFaculty ? "Update Faculty" : "Create Faculty"}

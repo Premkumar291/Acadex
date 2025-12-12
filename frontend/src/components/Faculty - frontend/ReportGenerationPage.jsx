@@ -398,20 +398,20 @@ function ReportGenerationPage() {
                 </div>
               </div>
             </div>
-            <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+            <div className="bg-primary-50 p-4 rounded-lg border border-primary-200">
               <div className="flex items-center">
-                <BookOpen className="h-6 w-6 text-amber-700 mr-2" />
+                <BookOpen className="h-6 w-6 text-primary-700 mr-2" />
                 <div>
-                  <p className="text-sm text-amber-700 font-medium">Total Subjects</p>
+                  <p className="text-sm text-primary-700 font-medium">Total Subjects</p>
                   <p className="text-xl font-bold text-gray-900">{reportData.resultData.totalSubjects}</p>
                 </div>
               </div>
             </div>
-            <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+            <div className="bg-primary-50 p-4 rounded-lg border border-primary-200">
               <div className="flex items-center">
-                <Building2 className="h-6 w-6 text-amber-700 mr-2" />
+                <Building2 className="h-6 w-6 text-primary-700 mr-2" />
                 <div>
-                  <p className="text-sm text-amber-700 font-medium">Overall Pass %</p>
+                  <p className="text-sm text-primary-700 font-medium">Overall Pass %</p>
                   <p className="text-xl font-bold text-gray-900">{reportData.resultData.overallPassPercentage.toFixed(1)}%</p>
                 </div>
               </div>
@@ -420,28 +420,28 @@ function ReportGenerationPage() {
         </div>
 
         {/* Report Form */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-amber-200">
-          <h2 className="text-lg font-semibold text-amber-900 mb-6 flex items-center">
-            <Building2 className="h-5 w-5 mr-2 text-amber-700" />
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-primary-200">
+          <h2 className="text-lg font-semibold text-primary-900 mb-6 flex items-center">
+            <Building2 className="h-5 w-5 mr-2 text-primary-700" />
             Institutional Report Details
           </h2>
           
           {/* Department Information Section */}
           <div className="mb-8">
-            <h3 className="text-md font-semibold text-amber-900 mb-4 flex items-center">
-              <Building2 className="h-4 w-4 mr-2 text-amber-700" />
+            <h3 className="text-md font-semibold text-primary-900 mb-4 flex items-center">
+              <Building2 className="h-4 w-4 mr-2 text-primary-700" />
               Department Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Semester */}
               <div>
-                <label className="block text-sm font-medium text-amber-900 mb-2">
+                <label className="block text-sm font-medium text-primary-900 mb-2">
                   Semester *
                 </label>
                 <input
                   type="text"
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-600 focus:border-amber-600 ${
-                    errors.semester ? 'border-red-300' : 'border-amber-200'
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 ${
+                    errors.semester ? 'border-red-300' : 'border-primary-200'
                   }`}
                   placeholder="e.g., 6"
                   value={departmentInfo.semester}
@@ -457,13 +457,13 @@ function ReportGenerationPage() {
               
               {/* Academic Year */}
               <div>
-                <label className="block text-sm font-medium text-amber-900 mb-2">
+                <label className="block text-sm font-medium text-primary-900 mb-2">
                   Academic Year *
                 </label>
                 <input
                   type="text"
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-600 focus:border-amber-600 ${
-                    errors.academicYear ? 'border-red-300' : 'border-amber-200'
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 ${
+                    errors.academicYear ? 'border-red-300' : 'border-primary-200'
                   }`}
                   placeholder="e.g., 2024-2025"
                   value={departmentInfo.academicYear}
@@ -479,12 +479,12 @@ function ReportGenerationPage() {
               
               {/* Department */}
               <div>
-                <label className="block text-sm font-medium text-amber-900 mb-2">
+                <label className="block text-sm font-medium text-primary-900 mb-2">
                   Department *
                 </label>
                 <select
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-600 focus:border-amber-600 ${
-                    errors.department ? 'border-red-300' : 'border-amber-200'
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 ${
+                    errors.department ? 'border-red-300' : 'border-primary-200'
                   }`}
                   value={departmentInfo.department}
                   onChange={(e) => handleDepartmentInfoChange('department', e.target.value)}
@@ -718,7 +718,7 @@ function ReportGenerationPage() {
                 className={`px-6 py-3 rounded-md font-medium flex items-center transition-all ${
                   loading 
                     ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-amber-800 hover:bg-amber-900 text-white shadow-lg hover:shadow-xl'
+                    : 'bg-primary-800 hover:bg-primary-900 text-white shadow-lg hover:shadow-xl'
                 } transform hover:scale-105`}
               >
                 {loading ? (
@@ -740,44 +740,44 @@ function ReportGenerationPage() {
         {/* Report Generated Success Modal */}
         {showPreview && generatedReport && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 border border-amber-200">
+            <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 border border-primary-200">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto bg-amber-100 rounded-full flex items-center justify-center mb-4">
-                  <CheckCircle className="h-8 w-8 text-amber-700" />
+                <div className="w-16 h-16 mx-auto bg-primary-100 rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle className="h-8 w-8 text-primary-700" />
                 </div>
                 
-                <h3 className="text-lg font-semibold text-amber-950 mb-2">
+                <h3 className="text-lg font-semibold text-primary-950 mb-2">
                   Report Generated Successfully!
                 </h3>
                 
-                <p className="text-amber-700 mb-6">
+                <p className="text-primary-700 mb-6">
                   Your institutional report has been generated successfully. You can now preview it or download it directly.
                 </p>
                 
                 {/* Report Details */}
-                <div className="bg-amber-50 rounded-lg p-4 mb-6 text-left border border-amber-200">
+                <div className="bg-primary-50 rounded-lg p-4 mb-6 text-left border border-primary-200">
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="font-medium text-amber-900">Department:</span>
-                      <p className="text-amber-900">{generatedReport.department}</p>
+                      <span className="font-medium text-primary-900">Department:</span>
+                      <p className="text-primary-900">{generatedReport.department}</p>
                     </div>
                     <div>
-                      <span className="font-medium text-amber-900">Semester:</span>
-                      <p className="text-amber-900">{generatedReport.semester}</p>
+                      <span className="font-medium text-primary-900">Semester:</span>
+                      <p className="text-primary-900">{generatedReport.semester}</p>
                     </div>
                     <div>
-                      <span className="font-medium text-amber-900">Academic Year:</span>
-                      <p className="text-amber-900">{generatedReport.academicYear}</p>
+                      <span className="font-medium text-primary-900">Academic Year:</span>
+                      <p className="text-primary-900">{generatedReport.academicYear}</p>
                     </div>
                     <div>
-                      <span className="font-medium text-amber-900">Generated:</span>
-                      <p className="text-amber-900">{new Date(generatedReport.generatedAt).toLocaleDateString()}</p>
+                      <span className="font-medium text-primary-900">Generated:</span>
+                      <p className="text-primary-900">{new Date(generatedReport.generatedAt).toLocaleDateString()}</p>
                     </div>
                     {generatedReport.totalStudents > 0 && (
                       <>
                         <div>
-                          <span className="font-medium text-amber-900">Students:</span>
-                          <p className="text-amber-900">{generatedReport.totalStudents}</p>
+                          <span className="font-medium text-primary-900">Students:</span>
+                          <p className="text-primary-900">{generatedReport.totalStudents}</p>
                         </div>
                         <div>
                           <span className="font-medium text-gray-700">Pass Rate:</span>
@@ -797,7 +797,7 @@ function ReportGenerationPage() {
                       const correctedPreviewUrl = `${apiBaseUrl}/reports/preview/${generatedReport.reportId}`;
                       window.open(correctedPreviewUrl, '_blank');
                     }}
-                    className="flex-1 px-4 py-2 bg-amber-800 text-white rounded-md hover:bg-amber-900 transition-colors flex items-center justify-center"
+                    className="flex-1 px-4 py-2 bg-primary-800 text-white rounded-md hover:bg-primary-900 transition-colors flex items-center justify-center"
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     View Report
@@ -813,7 +813,7 @@ function ReportGenerationPage() {
                         toast.error('Failed to download Excel report. Please try again.');
                       }
                     }}
-                    className="flex-1 px-4 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-800 transition-colors flex items-center justify-center"
+                    className="flex-1 px-4 py-2 bg-primary-700 text-white rounded-md hover:bg-primary-800 transition-colors flex items-center justify-center"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Download Report
@@ -823,7 +823,7 @@ function ReportGenerationPage() {
                 {/* Close Button */}
                 <button
                   onClick={() => dispatch({ type: 'SET_PREVIEW', payload: false })}
-                  className="mt-4 text-amber-600 hover:text-amber-800 text-sm transition-colors"
+                  className="mt-4 text-primary-600 hover:text-primary-800 text-sm transition-colors"
                 >
                   Close
                 </button>

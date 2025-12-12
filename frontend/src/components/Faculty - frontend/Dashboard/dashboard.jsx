@@ -711,7 +711,7 @@ const Dashboard = () => {
           transition={{ duration: 0.3, ease: "easeInOut" }}
           className={`
             fixed top-0 left-0 h-full z-50
-            bg-white border-amber-200
+            bg-white border-primary-200
             border-r shadow-lg
             flex flex-col
           `}
@@ -719,7 +719,7 @@ const Dashboard = () => {
           {/* Sidebar Header */}
           <div
             className={`
-              flex items-center ${isDarkMode ? "border-gray-800 bg-black" : "border-amber-200 bg-white"} border-b p-4
+              flex items-center ${isDarkMode ? "border-gray-800 bg-black" : "border-primary-200 bg-white"} border-b p-4
               ${isMobileOpen || !isCollapsed ? "justify-between" : "justify-center"}
             `}
           >
@@ -754,7 +754,7 @@ const Dashboard = () => {
               ))}
             </div>
             {/* Separator */}
-            <div className={`mx-4 my-4 border-t ${isDarkMode ? "border-gray-800" : "border-amber-200"}`}></div>
+            <div className={`mx-4 my-4 border-t ${isDarkMode ? "border-gray-800" : "border-primary-200"}`}></div>
           </div>
 
           {/* Logout Button */}
@@ -781,7 +781,7 @@ const Dashboard = () => {
 
           {/* Account Information Section */}
           {(isMobileOpen || !isCollapsed) && (
-            <div className={`${isDarkMode ? "border-gray-800 bg-black" : "border-amber-200 bg-white"} border-t p-4`}>
+            <div className={`${isDarkMode ? "border-gray-800 bg-black" : "border-primary-200 bg-white"} border-t p-4`}>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div
@@ -929,10 +929,10 @@ const Dashboard = () => {
             <div className="max-w-7xl mx-auto px-8 pb-12">
               {/* PDF Processing Section */}
               <div className="animate-section mb-12">
-                <div className={`bg-amber-900 rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 cursor-pointer border border-amber-800 hover-lift`}>
+                <div className={`bg-primary-900 rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 cursor-pointer border border-primary-800 hover-lift`}>
                   <div className="flex items-center space-x-4 mb-6">
                     <svg
-                      className={`w-8 h-8 float-element text-amber-200`}
+                      className={`w-8 h-8 float-element text-primary-200`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -945,15 +945,15 @@ const Dashboard = () => {
                       />
                     </svg>
                     <div>
-                      <h3 className={`text-2xl font-black text-amber-50`}>
+                      <h3 className={`text-2xl font-black text-primary-50`}>
                         Document Processing Engine
                       </h3>
-                      <p className={`text-base text-amber-200 mt-1`}>
+                      <p className={`text-base text-primary-200 mt-1`}>
                         Advanced AI-powered PDF analysis, extraction, and processing capabilities
                       </p>
                     </div>
                   </div>
-                  <div className={`bg-gradient-to-r from-transparent via-amber-800 to-transparent h-px mb-6`}></div>
+                  <div className={`bg-gradient-to-r from-transparent via-primary-800 to-transparent h-px mb-6`}></div>
 {/* PDF Processing Component */}
                   <PDFProcessingCard />
 

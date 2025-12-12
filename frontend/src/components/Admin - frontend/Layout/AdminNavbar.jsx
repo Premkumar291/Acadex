@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react"
 import { useNavigate, Link, useLocation } from "react-router-dom"
-import { 
-  Menu, 
-  X, 
-  LogOut, 
-  Users, 
-  BookOpen, 
+import {
+  Menu,
+  X,
+  LogOut,
+  Users,
+  BookOpen,
   ShieldCheckIcon
 } from "lucide-react"
 import { logout } from "@/api/auth"
@@ -63,7 +63,7 @@ const AdminNavbar = ({ user }) => {
   // Close mobile menu when location changes
   useEffect(() => {
     setIsMobileMenuOpen(false)
-    
+
     // Update active item based on current location
     const currentPath = location.pathname;
     const currentItem = navItems.find(item => item.url === currentPath);
@@ -80,7 +80,7 @@ const AdminNavbar = ({ user }) => {
   return (
     <>
       {/* Desktop Navbar */}
-      <header className="hidden md:flex items-center justify-between h-16 px-4 border-b bg-white border-amber-900 shadow-sm">
+      <header className="hidden md:flex items-center justify-between h-16 px-4 border-b bg-white border-primary-900 shadow-sm">
         <div className="flex items-center space-x-4">
           {/* Brand - Clicking navigates to dashboard */}
           <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer">
@@ -98,17 +98,16 @@ const AdminNavbar = ({ user }) => {
           {navItems.map((item) => {
             const Icon = item.icon
             const isActive = activeItem === item.name && activeItem !== ""
-            
+
             return (
               <Link
                 key={item.name}
                 to={item.url}
                 onClick={() => handleItemClick(item.name)}
-                className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
+                className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
                     ? "bg-gray-100 text-neutral-900"
                     : "text-gray-600 hover:bg-gray-50 hover:text-neutral-900"
-                }`}
+                  }`}
               >
                 <Icon className="w-4 h-4 mr-2" />
                 <span>{item.name}</span>
@@ -147,7 +146,7 @@ const AdminNavbar = ({ user }) => {
       </header>
 
       {/* Mobile Navbar */}
-      <header className="md:hidden flex items-center justify-between h-16 px-4 border-b bg-white border-amber-900 shadow-sm">
+      <header className="md:hidden flex items-center justify-between h-16 px-4 border-b bg-white border-primary-900 shadow-sm">
         <div className="flex items-center space-x-2">
           {/* Mobile Menu Button */}
           <button
@@ -156,7 +155,7 @@ const AdminNavbar = ({ user }) => {
           >
             <Menu className="w-5 h-5" />
           </button>
-          
+
           {/* Brand - Clicking navigates to dashboard */}
           <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-500">
@@ -184,15 +183,15 @@ const AdminNavbar = ({ user }) => {
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50">
           {/* Backdrop */}
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          
+
           {/* Sidebar */}
           <div className="fixed top-0 left-0 bottom-0 w-64 transform transition-transform duration-300 ease-in-out bg-white">
             {/* Header */}
-            <div className="flex items-center justify-between h-16 px-4 border-b border-amber-900">
+            <div className="flex items-center justify-between h-16 px-4 border-b border-primary-900">
               {/* Brand - Clicking navigates to dashboard */}
               <Link to="/admin-dashboard" className="flex items-center space-x-2 cursor-pointer" onClick={() => setIsMobileMenuOpen(false)}>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-500">
@@ -209,24 +208,23 @@ const AdminNavbar = ({ user }) => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             {/* Navigation Items */}
             <nav className="mt-4 px-2">
               {navItems.map((item) => {
                 const Icon = item.icon
                 // Changed to only show active state when item is explicitly selected
                 const isActive = activeItem === item.name && activeItem !== ""
-                
+
                 return (
                   <Link
                     key={item.name}
                     to={item.url}
                     onClick={() => handleItemClick(item.name)}
-                    className={`flex items-center w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      isActive
+                    className={`flex items-center w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive
                         ? "bg-gray-100 text-neutral-900"
                         : "text-gray-600 hover:bg-gray-50 hover:text-neutral-900"
-                    }`}
+                      }`}
                   >
                     <Icon className="w-5 h-5 mr-3" />
                     {item.name}
@@ -234,9 +232,9 @@ const AdminNavbar = ({ user }) => {
                 )
               })}
             </nav>
-            
+
             {/* User Info */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-amber-900">
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-primary-900">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-100">
                   <span className="font-medium text-blue-600">

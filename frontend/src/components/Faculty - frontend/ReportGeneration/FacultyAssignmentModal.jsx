@@ -123,31 +123,31 @@ const FacultyAssignmentModal = ({
         onClick={(e) => e.target === e.currentTarget && onClose()}
       >
         <motion.div
-          className={`w-full max-w-4xl max-h-[90vh] rounded-xl shadow-2xl overflow-hidden bg-white border border-amber-200`}
+          className={`w-full max-w-4xl max-h-[90vh] rounded-xl shadow-2xl overflow-hidden bg-white border border-primary-200`}
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
         >
           {/* Header */}
-          <div className={`px-6 py-4 border-b border-amber-200`}>
+          <div className={`px-6 py-4 border-b border-primary-200`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className={`p-2 rounded-lg bg-amber-100`}>
-                  <Users className={`w-5 h-5 text-amber-700`} />
+                <div className={`p-2 rounded-lg bg-primary-100`}>
+                  <Users className={`w-5 h-5 text-primary-700`} />
                 </div>
                 <div>
-                  <h2 className={`text-xl font-bold text-amber-950`}>
+                  <h2 className={`text-xl font-bold text-primary-950`}>
                     Faculty Assignment
                   </h2>
-                  <p className={`text-sm text-amber-700`}>
+                  <p className={`text-sm text-primary-700`}>
                     Assign faculty members to subjects for report generation
                   </p>
                 </div>
               </div>
               <button
                 onClick={onClose}
-                className={`p-2 rounded-lg transition-colors hover:bg-amber-100 text-amber-600`}
+                className={`p-2 rounded-lg transition-colors hover:bg-primary-100 text-primary-600`}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -156,16 +156,16 @@ const FacultyAssignmentModal = ({
             {/* Progress Bar */}
             <div className="mt-4">
               <div className="flex items-center justify-between mb-2">
-                <span className={`text-sm font-medium text-amber-900`}>
+                <span className={`text-sm font-medium text-primary-900`}>
                   Assignment Progress
                 </span>
-                <span className={`text-sm text-amber-700`}>
+                <span className={`text-sm text-primary-700`}>
                   {stats.assigned}/{stats.total} subjects ({stats.percentage}%)
                 </span>
               </div>
-              <div className={`w-full h-2 rounded-full bg-amber-100`}>
+              <div className={`w-full h-2 rounded-full bg-primary-100`}>
                 <div
-                  className="h-2 rounded-full bg-amber-700 transition-all duration-500"
+                  className="h-2 rounded-full bg-primary-700 transition-all duration-500"
                   style={{ width: `${stats.percentage}%` }}
                 />
               </div>
@@ -175,22 +175,22 @@ const FacultyAssignmentModal = ({
           {/* Content */}
           <div className="flex h-[calc(90vh-200px)]">
             {/* Faculty List - Left Side */}
-            <div className={`w-1/3 p-4 border-r border-amber-200 bg-amber-50`}>
+            <div className={`w-1/3 p-4 border-r border-primary-200 bg-primary-50`}>
               <div className="space-y-4">
                 <div>
-                  <h3 className={`text-sm font-medium text-amber-900 mb-2`}>
+                  <h3 className={`text-sm font-medium text-primary-900 mb-2`}>
                     Available Faculty ({department})
                   </h3>
                   
                   {/* Search */}
                   <div className="relative mb-3">
-                    <Search className={`absolute left-3 top-3 w-4 h-4 text-amber-600`} />
+                    <Search className={`absolute left-3 top-3 w-4 h-4 text-primary-600`} />
                     <input
                       type="text"
                       placeholder="Search faculty..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className={`w-full pl-10 pr-3 py-2 rounded-lg border bg-white border-amber-200 text-amber-950 placeholder-amber-600 focus:ring-2 focus:ring-amber-600 focus:border-transparent`}
+                      className={`w-full pl-10 pr-3 py-2 rounded-lg border bg-white border-primary-200 text-primary-950 placeholder-primary-600 focus:ring-2 focus:ring-primary-600 focus:border-transparent`}
                     />
                   </div>
                 </div>
@@ -199,23 +199,23 @@ const FacultyAssignmentModal = ({
                 <div className="space-y-2 max-h-96 overflow-y-auto">
                   {loading ? (
                     <div className="flex items-center justify-center py-8">
-                      <div className="w-6 h-6 border-2 border-amber-600 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
                     </div>
                   ) : filteredFaculty.length > 0 ? (
                     filteredFaculty.map((faculty) => (
                       <div
                         key={faculty._id}
-                        className={`p-3 rounded-lg border cursor-pointer transition-all border-amber-300 hover:border-amber-400 bg-white hover:bg-amber-50`}
+                        className={`p-3 rounded-lg border cursor-pointer transition-all border-primary-300 hover:border-primary-400 bg-white hover:bg-primary-50`}
                       >
                         <div className="flex items-center space-x-3">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-amber-100`}>
-                            <User className={`w-4 h-4 text-amber-700`} />
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-primary-100`}>
+                            <User className={`w-4 h-4 text-primary-700`} />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className={`font-medium text-sm text-amber-950 truncate`}>
+                            <h4 className={`font-medium text-sm text-primary-950 truncate`}>
                               {faculty.displayName}
                             </h4>
-                            <p className={`text-xs text-amber-700 truncate`}>
+                            <p className={`text-xs text-primary-700 truncate`}>
                               {faculty.email || `ID: ${faculty.employeeId || 'N/A'}`}
                             </p>
                           </div>
@@ -223,7 +223,7 @@ const FacultyAssignmentModal = ({
                       </div>
                     ))
                   ) : (
-                    <div className={`text-center py-8 text-amber-600`}>
+                    <div className={`text-center py-8 text-primary-600`}>
                       <Users className="w-8 h-8 mx-auto mb-2 opacity-50" />
                       <p className="text-sm">No faculty found</p>
                     </div>
@@ -235,7 +235,7 @@ const FacultyAssignmentModal = ({
             {/* Assignment Area - Right Side */}
             <div className="flex-1 p-4 overflow-y-auto bg-white">
               <div className="space-y-4">
-                <h3 className={`text-sm font-medium text-amber-900 mb-4`}>
+                <h3 className={`text-sm font-medium text-primary-900 mb-4`}>
                   Subject Faculty Assignments
                 </h3>
 
@@ -249,14 +249,14 @@ const FacultyAssignmentModal = ({
                       errors[subjectCode]
                         ? 'border-red-300 bg-red-50'
                         : assignments[subjectCode]
-                        ? 'border-amber-300 bg-amber-50'
-                        : 'border-amber-200 bg-white'
+                        ? 'border-primary-300 bg-primary-50'
+                        : 'border-primary-200 bg-white'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-2">
-                        <BookOpen className={`w-4 h-4 text-amber-700`} />
-                        <span className={`font-medium text-amber-950`}>
+                        <BookOpen className={`w-4 h-4 text-primary-700`} />
+                        <span className={`font-medium text-primary-950`}>
                           {subjectCode}
                         </span>
                         {assignments[subjectCode] && (
@@ -274,7 +274,7 @@ const FacultyAssignmentModal = ({
                     <div className="space-y-3">
                       {/* Faculty Selection Dropdown */}
                       <div>
-                        <label className={`block text-xs font-medium text-amber-900 mb-1`}>
+                        <label className={`block text-xs font-medium text-primary-900 mb-1`}>
                           Select from available faculty
                         </label>
                         <select
@@ -294,7 +294,7 @@ const FacultyAssignmentModal = ({
                               }
                             }
                           }}
-                          className={`w-full p-2 rounded-lg border bg-white border-amber-200 text-amber-950 focus:ring-2 focus:ring-amber-600 focus:border-transparent`}
+                          className={`w-full p-2 rounded-lg border bg-white border-primary-200 text-primary-950 focus:ring-2 focus:ring-primary-600 focus:border-transparent`}
                         >
                           <option value="">Choose a faculty member...</option>
                           {availableFaculty.map((faculty) => (
@@ -305,13 +305,13 @@ const FacultyAssignmentModal = ({
                         </select>
                       </div>
 
-                      <div className={`text-center text-xs text-amber-700`}>
+                      <div className={`text-center text-xs text-primary-700`}>
                         OR
                       </div>
 
                       {/* Manual Entry */}
                       <div>
-                        <label className={`block text-xs font-medium text-amber-900 mb-1`}>
+                        <label className={`block text-xs font-medium text-primary-900 mb-1`}>
                           Enter faculty name manually
                         </label>
                         <input
@@ -319,15 +319,15 @@ const FacultyAssignmentModal = ({
                           placeholder="Type faculty name..."
                           value={assignments[subjectCode] && assignments[subjectCode].isManual ? assignments[subjectCode].name : ''}
                           onChange={(e) => handleManualEntry(subjectCode, e.target.value)}
-                          className={`w-full p-2 rounded-lg border bg-white border-amber-200 text-amber-950 placeholder-amber-600 focus:ring-2 focus:ring-amber-600 focus:border-transparent`}
+                          className={`w-full p-2 rounded-lg border bg-white border-primary-200 text-primary-950 placeholder-primary-600 focus:ring-2 focus:ring-primary-600 focus:border-transparent`}
                         />
                       </div>
 
                       {/* Current Assignment Display */}
                       {assignments[subjectCode] && (
-                        <div className={`mt-2 p-2 rounded-md bg-amber-50 border border-amber-200`}>
+                        <div className={`mt-2 p-2 rounded-md bg-primary-50 border border-primary-200`}>
                           <div className="flex items-center justify-between">
-                            <span className={`text-sm font-medium text-amber-900`}>
+                            <span className={`text-sm font-medium text-primary-900`}>
                               Assigned: {assignments[subjectCode].displayName || assignments[subjectCode].name}
                             </span>
                             <button
@@ -344,7 +344,7 @@ const FacultyAssignmentModal = ({
                             </button>
                           </div>
                           {assignments[subjectCode].isManual && (
-                            <p className={`text-xs mt-1 text-amber-700`}>
+                            <p className={`text-xs mt-1 text-primary-700`}>
                               Manually entered
                             </p>
                           )}
@@ -358,10 +358,10 @@ const FacultyAssignmentModal = ({
           </div>
 
           {/* Footer */}
-          <div className={`px-6 py-4 border-t border-amber-200 flex justify-end space-x-3`}>
+          <div className={`px-6 py-4 border-t border-primary-200 flex justify-end space-x-3`}>
             <button
               onClick={onClose}
-              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all bg-amber-100 hover:bg-amber-200 text-amber-900`}
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all bg-primary-100 hover:bg-primary-200 text-primary-900`}
             >
               Cancel
             </button>
@@ -370,7 +370,7 @@ const FacultyAssignmentModal = ({
               disabled={stats.assigned === 0}
               className={`px-6 py-2 rounded-lg font-medium text-sm transition-all ${
                 stats.assigned > 0
-                  ? 'bg-amber-800 hover:bg-amber-900 text-white transform hover:-translate-y-0.5'
+                  ? 'bg-primary-800 hover:bg-primary-900 text-white transform hover:-translate-y-0.5'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }`}
             >

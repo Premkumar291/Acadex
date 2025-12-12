@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { 
-  ChevronDownIcon, 
-  ChevronRightIcon, 
-  UserGroupIcon, 
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  UserGroupIcon,
   UserIcon,
   PlusIcon,
   TrashIcon,
@@ -53,10 +53,10 @@ const AdminHierarchyPage = () => {
         getHierarchy(),
         getAdminStatistics()
       ]);
-      
+
       setHierarchyData(hierarchyRes.data);
       setStatistics(statsRes.data);
-      
+
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error loading hierarchy data:', error);
@@ -140,32 +140,32 @@ const AdminHierarchyPage = () => {
         {/* Statistics Cards */}
         {statistics && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-amber-900 p-6 rounded-lg shadow-md border border-amber-800">
+            <div className="bg-primary-900 p-6 rounded-lg shadow-md border border-primary-800">
               <div className="flex items-center">
-                <UserGroupIcon className="w-8 h-8 text-amber-200 mr-3" />
+                <UserGroupIcon className="w-8 h-8 text-primary-200 mr-3" />
                 <div>
-                  <p className="text-sm text-amber-300">Created Admins</p>
-                  <p className="text-2xl font-bold text-amber-50">{statistics.createdAdmins || 0}</p>
+                  <p className="text-sm text-primary-300">Created Admins</p>
+                  <p className="text-2xl font-bold text-primary-50">{statistics.createdAdmins || 0}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-amber-900 p-6 rounded-lg shadow-md border border-amber-800">
+            <div className="bg-primary-900 p-6 rounded-lg shadow-md border border-primary-800">
               <div className="flex items-center">
-                <UserIcon className="w-8 h-8 text-amber-200 mr-3" />
+                <UserIcon className="w-8 h-8 text-primary-200 mr-3" />
                 <div>
-                  <p className="text-sm text-amber-300">Created Users</p>
-                  <p className="text-2xl font-bold text-amber-50">{statistics.createdUsers || 0}</p>
+                  <p className="text-sm text-primary-300">Created Users</p>
+                  <p className="text-2xl font-bold text-primary-50">{statistics.createdUsers || 0}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-amber-900 p-6 rounded-lg shadow-md border border-amber-800">
+            <div className="bg-primary-900 p-6 rounded-lg shadow-md border border-primary-800">
               <div className="flex items-center">
-                <AcademicCapIcon className="w-8 h-8 text-amber-200 mr-3" />
+                <AcademicCapIcon className="w-8 h-8 text-primary-200 mr-3" />
                 <div>
-                  <p className="text-sm text-amber-300">Created Faculty</p>
-                  <p className="text-2xl font-bold text-amber-50">{hierarchyData?.createdFaculty?.length || 0}</p>
+                  <p className="text-sm text-primary-300">Created Faculty</p>
+                  <p className="text-2xl font-bold text-primary-50">{hierarchyData?.createdFaculty?.length || 0}</p>
                 </div>
               </div>
             </div>
@@ -173,39 +173,39 @@ const AdminHierarchyPage = () => {
         )}
 
         {/* Admin List */}
-        <div className="bg-amber-900 rounded-lg shadow-lg border border-amber-800 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-amber-50 mb-6">Created Admins</h2>
-          
+        <div className="bg-primary-900 rounded-lg shadow-lg border border-primary-800 p-6 mb-8">
+          <h2 className="text-xl font-semibold text-primary-50 mb-6">Created Admins</h2>
+
           {hierarchyData?.createdAdmins && hierarchyData.createdAdmins.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {hierarchyData.createdAdmins.map(admin => (
-                <div key={admin._id} className="bg-amber-800 rounded-lg p-4 border border-amber-700">
+                <div key={admin._id} className="bg-primary-800 rounded-lg p-4 border border-primary-700">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center">
-                      <ShieldCheckIcon className="w-6 h-6 text-amber-200 mr-3" />
+                      <ShieldCheckIcon className="w-6 h-6 text-primary-200 mr-3" />
                       <div>
-                        <h3 className="font-semibold text-amber-50">{admin.name}</h3>
-                        <p className="text-sm text-amber-300">{admin.email}</p>
+                        <h3 className="font-semibold text-primary-50">{admin.name}</h3>
+                        <p className="text-sm text-primary-300">{admin.email}</p>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="mb-3">
-                    <span className="text-xs bg-amber-700 text-amber-100 px-2 py-1 rounded">
+                    <span className="text-xs bg-primary-700 text-primary-100 px-2 py-1 rounded">
                       {admin.department}
                     </span>
                   </div>
-                  
+
                   <div className="flex space-x-2">
                     <button
                       onClick={() => openEditModal(admin)}
-                      className="flex-1 px-3 py-1 text-sm text-amber-200 hover:bg-amber-700 rounded transition-colors"
+                      className="flex-1 px-3 py-1 text-sm text-primary-200 hover:bg-primary-700 rounded transition-colors"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDeleteAdmin(admin._id, admin.name)}
-                      className="flex-1 px-3 py-1 text-sm text-amber-200 hover:bg-amber-700 rounded transition-colors"
+                      className="flex-1 px-3 py-1 text-sm text-primary-200 hover:bg-primary-700 rounded transition-colors"
                     >
                       Delete
                     </button>
@@ -222,40 +222,40 @@ const AdminHierarchyPage = () => {
         </div>
 
         {/* Faculty List with Delete Option */}
-        <div className="bg-amber-900 rounded-lg shadow-lg border border-amber-800 p-6">
-          <h2 className="text-xl font-semibold text-amber-50 mb-6">Created Faculty</h2>
-          
+        <div className="bg-primary-900 rounded-lg shadow-lg border border-primary-800 p-6">
+          <h2 className="text-xl font-semibold text-primary-50 mb-6">Created Faculty</h2>
+
           {hierarchyData?.createdFaculty && hierarchyData.createdFaculty.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {hierarchyData.createdFaculty.map(faculty => (
-                <div key={faculty._id} className="bg-amber-800 rounded-lg p-4 border border-amber-700">
+                <div key={faculty._id} className="bg-primary-800 rounded-lg p-4 border border-primary-700">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center">
-                      <AcademicCapIcon className="w-6 h-6 text-amber-200 mr-3" />
+                      <AcademicCapIcon className="w-6 h-6 text-primary-200 mr-3" />
                       <div>
-                        <h3 className="font-semibold text-amber-50">{faculty.name}</h3>
-                        <p className="text-sm text-amber-300">{faculty.email}</p>
+                        <h3 className="font-semibold text-primary-50">{faculty.name}</h3>
+                        <p className="text-sm text-primary-300">{faculty.email}</p>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="mb-3 space-y-1">
-                    <span className="text-xs bg-amber-700 text-amber-100 px-2 py-1 rounded mr-2">
+                    <span className="text-xs bg-primary-700 text-primary-100 px-2 py-1 rounded mr-2">
                       {faculty.department}
                     </span>
                     {faculty.phoneNumber && (
-                      <p className="text-xs text-amber-300">📞 {faculty.phoneNumber}</p>
+                      <p className="text-xs text-primary-300">📞 {faculty.phoneNumber}</p>
                     )}
-                    <p className="text-xs text-amber-300">
+                    <p className="text-xs text-primary-300">
                       Created: {formatDate(faculty.createdAt)}
                     </p>
                   </div>
-                  
+
                   {/* Delete Button for Faculty */}
                   <div className="flex justify-end mt-2">
                     <button
                       onClick={() => handleDeleteFaculty(faculty.user?._id || faculty._id, faculty.name)}
-                      className="px-3 py-1 text-sm text-amber-200 hover:bg-amber-700 rounded transition-colors flex items-center"
+                      className="px-3 py-1 text-sm text-primary-200 hover:bg-primary-700 rounded transition-colors flex items-center"
                     >
                       <TrashIcon className="w-4 h-4 mr-1" />
                       Delete
@@ -284,7 +284,7 @@ const AdminHierarchyPage = () => {
                   type="text"
                   placeholder="Full Name"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-neutral-900 placeholder-gray-500"
                   required
                 />
@@ -292,7 +292,7 @@ const AdminHierarchyPage = () => {
                   type="email"
                   placeholder="Email Address"
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-neutral-900 placeholder-gray-500"
                   required
                 />
@@ -300,7 +300,7 @@ const AdminHierarchyPage = () => {
                   type="text"
                   placeholder="Department"
                   value={formData.department}
-                  onChange={(e) => setFormData({...formData, department: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-neutral-900 placeholder-gray-500"
                   required
                 />
