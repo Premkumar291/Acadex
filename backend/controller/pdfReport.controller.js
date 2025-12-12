@@ -12,20 +12,20 @@ const __dirname = path.dirname(__filename);
  * Handles the generation of semester result PDF reports
  */
 export class PDFReportController {
-  
+
   /**
    * Generate a new Excel report from analysis data and stream it.
    */
   static async generateReport(req, res) {
     try {
-      const { 
-        facultyName, 
-        semester, 
-        academicYear, 
-        department, 
+      const {
+        facultyName,
+        semester,
+        academicYear,
+        department,
         analysisData,
         facultyId,
-        facultyDepartment 
+        facultyDepartment
       } = req.body;
 
       if (!facultyName || !semester || !academicYear || !department || !analysisData) {
@@ -43,7 +43,7 @@ export class PDFReportController {
       }
 
       const processedData = PDFReportController.processAnalysisData(analysisData);
-      
+
       const reportData = {
         facultyName,
         semester,
@@ -83,9 +83,9 @@ export class PDFReportController {
    */
   static async generateInstitutionalExcelReport(req, res) {
     try {
-      const { 
-        department, 
-        semester, 
+      const {
+        department,
+        semester,
         academicYear,
         classAdvisorName, // Added
         monthsAndYear,    // Added
@@ -99,7 +99,7 @@ export class PDFReportController {
       } = req.body;
 
       const processedData = PDFReportController.processAnalysisData(analysisData || { students: [], subjectCodes: [] }, subjectNames);
-      
+
       const reportData = {
         instituteName: instituteName || 'Government Engineering College, Erode',
         instituteLocation: instituteLocation || 'ERODE - 638 316',
@@ -268,9 +268,9 @@ export class PDFReportController {
    */
   static async generateInstitutionalReport(req, res) {
     try {
-      const { 
-        department, 
-        semester, 
+      const {
+        department,
+        semester,
         academicYear,
         analysisData,
         facultyAssignments,
@@ -288,7 +288,7 @@ export class PDFReportController {
       }
 
       const processedData = PDFReportController.processAnalysisData(analysisData || { students: [], subjectCodes: [] });
-      
+
       const reportData = {
         instituteName: instituteName || 'INSTITUTE OF ROAD AND TRANSPORT TECHNOLOGY',
         instituteLocation: instituteLocation || 'ERODE - 638 316',
@@ -354,13 +354,13 @@ export class PDFReportController {
    */
   static async generatePDFReport(req, res) {
     try {
-      const { 
-        facultyName, 
-        semester, 
-        academicYear, 
-        department, 
+      const {
+        facultyName,
+        semester,
+        academicYear,
+        department,
         analysisData,
-        facultyId 
+        facultyId
       } = req.body;
 
       if (!facultyName || !semester || !academicYear || !department || !analysisData) {
@@ -371,7 +371,7 @@ export class PDFReportController {
       }
 
       const processedData = PDFReportController.processAnalysisData(analysisData);
-      
+
       const reportData = {
         facultyName,
         semester,
@@ -497,23 +497,34 @@ export class PDFReportController {
     const totalSubjects = validSubjectCodes.length;
 
     // Calculate students appeared: Maximum among all subjects (highest enrollment)
-    const studentsAppeared = subjectResults.length > 0 
+    const studentsAppeared = subjectResults.length > 0
       ? Math.max(...subjectResults.map(subject => subject.totalStudents))
       : 0;
 
-    // Calculate students who passed ALL subjects
+    // Find the maximum enrollment count
+    const maxEnrollment = studentsAppeared;
+
+    // Get only subjects that have the maximum enrollment (exclude subjects with fewer students)
+    const maxEnrollmentSubjects = subjectResults
+      .filter(subject => subject.totalStudents === maxEnrollment)
+      .map(subject => subject.subjectCode);
+
+    // Calculate students who passed ALL subjects with maximum enrollment
+    // Only count students who passed subjects that have the highest enrollment
     const studentsPassedAll = students.filter(student => {
-      // Check if student has grades for all valid subjects and passed them all
-      return validSubjectCodes.every(code => {
+      // Check if student passed all subjects that have maximum enrollment
+      return maxEnrollmentSubjects.every(code => {
         const grade = student.grades[code];
         // Student must have a grade and it must not be an arrear grade
         return grade && grade !== '' && !arrearGrades.includes(grade);
       });
     }).length;
 
-    // Calculate overall pass percentage based on students who appeared vs students who passed all
-    const overallPassPercentage = studentsAppeared > 0 ?
-      (studentsPassedAll / studentsAppeared) * 100 : 0;
+    // Calculate overall pass percentage as the average of all subject pass percentages
+    // This gives a balanced view of performance across all subjects
+    const overallPassPercentage = subjectResults.length > 0
+      ? subjectResults.reduce((sum, subject) => sum + subject.passPercentage, 0) / subjectResults.length
+      : 0;
 
     const studentsData = students.map(student => ({
       regNo: student.regNo,
