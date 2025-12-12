@@ -520,11 +520,10 @@ export class PDFReportController {
       });
     }).length;
 
-    // Calculate overall pass percentage as the average of all subject pass percentages
-    // This gives a balanced view of performance across all subjects
-    const overallPassPercentage = subjectResults.length > 0
-      ? subjectResults.reduce((sum, subject) => sum + subject.passPercentage, 0) / subjectResults.length
-      : 0;
+    // Calculate overall pass percentage - MATCHES FRONTEND LOGIC
+    // Same as result-analysis.jsx: (students who passed all / total students) * 100
+    const overallPassPercentage = studentsAppeared > 0 ?
+      (studentsPassedAll / studentsAppeared) * 100 : 0;
 
     const studentsData = students.map(student => ({
       regNo: student.regNo,
