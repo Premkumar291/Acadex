@@ -8,17 +8,17 @@
 
 :root {
   /* Primary Color Palette - Full Spectrum */
-  --primary-50: #eefff5;    
-  --primary-100: #d8ffea;    
-  --primary-200: #b3ffd6;    
-  --primary-300: #70fcb1;    
-  --primary-400: #37f18e;   
-  --primary-500: #0ed96e;
-  --primary-600: #04b557;  
-  --primary-700: #088d48;
-  --primary-800: #0c6f3c; 
-  --primary-900: #0c5b33;   
-  --primary-950: #00331a;  
+  --primary-50: #eefcfd;    
+  --primary-100: #d4f6f9;    
+  --primary-200: #afebf2;    
+  --primary-300: #77dce9;    
+  --primary-400: #36c2d7;   
+  --primary-500: #1da6bd;
+  --primary-600: #1b869f;  
+  --primary-700: #1c6c82;
+  --primary-800: #20586a; 
+  --primary-900: #1e4a5b;   
+  --primary-950: #0f303d;  
   
   /* Semantic Color Mappings for Easy Reference */
   --color-primary: var(--primary-700);
