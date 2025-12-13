@@ -1,4 +1,7 @@
-import PDFParser from 'pdf2json';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const PDFParser = require('pdf2json');
+
 
 // Suppress pdf2json's "Setting up fake worker" warnings
 const originalWarn = console.warn;
