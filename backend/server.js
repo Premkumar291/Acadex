@@ -71,20 +71,20 @@ app.use(errorHandler);
 // Start server
 app.listen(PORT, async () => {
   try {
-     await connectDb();
+    await connectDb();
   } catch (error) {
     console.log("Database connection error:")
   }
-  
+
   if (process.env.NODE_ENV !== 'production') {
     console.log(`Server is running on http://localhost:${PORT}`);
   }
-  
+
   // System initialization complete
   if (process.env.NODE_ENV !== 'production') {
     console.log('Admin management system initialized');
   }
-  
+
   // Create database indexes for optimal performance
   try {
     await createIndexes();
@@ -93,10 +93,10 @@ app.listen(PORT, async () => {
       console.error('Error creating database indexes:', error);
     }
   }
-  
+
   // Start file cleanup scheduler for uploads folder (12-hour intervals)
   startFileCleanupScheduler();
 });
 
-// Export the serverless handler
-export const handler = serverless(app);
+// Export the serverless handler as default export for Vercel
+export default serverless(app);
