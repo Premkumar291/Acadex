@@ -32,7 +32,7 @@
     "multer-gridfs-storage": "^5.0.2",
     "nodemailer": "^6.10.1",
     "pdf-lib": "^1.17.1",
-    "pdfjs-dist": "^5.4.449",
+    "pdf2json": "^4.0.0",
     "pdfkit": "^0.15.0",
     "pdfkit-table": "^0.1.99",
     "serverless-http": "^3.2.0",
