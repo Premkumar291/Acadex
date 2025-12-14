@@ -49,7 +49,20 @@ const tempSessionStorage = new Map();
 
 // Routes
 app.get("/", (req, res) => {
-  res.send("Server Started successfully!");
+  res.json({
+    status: "Server is running",
+    message: "Server Started successfully!",
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development'
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.json({
+    status: "healthy",
+    database: isInitialized ? "connected" : "initializing",
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.use("/api/auth", authRoutes);
@@ -111,8 +124,10 @@ const initializeServer = async () => {
   return initPromise;
 };
 
-// Initialize on module load for serverless (non-blocking)
-initializeServer().catch(err => console.error('Initialization failed:', err));
+// Initialize on module load for serverless (fire and forget - don't block)
+setTimeout(() => {
+  initializeServer().catch(err => console.error('Initialization failed:', err));
+}, 0);
 
 // Start server (only for local development)
 if (process.env.NODE_ENV !== 'production') {
