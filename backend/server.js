@@ -102,4 +102,12 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Export serverless handler
-export default serverless(app);
+// Export serverless handler with event loop optimization
+const handler = serverless(app, {
+  request: (req, event, context) => {
+    // Critical: Prevent serverless function from waiting for DB connection to close
+    context.callbackWaitsForEmptyEventLoop = false;
+  }
+});
+
+export default handler;
