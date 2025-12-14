@@ -108,7 +108,7 @@ export const securityMiddleware = [
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "data:", "https:"],
         scriptSrc: ["'self'"],
-        connectSrc: ["'self'", "http://localhost:*", "https://acadex-beige.vercel.app"],
+        connectSrc: ["'self'", "http://localhost:*", "https://acadex-beige.vercel.app",process.env.FRONTEND_URL],
       },
     },
   }),
