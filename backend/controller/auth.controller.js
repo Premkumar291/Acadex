@@ -261,7 +261,7 @@ export const login = async (req,res) => {
         if (!user.role || !['faculty', 'admin'].includes(user.role)) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid user role configuration"
+                message: "Invalid user role configuration contact your admin"
             });
         }
 
