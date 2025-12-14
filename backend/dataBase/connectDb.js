@@ -19,12 +19,10 @@ export const connectDb = async () => {
 
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       bufferCommands: false,
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 10000, // Increased from 5000ms
-      socketTimeoutMS: 45000,
-      maxIdleTimeMS: 30000,
-      connectTimeoutMS: 10000,
-      // Retry configuration
+      maxPoolSize: 1, // Reduced for serverless
+      serverSelectionTimeoutMS: 5000, // Reduced for faster failures
+      socketTimeoutMS: 10000, // Reduced for serverless
+      connectTimeoutMS: 5000, // Reduced for serverless
       retryWrites: true
     });
 

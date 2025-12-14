@@ -71,6 +71,7 @@ app.use(errorHandler);
 
 // Connection caching for serverless
 let isInitialized = false;
+let initPromise = null;
 
 // Initialize database connection and indexes
 const initializeServer = async () => {
@@ -78,20 +79,40 @@ const initializeServer = async () => {
     return; // Skip if already initialized
   }
 
-  try {
-    await connectDb();
-    await createIndexes();
-    startFileCleanupScheduler();
-    isInitialized = true;
-    console.log('Server initialized successfully');
-  } catch (error) {
-    console.error('Server initialization error:', error);
-    // Don't set isInitialized to true on error, allow retry
+  if (initPromise) {
+    return initPromise; // Return existing promise if initialization in progress
   }
+
+  initPromise = (async () => {
+    try {
+      await connectDb();
+
+      // Create indexes in background (don't block in production)
+      if (process.env.NODE_ENV === 'production') {
+        createIndexes().catch(err => console.error('Index creation error:', err));
+      } else {
+        await createIndexes();
+      }
+
+      // Only run cleanup scheduler in non-serverless environments
+      if (process.env.NODE_ENV !== 'production') {
+        startFileCleanupScheduler();
+      }
+
+      isInitialized = true;
+      console.log('Server initialized successfully');
+    } catch (error) {
+      console.error('Server initialization error:', error);
+      initPromise = null; // Reset to allow retry
+      throw error;
+    }
+  })();
+
+  return initPromise;
 };
 
-// Initialize on module load for serverless
-initializeServer();
+// Initialize on module load for serverless (non-blocking)
+initializeServer().catch(err => console.error('Initialization failed:', err));
 
 // Start server (only for local development)
 if (process.env.NODE_ENV !== 'production') {
