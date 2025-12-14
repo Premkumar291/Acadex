@@ -69,14 +69,24 @@ app.use(notFound);
 app.use(errorHandler);
 
 
+// Connection caching for serverless
+let isInitialized = false;
+
 // Initialize database connection and indexes
 const initializeServer = async () => {
+  if (isInitialized) {
+    return; // Skip if already initialized
+  }
+
   try {
     await connectDb();
     await createIndexes();
     startFileCleanupScheduler();
+    isInitialized = true;
+    console.log('Server initialized successfully');
   } catch (error) {
     console.error('Server initialization error:', error);
+    // Don't set isInitialized to true on error, allow retry
   }
 };
 

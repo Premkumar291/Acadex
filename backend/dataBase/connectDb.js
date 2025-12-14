@@ -6,16 +6,17 @@ export const connectDb = async () => {
   try {
     // Check if MONGODB_URI is defined
     if (!process.env.MONGODB_URI) {
-      console.error('Error: MONGODB_URI is not defined in environment variables');
-      console.error('Please check your .env file and ensure MONGODB_URI is properly set');
-      process.exit(1);
+      const error = new Error('MONGODB_URI is not defined in environment variables');
+      console.error('Error:', error.message);
+      console.error('Please check your Vercel environment variables and ensure MONGODB_URI is properly set');
+      throw error;
     }
 
     if (process.env.NODE_ENV !== 'production') {
       console.log('Attempting to connect to MongoDB...');
       console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
     }
-    
+
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       bufferCommands: false,
       maxPoolSize: 10,
@@ -26,13 +27,13 @@ export const connectDb = async () => {
       // Retry configuration
       retryWrites: true
     });
-    
+
     // Initialize GridFS
     const { gfs, gridFSBucket } = initGridFS(conn.connection);
     if (process.env.NODE_ENV !== 'production') {
       console.log('GridFS initialized successfully');
     }
-    
+
     if (process.env.NODE_ENV !== 'production') {
       console.log(`MongoDB connected successfully: ${conn.connection.host}`);
     }
@@ -42,6 +43,6 @@ export const connectDb = async () => {
     if (process.env.NODE_ENV !== 'production') {
       console.error('Full error details:', error);
     }
-    process.exit(1); // Exit the process with failure
+    throw error; // Re-throw for serverless error handling
   }
 };
