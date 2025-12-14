@@ -1,12 +1,6 @@
 import { pdfReportService } from '../services/pdfReportService.js';
 import { excelReportService } from '../services/excelReportService.js';
 import { ReportTemplate } from '../models/reportTemplate.model.js';
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 /**
  * Handles the generation of semester result PDF reports
@@ -141,81 +135,20 @@ export class PDFReportController {
    * Download a generated PDF report
    */
   static async downloadReport(req, res) {
-    try {
-      const { reportId } = req.params;
-
-      const report = await ReportTemplate.findById(reportId);
-      if (!report) {
-        return res.status(404).json({
-          success: false,
-          message: 'Report not found'
-        });
-      }
-
-      if (!report.pdfPath || !fs.existsSync(report.pdfPath)) {
-        return res.status(404).json({
-          success: false,
-          message: 'PDF file not found on server'
-        });
-      }
-
-      const filename = path.basename(report.pdfPath);
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-
-      const fileStream = fs.createReadStream(report.pdfPath);
-      fileStream.pipe(res);
-
-    } catch (error) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('Error downloading PDF report:', error);
-      }
-      res.status(500).json({
-        success: false,
-        message: 'Failed to download PDF report',
-        error: error.message
-      });
-    }
+    return res.status(404).json({
+      success: false,
+      message: 'Report downloading from storage is no longer supported. Please generate a new report.'
+    });
   }
 
   /**
    * Preview a generated PDF report
    */
   static async previewReport(req, res) {
-    try {
-      const { reportId } = req.params;
-
-      const report = await ReportTemplate.findById(reportId);
-      if (!report) {
-        return res.status(404).json({
-          success: false,
-          message: 'Report not found'
-        });
-      }
-
-      if (!report.pdfPath || !fs.existsSync(report.pdfPath)) {
-        return res.status(404).json({
-          success: false,
-          message: 'PDF file not found on server'
-        });
-      }
-
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'inline');
-
-      const fileStream = fs.createReadStream(report.pdfPath);
-      fileStream.pipe(res);
-
-    } catch (error) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('Error previewing PDF report:', error);
-      }
-      res.status(500).json({
-        success: false,
-        message: 'Failed to preview PDF report',
-        error: error.message
-      });
-    }
+    return res.status(404).json({
+      success: false,
+      message: 'Report preview from storage is no longer supported. Please generate a new report.'
+    });
   }
 
   /**
@@ -264,7 +197,7 @@ export class PDFReportController {
   }
 
   /**
-   * Generate institutional format PDF report (saves to disk)
+   * Generate institutional format PDF report (direct stream)
    */
   static async generateInstitutionalReport(req, res) {
     try {
@@ -306,36 +239,14 @@ export class PDFReportController {
 
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-').replace('T', '_').substring(0, 19);
       const filename = `institutional_report_${department}_Sem${semester}_${academicYear.replace('-', '_')}_${timestamp}.pdf`;
-      const outputPath = path.join(__dirname, '../uploads/reports', filename);
 
-      const reportsDir = path.dirname(outputPath);
-      if (!fs.existsSync(reportsDir)) {
-        fs.mkdirSync(reportsDir, { recursive: true });
-      }
+      // Generate PDF buffer
+      const pdfBuffer = await pdfReportService.generateInstitutionalReport(reportData);
 
-      const pdfPath = await pdfReportService.generateInstitutionalReport(reportData, outputPath);
-
-      const reportTemplate = new ReportTemplate({
-        ...reportData,
-        facultyName: `${department} Faculty`,
-        pdfPath: pdfPath,
-        fileType: 'pdf',
-        generatedAt: new Date(),
-        status: 'completed'
-      });
-
-      await reportTemplate.save();
-
-      res.status(200).json({
-        success: true,
-        message: 'Institutional PDF report generated successfully',
-        data: {
-          reportId: reportTemplate._id,
-          filename: filename,
-          downloadUrl: `/api/reports/download-pdf/${reportTemplate._id}`,
-          previewUrl: `/api/reports/preview-pdf/${reportTemplate._id}`,
-        }
-      });
+      // Stream directly to response
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(pdfBuffer);
 
     } catch (error) {
       if (process.env.NODE_ENV !== 'production') {
@@ -350,7 +261,7 @@ export class PDFReportController {
   }
 
   /**
-   * Generate a PDF report (saves to disk)
+   * Generate a PDF report (direct stream)
    */
   static async generatePDFReport(req, res) {
     try {
@@ -384,29 +295,14 @@ export class PDFReportController {
 
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const filename = `semester_report_${semester}_${timestamp}.pdf`;
-      const outputPath = path.join(__dirname, '../uploads/reports', filename);
 
-      const reportsDir = path.dirname(outputPath);
-      if (!fs.existsSync(reportsDir)) {
-        fs.mkdirSync(reportsDir, { recursive: true });
-      }
+      // Generate PDF buffer
+      const pdfBuffer = await pdfReportService.generateSemesterReport(reportData);
 
-      const pdfPath = await pdfReportService.generateSemesterReport(reportData, outputPath);
-
-      const reportTemplate = new ReportTemplate({
-        ...reportData,
-        pdfPath: pdfPath,
-        generatedAt: new Date(),
-        status: 'completed'
-      });
-
-      await reportTemplate.save();
-
-      res.status(200).json({
-        success: true,
-        message: 'PDF report generated successfully',
-        data: { reportId: reportTemplate._id }
-      });
+      // Stream directly to response
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(pdfBuffer);
 
     } catch (error) {
       if (process.env.NODE_ENV !== 'production') {
@@ -421,7 +317,7 @@ export class PDFReportController {
   }
 
   /**
-   * Delete a generated report
+   * Delete a generated report (Legacy/Cleanup)
    */
   static async deleteReport(req, res) {
     try {
@@ -435,13 +331,7 @@ export class PDFReportController {
         });
       }
 
-      if (report.pdfPath && fs.existsSync(report.pdfPath)) {
-        fs.unlinkSync(report.pdfPath);
-      }
-      if (report.excelPath && fs.existsSync(report.excelPath)) {
-        fs.unlinkSync(report.excelPath);
-      }
-
+      // No local files to delete anymore
       await ReportTemplate.findByIdAndDelete(reportId);
 
       res.status(200).json({

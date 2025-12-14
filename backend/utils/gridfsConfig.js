@@ -5,6 +5,8 @@ import { GridFsStorage } from 'multer-gridfs-storage';
 import path from 'path';
 import crypto from 'crypto';
 
+import { Readable } from 'stream';
+
 // GridFS variables
 let gfs;
 let gridFSBucket;
@@ -101,4 +103,38 @@ export const deleteFilesByMetadata = async (metadata) => {
   } catch (error) {
     throw error;
   }
+};
+
+// Save a buffer to GridFS
+// Used for generated reports that don't go through Multer
+export const saveBufferToGridFS = (buffer, filename, metadata) => {
+  return new Promise((resolve, reject) => {
+    if (!gridFSBucket) {
+      return reject(new Error('GridFS bucket not initialized'));
+    }
+
+    // Create a readable stream from the buffer
+    const readableStream = new Readable();
+    readableStream.push(buffer);
+    readableStream.push(null);
+
+    const uploadStream = gridFSBucket.openUploadStream(filename, {
+      metadata
+    });
+
+    // Store the file ID before piping
+    const fileId = uploadStream.id;
+
+    readableStream.pipe(uploadStream)
+      .on('error', (error) => {
+        reject(error);
+      })
+      .on('finish', () => {
+        resolve({
+          _id: fileId,
+          filename: filename,
+          metadata: metadata
+        });
+      });
+  });
 };

@@ -1,7 +1,4 @@
 import ExcelJS from 'exceljs';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 /**
  * Excel Report Generation Service
@@ -13,7 +10,7 @@ export class ExcelReportService {
       font: { name: 'Arial', size: 10 },
       alignment: { vertical: 'middle', horizontal: 'center' }
     };
-    
+
     this.headerStyle = {
       font: { name: 'Arial', size: 12, bold: true },
       alignment: { vertical: 'middle', horizontal: 'center', wrapText: true },
@@ -44,7 +41,7 @@ export class ExcelReportService {
   async generateSemesterReportBuffer(reportData) {
     try {
       const workbook = new ExcelJS.Workbook();
-      
+
       // Set workbook properties
       workbook.creator = 'College Result Portal';
       workbook.lastModifiedBy = 'System';
@@ -66,69 +63,13 @@ export class ExcelReportService {
   }
 
   /**
-   * Generate main institutional report matching exact template
-   */
-  async generateSemesterReport(reportData, outputPath) {
-    try {
-      const workbook = new ExcelJS.Workbook();
-      
-      // Set workbook properties
-      workbook.creator = 'College Result Portal';
-      workbook.lastModifiedBy = 'System';
-      workbook.created = new Date();
-      workbook.modified = new Date();
-
-      // Create the main institutional template sheet only
-      await this.createInstitutionalTemplateSheet(workbook, reportData);
-
-      // Save the workbook
-      await workbook.xlsx.writeFile(outputPath);
-      return outputPath;
-
-    } catch (error) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('Error generating Excel report:', error);
-      }
-      throw error;
-    }
-  }
-
-  /**
-   * Generate enhanced Excel report with additional features
-   */
-  async generateEnhancedReport(reportData, outputPath) {
-    try {
-      const workbook = new ExcelJS.Workbook();
-      
-      workbook.creator = 'College Result Portal';
-      workbook.created = new Date();
-
-      // Create enhanced worksheets
-      await this.createEnhancedSummarySheet(workbook, reportData);
-      await this.createDetailedResultsSheet(workbook, reportData);
-      await this.createSubjectAnalysisSheet(workbook, reportData);
-      await this.createEditableGradesSheet(workbook, reportData);
-      await this.createFacultyInfoSheet(workbook, reportData);
-      await this.createChartsSheet(workbook, reportData);
-
-      await workbook.xlsx.writeFile(outputPath);
-      return outputPath;
-
-    } catch (error) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('Error generating enhanced Excel report:', error);
-      }
-      throw error;
-    }
-  }
-
-  /**
    * Generate institutional format Excel report
    */
   async generateInstitutionalReportBuffer(reportData) {
     try {
       const workbook = new ExcelJS.Workbook();
-      
+
+      // Set workbook properties
       workbook.creator = 'College Result Portal';
       workbook.created = new Date();
 
@@ -142,32 +83,6 @@ export class ExcelReportService {
     } catch (error) {
       if (process.env.NODE_ENV !== 'production') {
         console.error('Error generating institutional Excel report buffer:', error);
-      }
-      throw error;
-    }
-  }
-
-  /**
-   * Generate institutional format Excel report
-   */
-  async generateInstitutionalReport(reportData, outputPath) {
-    try {
-      const workbook = new ExcelJS.Workbook();
-      
-      workbook.creator = 'College Result Portal';
-      workbook.created = new Date();
-
-      // Create institutional format sheets
-      await this.createInstitutionalMainSheet(workbook, reportData);
-      await this.createInstitutionalSummarySheet(workbook, reportData);
-      await this.createEditableInstitutionalSheet(workbook, reportData);
-
-      await workbook.xlsx.writeFile(outputPath);
-      return outputPath;
-
-    } catch (error) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('Error generating institutional Excel report:', error);
       }
       throw error;
     }
@@ -225,7 +140,7 @@ export class ExcelReportService {
       const row = sheet.getRow(currentRow + index);
       row.getCell(1).value = label;
       row.getCell(2).value = value;
-      
+
       if (label === 'STATISTICS') {
         row.getCell(1).style = {
           font: { name: 'Arial', size: 12, bold: true },
@@ -241,7 +156,7 @@ export class ExcelReportService {
           alignment: { vertical: 'middle', horizontal: 'left' }
         };
       }
-      
+
       row.height = 20;
     });
 
@@ -258,7 +173,7 @@ export class ExcelReportService {
     sheet.getRow(currentRow).height = 25;
 
     currentRow++;
-    
+
     // Subject headers
     const subjectHeaders = ['Subject Code', 'Total Students', 'Pass Percentage'];
     subjectHeaders.forEach((header, index) => {
@@ -276,12 +191,12 @@ export class ExcelReportService {
       row.getCell(1).value = subject.subjectCode;
       row.getCell(2).value = subject.totalStudents;
       row.getCell(3).value = `${subject.passPercentage.toFixed(1)}%`;
-      
+
       // Apply cell styles
       [1, 2, 3].forEach(col => {
         row.getCell(col).style = this.cellStyle;
       });
-      
+
       // Color coding for pass percentage
       const passCell = row.getCell(3);
       if (subject.passPercentage < 50) {
@@ -295,7 +210,7 @@ export class ExcelReportService {
           fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'D1FAE5' } }
         };
       }
-      
+
       row.height = 20;
     });
   }
@@ -310,7 +225,7 @@ export class ExcelReportService {
     sheet.getColumn(1).width = 8;  // S.No
     sheet.getColumn(2).width = 15; // Reg No
     sheet.getColumn(3).width = 25; // Name
-    
+
     // Dynamic subject columns
     const subjectCodes = (reportData.subjectResults || []).map(s => s.subjectCode);
     subjectCodes.forEach((_, index) => {
@@ -342,18 +257,18 @@ export class ExcelReportService {
     // Student data
     (reportData.studentsData || []).forEach((student, studentIndex) => {
       const row = sheet.getRow(currentRow + studentIndex);
-      
+
       // Basic student info
       row.getCell(1).value = studentIndex + 1;
       row.getCell(2).value = student.regNo;
       row.getCell(3).value = student.name;
-      
+
       // Grades for each subject
       subjectCodes.forEach((subjectCode, subjectIndex) => {
         const grade = student.grades[subjectCode] || '-';
         const cell = row.getCell(4 + subjectIndex);
         cell.value = grade;
-        
+
         // Color coding for grades
         const arrearGrades = ['U', 'F', 'UA', 'R', 'WH', 'RA'];
         if (arrearGrades.includes(grade)) {
@@ -379,7 +294,7 @@ export class ExcelReportService {
       [1, 2, 3].forEach(col => {
         row.getCell(col).style = this.cellStyle;
       });
-      
+
       row.height = 20;
     });
 
@@ -419,7 +334,7 @@ export class ExcelReportService {
     // Headers
     const headers = [
       'Subject Code',
-      'Subject Name', 
+      'Subject Name',
       'Total Students',
       'Passed Students',
       'Failed Students',
@@ -437,14 +352,14 @@ export class ExcelReportService {
     (reportData.subjectResults || []).forEach((subject, index) => {
       const row = sheet.getRow(4 + index);
       const failedStudents = subject.totalStudents - subject.passedStudents;
-      
+
       row.getCell(1).value = subject.subjectCode;
       row.getCell(2).value = subject.subjectName || subject.subjectCode;
       row.getCell(3).value = subject.totalStudents;
       row.getCell(4).value = subject.passedStudents;
       row.getCell(5).value = failedStudents;
       row.getCell(6).value = `${subject.passPercentage.toFixed(1)}%`;
-      
+
       // Status based on pass percentage
       let status = 'Poor';
       let statusColor = 'FEE2E2';
@@ -458,7 +373,7 @@ export class ExcelReportService {
         status = 'Average';
         statusColor = 'F3E8FF';
       }
-      
+
       const statusCell = row.getCell(7);
       statusCell.value = status;
       statusCell.style = {
@@ -470,7 +385,7 @@ export class ExcelReportService {
       [1, 2, 3, 4, 5, 6].forEach(col => {
         row.getCell(col).style = this.cellStyle;
       });
-      
+
       row.height = 20;
     });
 
@@ -497,7 +412,7 @@ export class ExcelReportService {
       const row = sheet.getRow(summaryRow + 2 + index);
       row.getCell(1).value = data[0];
       row.getCell(2).value = data[1];
-      
+
       row.getCell(1).style = {
         font: { name: 'Arial', size: 10, bold: true },
         alignment: { vertical: 'middle', horizontal: 'left' }
@@ -519,7 +434,7 @@ export class ExcelReportService {
     sheet.getColumn(1).width = 8;  // S.No
     sheet.getColumn(2).width = 15; // Reg No
     sheet.getColumn(3).width = 25; // Name
-    
+
     const subjectCodes = (reportData.subjectResults || []).map(s => s.subjectCode);
     subjectCodes.forEach((_, index) => {
       sheet.getColumn(4 + index).width = 12;
@@ -551,12 +466,12 @@ export class ExcelReportService {
     // Student data with editable grades
     (reportData.studentsData || []).forEach((student, studentIndex) => {
       const row = sheet.getRow(4 + studentIndex);
-      
+
       // Non-editable student info
       row.getCell(1).value = studentIndex + 1;
       row.getCell(2).value = student.regNo;
       row.getCell(3).value = student.name;
-      
+
       // Apply protection to non-editable cells
       [1, 2, 3].forEach(col => {
         row.getCell(col).style = {
@@ -571,10 +486,10 @@ export class ExcelReportService {
         const grade = student.grades[subjectCode] || '';
         const cell = row.getCell(4 + subjectIndex);
         cell.value = grade;
-        
+
         // Make grades editable
         cell.protection = { locked: false };
-        
+
         // Style editable cells differently
         cell.style = {
           ...this.cellStyle,
@@ -586,7 +501,7 @@ export class ExcelReportService {
             right: { style: 'medium', color: { argb: '10B981' } }
           }
         };
-        
+
         // Add data validation for grades
         cell.dataValidation = {
           type: 'list',
@@ -598,7 +513,7 @@ export class ExcelReportService {
           error: 'Please select a valid grade from the dropdown.'
         };
       });
-      
+
       row.height = 20;
     });
 
@@ -629,7 +544,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
         right: { style: 'thin' }
       }
     };
-    
+
     // Set row heights for instructions
     for (let i = 0; i < 5; i++) {
       sheet.getRow(instructionsRow + i).height = 20;
@@ -665,10 +580,10 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
    */
   async createEnhancedSummarySheet(workbook, reportData) {
     const sheet = workbook.addWorksheet('Enhanced Summary');
-    
+
     // This will include charts, additional metrics, and enhanced formatting
     await this.createSummarySheet(workbook, reportData);
-    
+
     // Remove the basic summary sheet since we have enhanced version
     workbook.removeWorksheet('Summary');
   }
@@ -705,7 +620,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       const row = sheet.getRow(3 + index);
       row.getCell(1).value = label;
       row.getCell(2).value = value;
-      
+
       row.getCell(1).style = {
         font: { name: 'Arial', size: 10, bold: true },
         alignment: { vertical: 'middle', horizontal: 'left' }
@@ -722,7 +637,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       const row = sheet.getRow(currentRow + index);
       row.getCell(1).value = `Subject ${index + 1}:`;
       row.getCell(2).value = `${subject.subjectCode} - ${subject.subjectName || subject.subjectCode}`;
-      
+
       row.getCell(1).style = {
         font: { name: 'Arial', size: 10, bold: true },
         alignment: { vertical: 'middle', horizontal: 'left' }
@@ -752,7 +667,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
     // Placeholder for charts
     sheet.getCell('A3').value = 'Charts and graphs will be available in future versions.';
     sheet.getCell('A4').value = 'Current data can be used to create charts manually in Excel.';
-    
+
     // Data for chart creation
     sheet.getCell('A6').value = 'Subject Performance Data:';
     sheet.getCell('A6').style = {
@@ -772,7 +687,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       const row = sheet.getRow(9 + index);
       row.getCell(1).value = subject.subjectCode;
       row.getCell(2).value = subject.passPercentage;
-      
+
       [1, 2].forEach(col => {
         row.getCell(col).style = this.cellStyle;
       });
@@ -850,13 +765,13 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
     // Headers row
     const headers = [
       'S.NO',
-      'COURSE CODE', 
+      'COURSE CODE',
       'NAME OF THE SUBJECT',
       'NAME OF THE STAFF HANDLED THE SUBJECT',
       'DEPARTMENT OF THE STAFF',
       'APPEARED',
       'PASSED BEFORE REVALUATION',
-      'PASSED AFTER REVALUATION', 
+      'PASSED AFTER REVALUATION',
       'PERCENTAGE OF PASS BEFORE REVALUATION',
       'PERCENTAGE OF PASS AFTER REVALUATION'
     ];
@@ -881,11 +796,11 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
     // Calculate dynamic number of rows based on semester
     const semesterNumber = parseInt(reportData.semester) || 1;
     let maxRows = 8; // Default for most semesters
-    
+
     // Adjust based on semester (typically more subjects in higher semesters)
     if (semesterNumber >= 5) maxRows = 10;
     if (semesterNumber >= 7) maxRows = 12;
-    
+
     // Or use actual subject count if available
     if (reportData.subjectResults && reportData.subjectResults.length > 0) {
       maxRows = Math.max(reportData.subjectResults.length + 2, 8);
@@ -894,7 +809,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
     // Data rows - create empty template with editable cells
     for (let i = 0; i < maxRows; i++) {
       const row = sheet.getRow(5 + i);
-      
+
       // Serial number
       row.getCell(1).value = i + 1;
       row.getCell(1).style = {
@@ -914,31 +829,31 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
         const facultyName = reportData.facultyAssignments?.[subject.subjectCode] || '';
         // Use individual faculty department if available, otherwise fallback to overall department
         const facultyDepartment = reportData.facultyDepartments?.[subject.subjectCode] || reportData.facultyDepartment || reportData.department || '';
-        
+
         // Course Code
         row.getCell(2).value = subject.subjectCode || '';
-        
+
         // Subject Name  
         row.getCell(3).value = subject.subjectName || subject.subjectCode || '';
-        
+
         // Faculty Name (editable)
         row.getCell(4).value = facultyName;
-        
+
         // Department (editable)
         row.getCell(5).value = facultyDepartment; // Use faculty's individual department
-        
+
         // Appeared
         row.getCell(6).value = subject.totalStudents || '';
-        
+
         // Passed Before
         row.getCell(7).value = subject.passedStudents || '';
-        
+
         // Passed After (same as before for now)
         row.getCell(8).value = subject.passedStudents || '';
-        
+
         // Percentage Before
         row.getCell(9).value = subject.passPercentage ? `${subject.passPercentage.toFixed(1)}%` : '';
-        
+
         // Percentage After (same as before for now)
         row.getCell(10).value = subject.passPercentage ? `${subject.passPercentage.toFixed(1)}%` : '';
       } else {
@@ -951,7 +866,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       // Apply styles to all data cells with appropriate alignment
       for (let col = 2; col <= 10; col++) {
         const cell = row.getCell(col);
-        
+
         // Set alignment based on content type
         let alignment = { vertical: 'middle', horizontal: 'center' };
         if (col === 3) { // Subject name - left align for better readability
@@ -961,7 +876,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
         } else if (col === 5) { // Department - left align for better readability
           alignment = { vertical: 'middle', horizontal: 'left' };
         }
-        
+
         cell.style = {
           font: { name: 'Arial', size: 10 },
           alignment: alignment,
@@ -972,7 +887,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
             right: { style: 'thin' }
           }
         };
-        
+
         // Make faculty name and department cells editable with light green background
         if (col === 4 || col === 5) {
           cell.style.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F0FDF4' } };
@@ -982,13 +897,13 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
           cell.protection = { locked: true };
         }
       }
-      
+
       row.height = 30; // Increased height for better visual spacing
     }
 
     // Summary section at bottom
     const summaryStartRow = 5 + maxRows + 2;
-    
+
     // NO.OF STUDENTS APPEARED
     sheet.getCell(`A${summaryStartRow}`).value = 'NO.OF STUDENTS APPEARED';
     sheet.getCell(`A${summaryStartRow}`).style = {
@@ -1001,7 +916,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
         right: { style: 'thin' }
       }
     };
-    
+
     // Box for student count - Use studentsAppeared (max among subjects)
     sheet.mergeCells(`B${summaryStartRow}:C${summaryStartRow}`);
     const appearedCell = sheet.getCell(`B${summaryStartRow}`);
@@ -1030,7 +945,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
         right: { style: 'thin' }
       }
     };
-    
+
     // Box for passed count - Use studentsPassedAll (who passed ALL subjects)
     sheet.mergeCells(`B${summaryStartRow + 1}:C${summaryStartRow + 1}`);
     const passedCell = sheet.getCell(`B${summaryStartRow + 1}`);
@@ -1059,7 +974,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
         right: { style: 'thin' }
       }
     };
-    
+
     // Box for percentage - Already correctly calculated in controller
     sheet.mergeCells(`B${summaryStartRow + 2}:C${summaryStartRow + 2}`);
     const percentageCell = sheet.getCell(`B${summaryStartRow + 2}`);
@@ -1078,19 +993,19 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
 
     // Signature section
     const sigRow = summaryStartRow + 5;
-    
+
     sheet.getCell(`A${sigRow}`).value = 'CLASS ADVISOR';
     sheet.getCell(`A${sigRow}`).style = {
       font: { name: 'Arial', size: 11, bold: true },
       alignment: { vertical: 'middle', horizontal: 'center' }
     };
-    
+
     sheet.getCell(`D${sigRow}`).value = 'HEAD OF THE DEPARTMENT';
     sheet.getCell(`D${sigRow}`).style = {
       font: { name: 'Arial', size: 11, bold: true },
       alignment: { vertical: 'middle', horizontal: 'center' }
     };
-    
+
     sheet.getCell(`H${sigRow}`).value = 'PRINCIPAL';
     sheet.getCell(`H${sigRow}`).style = {
       font: { name: 'Arial', size: 11, bold: true },
@@ -1123,7 +1038,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
   /**
    * Create main institutional sheet matching exact template format
    */
-    async createInstitutionalMainSheet(workbook, reportData) {
+  async createInstitutionalMainSheet(workbook, reportData) {
     const sheet = workbook.addWorksheet('Result Analysis Report');
 
     // Set up page for landscape printing
@@ -1199,7 +1114,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
         const facultyName = reportData.facultyAssignments?.[subject.subjectCode] || '';
         // Use individual faculty department if available, otherwise fallback to overall department
         const facultyDepartment = reportData.facultyDepartments?.[subject.subjectCode] || reportData.department || '';
-        
+
         row.getCell(2).value = subject.subjectCode;
         row.getCell(3).value = subject.subjectName || subject.subjectCode;
         row.getCell(4).value = facultyName;
@@ -1219,7 +1134,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
           font: { name: 'Arial', size: 9 }
         };
       }
-      row.height = 24; 
+      row.height = 24;
     }
 
     // --- Re-evaluation Summary Table and Signature Section ---
@@ -1316,7 +1231,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       const row = sheet.getRow(3 + index);
       row.getCell(1).value = data[0];
       row.getCell(2).value = data[1];
-      
+
       row.getCell(1).style = {
         font: { name: 'Arial', size: 10, bold: true },
         alignment: { vertical: 'middle', horizontal: 'left' }
@@ -1360,11 +1275,11 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
       await workbook.xlsx.readFile(filePath);
 
       const previewData = {};
-      
+
       workbook.eachSheet((worksheet, sheetId) => {
         const sheetData = [];
         const sheetName = worksheet.name;
-        
+
         worksheet.eachRow((row, rowNumber) => {
           const rowData = [];
           row.eachCell((cell, colNumber) => {
@@ -1380,7 +1295,7 @@ C = Average, P = Pass, U = Fail, F = Fail, - = Not Applicable`;
           });
           sheetData.push(rowData);
         });
-        
+
         previewData[sheetName] = sheetData;
       });
 

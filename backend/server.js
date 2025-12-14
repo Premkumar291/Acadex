@@ -5,7 +5,6 @@ import cors from 'cors';
 import serverless from 'serverless-http';
 import { connectDb } from './dataBase/connectDb.js';
 import { createIndexes } from './models/index.js';
-import { startFileCleanupScheduler } from './utils/fileCleanup.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 import { securityMiddleware, corsOptions } from './middleware/security.js';
 import adminRoutes from './routes/admin.route.js';
