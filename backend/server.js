@@ -65,6 +65,24 @@ app.get("/health", (req, res) => {
   });
 });
 
+// Middleware to ensure database is ready for API routes
+const ensureDbReady = async (req, res, next) => {
+  if (!isInitialized) {
+    try {
+      await initializeServer();
+    } catch (error) {
+      return res.status(503).json({
+        error: "Service temporarily unavailable",
+        message: "Database is initializing, please try again in a moment"
+      });
+    }
+  }
+  next();
+};
+
+// Apply database readiness middleware to all API routes
+app.use("/api", ensureDbReady);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/protected", protectedRoutes);
