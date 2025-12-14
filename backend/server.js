@@ -68,35 +68,29 @@ app.use("/api/reports", pdfReportRoutes); // PDF report generation and managemen
 app.use(notFound);
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, async () => {
+
+// Initialize database connection and indexes
+const initializeServer = async () => {
   try {
     await connectDb();
-  } catch (error) {
-    console.log("Database connection error:")
-  }
-
-  if (process.env.NODE_ENV !== 'production') {
-    console.log(`Server is running on http://localhost:${PORT}`);
-  }
-
-  // System initialization complete
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('Admin management system initialized');
-  }
-
-  // Create database indexes for optimal performance
-  try {
     await createIndexes();
+    startFileCleanupScheduler();
   } catch (error) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error('Error creating database indexes:', error);
-    }
+    console.error('Server initialization error:', error);
   }
+};
 
-  // Start file cleanup scheduler for uploads folder (12-hour intervals)
-  startFileCleanupScheduler();
-});
+// Initialize on module load for serverless
+initializeServer();
+
+// Start server (only for local development)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log('Admin management system initialized');
+  });
+}
 
 // Export the serverless handler as default export for Vercel
 export default serverless(app);
+

@@ -108,7 +108,7 @@ export const securityMiddleware = [
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "data:", "https:"],
         scriptSrc: ["'self'"],
-        connectSrc: ["'self'", "http://localhost:*", "https://acadex-beige.vercel.app",process.env.FRONTEND_URL],
+        connectSrc: ["'self'", "http://localhost:*", "https://acadex-beige.vercel.app", process.env.FRONTEND_URL],
       },
     },
   }),
@@ -129,13 +129,25 @@ export const securityMiddleware = [
  * CORS configuration for development and production
  */
 export const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:5175',
-    'https://acadex-21.vercel.app',
-    process.env.FRONTEND_URL
-  ].filter(Boolean),
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:5175',
+      'https://acadex-21.vercel.app',
+      process.env.FRONTEND_URL
+    ].filter(Boolean);
+
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -148,5 +160,7 @@ export const corsOptions = {
     'Cache-Control',
     'X-Access-Token'
   ],
-  preflightContinue: false
+  exposedHeaders: ['Set-Cookie'],
+  preflightContinue: false,
+  maxAge: 86400 // 24 hours
 };
