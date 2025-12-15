@@ -8,20 +8,20 @@ export const generateTokenAndSetCookie = (userId, role, res) => {
 
     try {
         const token = jwt.sign({ userId, role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        
+
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
             maxAge: 3600000 // 1 hour
         });
 
         const refreshToken = jwt.sign({ userId, role }, process.env.JWT_REFRESH_SECRET, { expiresIn: '30d' });
-        
+
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
             maxAge: 2592000000 // 30 days
         });
 
