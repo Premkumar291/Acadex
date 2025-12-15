@@ -70,13 +70,20 @@ app.use(errorHandler);
 
 // Local development server
 if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+  (async () => {
+    try {
+      await connectDb();
+      console.log('Database connected successfully');
+      app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+      });
+    } catch (error) {
+      console.error('Failed to start server:', error);
+      process.exit(1);
+    }
+  })();
 }
 
-// Export serverless handler
-// Export serverless handler with event loop optimization
 // Export serverless handler with DB connection wait
 const handler = serverless(app, {
   request: (req, event, context) => {
@@ -88,9 +95,10 @@ const handler = serverless(app, {
 export default async (req, res) => {
   try {
     await connectDb();
+
     return handler(req, res);
   } catch (error) {
-    console.error('Database connection failed:', error);
-    res.status(500).json({ error: 'Database connection failed' });
+    console.error('[Vercel] Error:', error);
+    res.status(500).json({ error: 'Internal Server Error', details: error.message });
   }
 };
