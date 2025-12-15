@@ -93,6 +93,11 @@ const handler = serverless(app, {
 });
 
 export default async (req, res) => {
+  // Skip DB connection for health checks to verify server is running
+  if (req.url === '/' || req.url === '/health') {
+    return handler(req, res);
+  }
+
   try {
     await connectDb();
 
