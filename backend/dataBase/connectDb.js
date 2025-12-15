@@ -17,13 +17,19 @@ export const connectDb = async () => {
       console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
     }
 
+    if (mongoose.connection.readyState >= 1) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Using existing MongoDB connection');
+      }
+      return mongoose;
+    }
+
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       bufferCommands: false,
       maxPoolSize: 1, // Reduced for serverless
       serverSelectionTimeoutMS: 5000, // Reduced for faster failures
       socketTimeoutMS: 10000, // Reduced for serverless
       connectTimeoutMS: 5000, // Reduced for serverless
-      retryWrites: true
     });
 
     // Initialize GridFS

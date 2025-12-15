@@ -68,30 +68,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Database initialization (async, non-blocking)
-let dbInitialized = false;
-
-const initDB = async () => {
-  if (dbInitialized) return;
-
-  try {
-    await connectDb();
-
-    // Create indexes in background
-    if (process.env.NODE_ENV === 'production') {
-      createIndexes().catch(err => console.error('Index error:', err));
-    } else {
-      await createIndexes();
-    }
-
-    dbInitialized = true;
-    console.log('Database initialized');
-  } catch (error) {
-    console.error('DB init error:', error.message);
-  }
-};
-
-// Start initialization (don't await)
-initDB();
+// Database initialization handled in request wrapper
 
 // Local development server
 if (process.env.NODE_ENV !== 'production') {
@@ -102,6 +79,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export serverless handler
 // Export serverless handler with event loop optimization
+// Export serverless handler with DB connection wait
 const handler = serverless(app, {
   request: (req, event, context) => {
     // Critical: Prevent serverless function from waiting for DB connection to close
@@ -109,4 +87,12 @@ const handler = serverless(app, {
   }
 });
 
-export default handler;
+export default async (req, res) => {
+  try {
+    await connectDb();
+    return handler(req, res);
+  } catch (error) {
+    console.error('Database connection failed:', error);
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+};

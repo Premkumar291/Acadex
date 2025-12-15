@@ -22,8 +22,12 @@ export const initGridFS = (connection) => {
 
 // Create storage engine
 const storage = new GridFsStorage({
-  url: process.env.MONGO_URI || 'mongodb+srv://premkumar29105:VEFPxnj7PNHUCSTi@users.jbelgnm.mongodb.net/user_db?retryWrites=true&w=majority&appName=Users',
-  options: { useNewUrlParser: true, useUnifiedTopology: true },
+  url: process.env.MONGODB_URI,
+  options: {
+    maxPoolSize: 1, // Reduced for serverless
+    serverSelectionTimeoutMS: 5000,
+    connectTimeoutMS: 5000
+  },
   file: (req, file) => {
     return new Promise((resolve, reject) => {
       // Generate a unique filename
