@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import serverless from 'serverless-http';
+
 import { connectDb } from './dataBase/connectDb.js';
 import { createIndexes } from './models/index.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
@@ -84,26 +84,21 @@ if (process.env.NODE_ENV !== 'production') {
   })();
 }
 
-// Export serverless handler with DB connection wait
-const handler = serverless(app, {
-  request: (req, event, context) => {
-    // Critical: Prevent serverless function from waiting for DB connection to close
-    context.callbackWaitsForEmptyEventLoop = false;
-  }
-});
-
+// Export for Vercel (Native Express)
 export default async (req, res) => {
-  // Skip DB connection for health checks to verify server is running
+  // Skip DB connection for health checks
   if (req.url === '/' || req.url === '/health') {
-    return handler(req, res);
+    return app(req, res);
   }
 
   try {
+    // Ensure DB is connected before handling request
     await connectDb();
 
-    return handler(req, res);
+    // Pass request to Express app
+    return app(req, res);
   } catch (error) {
-    console.error('[Vercel] Error:', error);
-    res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    console.error('[Vercel] DB Connection Error:', error);
+    res.status(500).json({ error: 'Database connection failed', details: error.message });
   }
 };
