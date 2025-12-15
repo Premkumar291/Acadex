@@ -15,31 +15,10 @@ export const createIndexes = async () => {
       console.log('Creating database indexes...');
     }
 
-    // User model indexes
-    await User.collection.createIndex({ email: 1 }, { unique: true });
-    await User.collection.createIndex({ department: 1 });
-    await User.collection.createIndex({ role: 1 });
-    await User.collection.createIndex({ createdAt: -1 });
-    // Removed hierarchyPath.level index as field doesn't exist in current schema
-
-    // Subject model indexes
-    await Subject.collection.createIndex({ subjectCode: 1 }, { unique: true });
-    await Subject.collection.createIndex({ department: 1 });
-    await Subject.collection.createIndex({ semester: 1 });
-    await Subject.collection.createIndex({ subjectType: 1 });
-    await Subject.collection.createIndex({ active: 1 });
-    await Subject.collection.createIndex({ department: 1, semester: 1 });
-
-    // Faculty model indexes (for other purposes, not faculty accounts)
-    await Faculty.collection.createIndex({ email: 1 }, { unique: true });
-    await Faculty.collection.createIndex({ employeeId: 1 }, { unique: true });
-    await Faculty.collection.createIndex({ department: 1 });
-    await Faculty.collection.createIndex({ active: 1 });
-    await Faculty.collection.createIndex({ dateOfJoining: -1 });
-
+    // Indexes are handled by Mongoose Schema definitions
 
     if (process.env.NODE_ENV !== 'production') {
-      console.log('Database indexes created successfully');
+      console.log('Database indexes check completed');
     }
   } catch (error) {
     if (process.env.NODE_ENV !== 'production') {
@@ -56,11 +35,11 @@ export const dropIndexes = async () => {
     if (process.env.NODE_ENV !== 'production') {
       console.log('Dropping database indexes...');
     }
-    
+
     await User.collection.dropIndexes();
     await Subject.collection.dropIndexes();
     await Faculty.collection.dropIndexes();
-    
+
     if (process.env.NODE_ENV !== 'production') {
       console.log('Database indexes dropped successfully');
     }
