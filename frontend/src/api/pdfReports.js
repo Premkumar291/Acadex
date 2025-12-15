@@ -26,20 +26,20 @@ reportsApi.interceptors.response.use(
 
 
 export const pdfReportsApi = {
-  
- 
+
+
   async generateReport(reportData) {
     try {
-      
+
       const response = await reportsApi.post('/generate', reportData);
-      
+
       if (response.data.success) {
         return response.data;
       } else {
         throw new Error(response.data.message || 'Failed to generate PDF report');
       }
     } catch (error) {
-      
+
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
       } else if (error.response?.status === 401) {
@@ -52,19 +52,19 @@ export const pdfReportsApi = {
     }
   },
 
- 
+
   async generateEnhancedReport(reportData) {
     try {
-      
+
       const response = await reportsApi.post('/generate-enhanced', reportData);
-      
+
       if (response.data.success) {
         return response.data;
       } else {
         throw new Error(response.data.message || 'Failed to generate enhanced PDF report');
       }
     } catch (error) {
-      
+
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
       } else if (error.response?.status === 401) {
@@ -77,19 +77,19 @@ export const pdfReportsApi = {
     }
   },
 
- 
+
   async generateInstitutionalReport(reportData) {
     try {
-      
+
       const response = await reportsApi.post('/generate-institutional', reportData);
-      
+
       if (response.data.success) {
         return response.data;
       } else {
         throw new Error(response.data.message || 'Failed to generate institutional PDF report');
       }
     } catch (error) {
-      
+
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
       } else if (error.response?.status === 401) {
@@ -102,22 +102,22 @@ export const pdfReportsApi = {
     }
   },
 
-  
+
   async getReports(options = {}) {
     try {
       const { page = 1, limit = 10 } = options;
-      
+
       const response = await reportsApi.get('/list', {
         params: { page, limit }
       });
-      
+
       if (response.data.success) {
         return response.data.data;
       } else {
         throw new Error(response.data.message || 'Failed to fetch reports');
       }
     } catch (error) {
-      
+
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
       } else {
@@ -126,16 +126,16 @@ export const pdfReportsApi = {
     }
   },
 
-  
+
   async downloadReport(reportId) {
     try {
       const response = await reportsApi.get(`/download/${reportId}`, {
         responseType: 'blob'
       });
-      
+
       return response.data;
     } catch (error) {
-      
+
       if (error.response?.status === 404) {
         throw new Error('Report not found or has been deleted.');
       } else {
@@ -144,16 +144,16 @@ export const pdfReportsApi = {
     }
   },
 
-  
+
   async downloadPDFReport(reportId) {
     try {
       const response = await reportsApi.get(`/download-pdf/${reportId}`, {
         responseType: 'blob'
       });
-      
+
       return response.data;
     } catch (error) {
-      
+
       if (error.response?.status === 404) {
         throw new Error('Report not found or has been deleted.');
       } else {
@@ -162,21 +162,21 @@ export const pdfReportsApi = {
     }
   },
 
-  
+
   getPreviewUrl(reportId) {
     return `${API_BASE_URL}/reports/preview/${reportId}`;
   },
 
-  
+
   async previewReport(reportId) {
     try {
       const response = await reportsApi.get(`/preview/${reportId}`, {
         responseType: 'blob'
       });
-      
+
       return response.data;
     } catch (error) {
-      
+
       if (error.response?.status === 404) {
         throw new Error('Report not found or has been deleted.');
       } else {
@@ -185,18 +185,18 @@ export const pdfReportsApi = {
     }
   },
 
- 
+
   async deleteReport(reportId) {
     try {
       const response = await reportsApi.delete(`/${reportId}`);
-      
+
       if (response.data.success) {
         return response.data;
       } else {
         throw new Error(response.data.message || 'Failed to delete report');
       }
     } catch (error) {
-      
+
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
       } else if (error.response?.status === 404) {
@@ -244,17 +244,13 @@ export const pdfReportsApi = {
    */
   async generateInstitutionalExcel(reportData) {
     try {
-      console.log('Sending report data to API:', reportData);
-      
+
       const response = await reportsApi.post('/generate-institutional', reportData, {
         responseType: 'blob',
         timeout: 30000, // 30 second timeout
       });
 
-      console.log('API response received:', response.status, response.headers);
-
       if (!(response.data instanceof Blob)) {
-        console.error('Invalid response type:', typeof response.data);
         throw new Error('Server returned invalid file format. Expected Excel file.');
       }
 
@@ -267,7 +263,6 @@ export const pdfReportsApi = {
         }
       }
 
-      console.log('Triggering download for file:', filename);
       this.triggerDownload(response.data, filename);
     } catch (error) {
       console.error('Excel generation error:', error);
@@ -309,24 +304,24 @@ export const pdfReportsApi = {
    */
   async DEPRECATED_generateAndDownloadExcel(reportData) {
     try {
-      
+
       // First generate the report using institutional endpoint
       const generateResponse = await reportsApi.post('/generate-institutional', reportData);
-      
+
       if (generateResponse.data.success) {
         const reportId = generateResponse.data.data.reportId;
-        
+
         // Then download it immediately
         const downloadResponse = await reportsApi.get(`/download/${reportId}`, {
           responseType: 'blob'
         });
-        
-        
+
+
         // Verify we got a blob, not JSON
         if (!(downloadResponse.data instanceof Blob)) {
           throw new Error('Server returned invalid file format. Expected Excel file.');
         }
-        
+
         return {
           blob: downloadResponse.data,
           filename: generateResponse.data.data.filename || 'semester_report.xlsx',
@@ -336,7 +331,7 @@ export const pdfReportsApi = {
         throw new Error(generateResponse.data.message || 'Failed to generate Excel report');
       }
     } catch (error) {
-      
+
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
       } else if (error.response?.status === 401) {

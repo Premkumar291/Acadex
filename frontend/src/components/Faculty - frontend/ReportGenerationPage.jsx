@@ -1,11 +1,11 @@
 import React, { useEffect, useReducer, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  FileText, 
-  Building2, 
-  Download, 
-  Eye, 
+import {
+  ArrowLeft,
+  FileText,
+  Building2,
+  Download,
+  Eye,
   User,
   BookOpen,
   AlertCircle,
@@ -46,50 +46,50 @@ function formReducer(state, action) {
   switch (action.type) {
     case 'SET_REPORT_DATA':
       return { ...state, reportData: action.payload };
-    
+
     case 'UPDATE_DEPARTMENT_INFO':
       return {
         ...state,
         departmentInfo: { ...state.departmentInfo, [action.field]: action.value },
         errors: { ...state.errors, [action.field]: '' }
       };
-    
+
     case 'UPDATE_FACULTY_ASSIGNMENT':
       return {
         ...state,
         facultyAssignments: { ...state.facultyAssignments, [action.subjectCode]: action.value },
         errors: { ...state.errors, [`faculty_${action.subjectCode}`]: '' }
       };
-    
+
     case 'UPDATE_FACULTY_DEPARTMENT':
       return {
         ...state,
         facultyDepartments: { ...state.facultyDepartments, [action.subjectCode]: action.value },
         errors: { ...state.errors, [`faculty_${action.subjectCode}`]: '' }
       };
-    
+
     case 'UPDATE_SUBJECT_NAME':
       return {
         ...state,
         subjectNames: { ...state.subjectNames, [action.subjectCode]: action.value },
         errors: { ...state.errors, [`subject_${action.subjectCode}`]: '' }
       };
-    
+
     case 'SET_ERRORS':
       return { ...state, errors: action.payload };
-    
+
     case 'CLEAR_ERROR':
       return { ...state, errors: { ...state.errors, [action.field]: '' } };
-    
+
     case 'SET_LOADING':
       return { ...state, ui: { ...state.ui, loading: action.payload } };
-    
+
     case 'SET_PREVIEW':
       return { ...state, ui: { ...state.ui, showPreview: action.payload } };
-    
+
     case 'SET_GENERATED_REPORT':
       return { ...state, ui: { ...state.ui, generatedReport: action.payload } };
-    
+
     case 'INITIALIZE_SUBJECTS':
       // Merge with existing state to preserve any already fetched subject names
       return {
@@ -99,7 +99,7 @@ function formReducer(state, action) {
         subjectNames: { ...state.subjectNames, ...action.subjectNames },
         departmentInfo: { ...state.departmentInfo, semester: action.semester }
       };
-    
+
     default:
       return state;
   }
@@ -109,7 +109,7 @@ function formReducer(state, action) {
 function ReportGenerationPage() {
   const navigate = useNavigate();
   const [state, dispatch] = useReducer(formReducer, initialFormState);
-  
+
   const { reportData, departmentInfo, facultyAssignments, facultyDepartments, subjectNames, errors, ui } = state;
   const { loading, showPreview, generatedReport } = ui;
 
@@ -120,13 +120,13 @@ function ReportGenerationPage() {
       const initialAssignments = {};
       const initialDepartments = {};
       const initialSubjectNames = {};
-      
+
       reportData.analysisData.subjectCodes.forEach(subjectCode => {
         initialAssignments[subjectCode] = '';
         initialDepartments[subjectCode] = '';
         initialSubjectNames[subjectCode] = ''; // Use empty string as default name
       });
-      
+
       // Dispatch initialization action
       dispatch({
         type: 'INITIALIZE_SUBJECTS',
@@ -141,7 +141,7 @@ function ReportGenerationPage() {
   useEffect(() => {
     // Retrieve saved report generation data from session storage
     const data = sessionStorage.getItem('reportGenerationData');
-    
+
     if (data) {
       try {
         const parsedData = JSON.parse(data);
@@ -151,7 +151,7 @@ function ReportGenerationPage() {
         const initialAssignments = {};
         const initialDepartments = {};
         const initialSubjectNames = {};
-        
+
         if (parsedData.analysisData && parsedData.analysisData.subjectCodes) {
           parsedData.analysisData.subjectCodes.forEach(subjectCode => {
             initialAssignments[subjectCode] = '';
@@ -160,7 +160,7 @@ function ReportGenerationPage() {
             initialSubjectNames[subjectCode] = '';
           });
         }
-        
+
         dispatch({
           type: 'INITIALIZE_SUBJECTS',
           facultyAssignments: initialAssignments,
@@ -195,20 +195,17 @@ function ReportGenerationPage() {
       subjectCode,
       value: facultyName
     });
-    
+
     // Store faculty department
     dispatch({
       type: 'UPDATE_FACULTY_DEPARTMENT',
       subjectCode,
       value: facultyDepartment || ''
     });
-    
+
     // If facultyDepartment is provided, you can use it as needed
     // For example, you might want to store it in state or use it for other purposes
-    if (facultyDepartment) {
-      // Handle faculty department if needed
-      console.log(`Faculty ${facultyName} is from department: ${facultyDepartment}`);
-    }
+
   }, []);
 
   const handleDepartmentInfoChange = useCallback((field, value) => {
@@ -231,7 +228,7 @@ function ReportGenerationPage() {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     // Validate department info
     if (!departmentInfo.semester.trim()) {
       newErrors.semester = 'Semester is required';
@@ -294,18 +291,18 @@ function ReportGenerationPage() {
         academicYear: departmentInfo.academicYear?.toString().trim() || '',
         classAdvisorName: departmentInfo.classAdvisorName?.toString().trim() || '',
         monthsAndYear: departmentInfo.monthsAndYear?.toString().trim() || '',
-        
+
         // Analysis data from the previous analysis - backend expects only students and subjectCodes
         analysisData: {
           students: reportData?.analysisData?.students || [],
           subjectCodes: reportData?.analysisData?.subjectCodes || []
         },
-        
+
         // Faculty assignments and subject names - ensure objects exist
         facultyAssignments: facultyAssignments || {},
         facultyDepartments: facultyDepartments || {}, // Include faculty departments
         subjectNames: subjectNames || {}, // This will now contain either DB names or dash icons
-        
+
         // Optional fields with defaults
         facultyId: null, // Will use req.user?.id from backend
         instituteName: 'INSTITUTE OF ROAD AND TRANSPORT TECHNOLOGY',
@@ -331,7 +328,7 @@ function ReportGenerationPage() {
         overallPassPercentage: reportData?.resultData?.overallPassPercentage || 0,
         filename: `institutional_report_${reportRequestData.semester}.xlsx` // Approximate filename
       };
-      
+
       dispatch({ type: 'SET_GENERATED_REPORT', payload: generatedReportData });
       dispatch({ type: 'SET_PREVIEW', payload: true });
     } catch (error) {
@@ -342,7 +339,7 @@ function ReportGenerationPage() {
           status: error.response?.status
         });
       }
-      
+
       // Show more specific error message
       const errorMessage = error.response?.data?.message || error.message || 'Failed to generate report. Please check your connection and try again.';
       toast.error(`Report Generation Failed: ${errorMessage}`);
@@ -425,7 +422,7 @@ function ReportGenerationPage() {
             <Building2 className="h-5 w-5 mr-2 text-primary-700" />
             Institutional Report Details
           </h2>
-          
+
           {/* Department Information Section */}
           <div className="mb-8">
             <h3 className="text-md font-semibold text-primary-900 mb-4 flex items-center">
@@ -440,9 +437,8 @@ function ReportGenerationPage() {
                 </label>
                 <input
                   type="text"
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 ${
-                    errors.semester ? 'border-red-300' : 'border-primary-200'
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 ${errors.semester ? 'border-red-300' : 'border-primary-200'
+                    }`}
                   placeholder="e.g., 6"
                   value={departmentInfo.semester}
                   onChange={(e) => handleDepartmentInfoChange('semester', e.target.value)}
@@ -454,7 +450,7 @@ function ReportGenerationPage() {
                   </p>
                 )}
               </div>
-              
+
               {/* Academic Year */}
               <div>
                 <label className="block text-sm font-medium text-primary-900 mb-2">
@@ -462,9 +458,8 @@ function ReportGenerationPage() {
                 </label>
                 <input
                   type="text"
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 ${
-                    errors.academicYear ? 'border-red-300' : 'border-primary-200'
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 ${errors.academicYear ? 'border-red-300' : 'border-primary-200'
+                    }`}
                   placeholder="e.g., 2024-2025"
                   value={departmentInfo.academicYear}
                   onChange={(e) => handleDepartmentInfoChange('academicYear', e.target.value)}
@@ -476,16 +471,15 @@ function ReportGenerationPage() {
                   </p>
                 )}
               </div>
-              
+
               {/* Department */}
               <div>
                 <label className="block text-sm font-medium text-primary-900 mb-2">
                   Department *
                 </label>
                 <select
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 ${
-                    errors.department ? 'border-red-300' : 'border-primary-200'
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600 ${errors.department ? 'border-red-300' : 'border-primary-200'
+                    }`}
                   value={departmentInfo.department}
                   onChange={(e) => handleDepartmentInfoChange('department', e.target.value)}
                 >
@@ -515,11 +509,9 @@ function ReportGenerationPage() {
                   onChange={(field, value, department) => {
                     // Handle the class advisor name update
                     handleDepartmentInfoChange(field, value);
-                    
+
                     // If department is provided, you might want to store it
-                    if (department) {
-                      console.log(`Class advisor is from department: ${department}`);
-                    }
+
                   }}
                   error={errors.classAdvisorName}
                 />
@@ -538,9 +530,8 @@ function ReportGenerationPage() {
                 </label>
                 <input
                   type="text"
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.monthsAndYear ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.monthsAndYear ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   placeholder="e.g., APRIL/MAY 2024"
                   value={departmentInfo.monthsAndYear}
                   onChange={(e) => handleDepartmentInfoChange('monthsAndYear', e.target.value)}
@@ -554,7 +545,7 @@ function ReportGenerationPage() {
               </div>
             </div>
           </div>
-          
+
           {/* Faculty Assignment Section */}
           <div className="mb-8">
             <h3 className="text-md font-semibold text-gray-900 mb-4 flex items-center">
@@ -564,7 +555,7 @@ function ReportGenerationPage() {
             <p className="text-sm text-gray-600 mb-4">
               Please assign a faculty member for each subject detected in the analysis. This information will be included in the institutional report.
             </p>
-            
+
             {/* Info notice for filtered subjects */}
             {reportData.analysisData.subjectCodes.length < reportData.resultData.totalSubjects && (
               <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
@@ -581,7 +572,7 @@ function ReportGenerationPage() {
                 </div>
               </div>
             )}
-            
+
             <div className="bg-gray-50 border border-gray-200 rounded-md overflow-hidden">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-100">
@@ -621,14 +612,14 @@ function ReportGenerationPage() {
                           value={facultyAssignments[subjectCode] || ''}
                           onChange={handleFacultyAssignmentChange}
                           error={errors[`faculty_${subjectCode}`]}
-                        /> 
+                        />
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            
+
             <div className="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
               <div className="flex items-start">
                 <CheckCircle className="h-4 w-4 text-blue-600 mr-2 mt-0.5" />
@@ -668,31 +659,30 @@ function ReportGenerationPage() {
               {reportData.resultData.subjectWiseResults
                 .filter(subject => subject.totalStudents > 0)
                 .map((subject, index) => (
-                <div 
-                  key={index}
-                  className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
-                >
-                  <h4 className="font-medium text-gray-900 mb-2 flex items-center">
-                    <BookOpen className="h-4 w-4 text-blue-500 mr-2" />
-                    {subject.subject}
-                  </h4>
-                  <div className="space-y-1 text-sm text-gray-600">
-                    <p>Total Students: <span className="font-medium">{subject.totalStudents}</span></p>
-                    <p>Passed: <span className="font-medium text-green-600">{subject.passedStudents}</span></p>
-                    <p>Pass Rate: <span className="font-medium">{subject.passPercentage.toFixed(1)}%</span></p>
+                  <div
+                    key={index}
+                    className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
+                  >
+                    <h4 className="font-medium text-gray-900 mb-2 flex items-center">
+                      <BookOpen className="h-4 w-4 text-blue-500 mr-2" />
+                      {subject.subject}
+                    </h4>
+                    <div className="space-y-1 text-sm text-gray-600">
+                      <p>Total Students: <span className="font-medium">{subject.totalStudents}</span></p>
+                      <p>Passed: <span className="font-medium text-green-600">{subject.passedStudents}</span></p>
+                      <p>Pass Rate: <span className="font-medium">{subject.passPercentage.toFixed(1)}%</span></p>
+                    </div>
+                    <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full transition-all duration-500 ${subject.passPercentage >= 90 ? 'bg-green-500' :
+                          subject.passPercentage >= 75 ? 'bg-yellow-500' :
+                            subject.passPercentage >= 60 ? 'bg-orange-500' : 'bg-red-500'
+                          }`}
+                        style={{ width: `${subject.passPercentage}%` }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className={`h-2 rounded-full transition-all duration-500 ${
-                        subject.passPercentage >= 90 ? 'bg-green-500' :
-                        subject.passPercentage >= 75 ? 'bg-yellow-500' :
-                        subject.passPercentage >= 60 ? 'bg-orange-500' : 'bg-red-500'
-                      }`}
-                      style={{ width: `${subject.passPercentage}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 
@@ -715,11 +705,10 @@ function ReportGenerationPage() {
               <button
                 onClick={handleGenerateReport}
                 disabled={loading}
-                className={`px-6 py-3 rounded-md font-medium flex items-center transition-all ${
-                  loading 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-primary-800 hover:bg-primary-900 text-white shadow-lg hover:shadow-xl'
-                } transform hover:scale-105`}
+                className={`px-6 py-3 rounded-md font-medium flex items-center transition-all ${loading
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-primary-800 hover:bg-primary-900 text-white shadow-lg hover:shadow-xl'
+                  } transform hover:scale-105`}
               >
                 {loading ? (
                   <>
@@ -745,15 +734,15 @@ function ReportGenerationPage() {
                 <div className="w-16 h-16 mx-auto bg-primary-100 rounded-full flex items-center justify-center mb-4">
                   <CheckCircle className="h-8 w-8 text-primary-700" />
                 </div>
-                
+
                 <h3 className="text-lg font-semibold text-primary-950 mb-2">
                   Report Generated Successfully!
                 </h3>
-                
+
                 <p className="text-primary-700 mb-6">
                   Your institutional report has been generated successfully. You can now preview it or download it directly.
                 </p>
-                
+
                 {/* Report Details */}
                 <div className="bg-primary-50 rounded-lg p-4 mb-6 text-left border border-primary-200">
                   <div className="grid grid-cols-2 gap-4 text-sm">
@@ -787,22 +776,11 @@ function ReportGenerationPage() {
                     )}
                   </div>
                 </div>
-                
+
                 {/* Action Buttons */}
                 <div className="flex space-x-3">
-                  <button
-                    onClick={() => {
-                      // Open preview in new tab - use env API URL
-                      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
-                      const correctedPreviewUrl = `${apiBaseUrl}/reports/preview/${generatedReport.reportId}`;
-                      window.open(correctedPreviewUrl, '_blank');
-                    }}
-                    className="flex-1 px-4 py-2 bg-primary-800 text-white rounded-md hover:bg-primary-900 transition-colors flex items-center justify-center"
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    View Report
-                  </button>
-                  
+
+
                   <button
                     onClick={async () => {
                       try {
@@ -819,7 +797,7 @@ function ReportGenerationPage() {
                     Download Report
                   </button>
                 </div>
-                
+
                 {/* Close Button */}
                 <button
                   onClick={() => dispatch({ type: 'SET_PREVIEW', payload: false })}

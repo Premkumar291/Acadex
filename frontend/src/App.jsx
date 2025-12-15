@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { 
-  LoginPage, 
-  SignupPage, 
-  VerifyEmailPage, 
+import FacultyErrorBoundary from "./components/common/FacultyErrorBoundary";
+import {
+  LoginPage,
+  SignupPage,
+  VerifyEmailPage,
   ForgotPassword,
   Dashboard as FacultyDashboard,
   PageNotFound
@@ -22,7 +23,7 @@ import AdminLayout from "./components/Admin - frontend/Layout/AdminLayout";
 function AppLayout({ children }) {
   const location = useLocation();
   const isFullWidthPage = location.pathname === '/faculty-dashboard' || location.pathname === '/admin-dashboard' || location.pathname.includes('/result-analysis') || location.pathname.includes('/generate-report') || location.pathname.includes('/subject-management') || location.pathname.includes('/faculty-management') || location.pathname.includes('/admin-hierarchy') || location.pathname.includes('/create-faculty');
-  
+
   if (isFullWidthPage) {
     // Full-width layout for dashboard and result analysis pages
     return (
@@ -31,7 +32,7 @@ function AppLayout({ children }) {
       </div>
     );
   }
-  
+
   // Centered layout for auth pages
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -50,17 +51,17 @@ function App() {
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/faculty-dashboard" element={<FacultyDashboard />} />
+          <Route path="/faculty-dashboard" element={<FacultyErrorBoundary><FacultyDashboard /></FacultyErrorBoundary>} />
           <Route path="/admin-dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
           <Route path="/admin-dashboard/create-faculty" element={<AdminLayout><CreateFaculty /></AdminLayout>} />
           <Route path="/admin-dashboard/subject-management" element={<AdminLayout><SubjectManagement /></AdminLayout>} />
           <Route path="/admin-dashboard/faculty-management" element={<AdminLayout><FacultyManagement /></AdminLayout>} />
           <Route path="/admin-dashboard/admin-hierarchy" element={<AdminLayout><AdminHierarchyPage /></AdminLayout>} />
-          
+
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/result-analysis" element={<ResultAnalysis />} />
-          <Route path="/generate-report" element={<ReportGenerationPage />} />
+          <Route path="/result-analysis" element={<FacultyErrorBoundary><ResultAnalysis /></FacultyErrorBoundary>} />
+          <Route path="/generate-report" element={<FacultyErrorBoundary><ReportGenerationPage /></FacultyErrorBoundary>} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
         <Toaster
