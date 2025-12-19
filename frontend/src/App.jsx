@@ -6,13 +6,13 @@ import LoadingSpinner from "./components/common/LoadingSpinner"; // You might ne
 
 
 // Lazy load pages
-const LoginPage = lazy(() => import("./components/Faculty - frontend/auth/LoginPage"));
-const SignupPage = lazy(() => import("./components/Faculty - frontend/auth/SignupPage"));
-const VerifyEmailPage = lazy(() => import("./components/Faculty - frontend/auth/VerifyEmailPage"));
-const ForgotPassword = lazy(() => import("./components/Faculty - frontend/auth/ForgotPassword"));
-const FacultyDashboard = lazy(() => import("./components/Faculty - frontend/Dashboard/Dashboard"));
-const PageNotFound = lazy(() => import("./components/Faculty - frontend/pagenotfound/PageNotFound"));
-const ResultAnalysis = lazy(() => import("./components/Faculty - frontend/Analysis"));
+const LoginPage = lazy(() => import("./components/auth/login-page"));
+const SignupPage = lazy(() => import("./components/auth/signup-page"));
+const VerifyEmailPage = lazy(() => import("./components/auth/verify-email-page"));
+const ForgotPassword = lazy(() => import("./components/auth/forgot-password"));
+const FacultyDashboard = lazy(() => import("./components/Faculty - frontend/Dashboard/dashboard"));
+const PageNotFound = lazy(() => import("./components/pagenotfound/page-not-found"));
+const ResultAnalysis = lazy(() => import("./components/Faculty - frontend/Analysis/result-analysis"));
 const ReportGenerationPage = lazy(() => import("./components/Faculty - frontend/ReportGenerationPage"));
 const AdminDashboard = lazy(() => import("./components/Admin - frontend/Dashboard/dashboard"));
 const CreateFaculty = lazy(() => import("./components/Admin - frontend/creatingPages/create-faculty"));
