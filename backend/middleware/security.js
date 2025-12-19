@@ -5,13 +5,15 @@ import hpp from 'hpp';
  * Custom MongoDB sanitization middleware for Express 5 compatibility
  */
 const mongoSanitize = (req, res, next) => {
-  const sanitizeObject = (obj) => {
+  const sanitizeObject = (obj, depth = 0) => {
+    if (depth > 5) return;
     if (obj && typeof obj === 'object') {
       for (const key in obj) {
         if (key.includes('$') || key.includes('.')) {
           delete obj[key];
         } else if (typeof obj[key] === 'object') {
-          sanitizeObject(obj[key]);
+        } else if (typeof obj[key] === 'object' && obj[key] !== null && depth < 5) {
+          sanitizeObject(obj[key], depth + 1);
         }
       }
     }
@@ -19,18 +21,18 @@ const mongoSanitize = (req, res, next) => {
 
   // Sanitize body
   if (req.body) {
-    sanitizeObject(req.body);
+    sanitizeObject(req.body, 0);
   }
 
   // Sanitize params
   if (req.params) {
-    sanitizeObject(req.params);
+    sanitizeObject(req.params, 0);
   }
 
   // For Express 5 compatibility, create a new query object instead of modifying the read-only one
   if (req.query) {
     const sanitizedQuery = JSON.parse(JSON.stringify(req.query));
-    sanitizeObject(sanitizedQuery);
+    sanitizeObject(sanitizedQuery, 0);
     // Replace the query object with sanitized version
     Object.defineProperty(req, 'query', {
       value: sanitizedQuery,
@@ -57,13 +59,15 @@ const xssSanitize = (req, res, next) => {
       .replace(/\//g, '&#x2F;');
   };
 
-  const sanitizeObject = (obj) => {
+  const sanitizeObject = (obj, depth = 0) => {
+    if (depth > 5) return;
     if (obj && typeof obj === 'object') {
       for (const key in obj) {
         if (typeof obj[key] === 'string') {
           obj[key] = sanitizeString(obj[key]);
         } else if (typeof obj[key] === 'object') {
-          sanitizeObject(obj[key]);
+        } else if (typeof obj[key] === 'object' && obj[key] !== null && depth < 5) {
+          sanitizeObject(obj[key], depth + 1);
         }
       }
     }
@@ -71,18 +75,18 @@ const xssSanitize = (req, res, next) => {
 
   // Sanitize body
   if (req.body) {
-    sanitizeObject(req.body);
+    sanitizeObject(req.body, 0);
   }
 
   // Sanitize params
   if (req.params) {
-    sanitizeObject(req.params);
+    sanitizeObject(req.params, 0);
   }
 
   // For Express 5 compatibility, create a new query object for XSS sanitization
   if (req.query) {
     const sanitizedQuery = JSON.parse(JSON.stringify(req.query));
-    sanitizeObject(sanitizedQuery);
+    sanitizeObject(sanitizedQuery, 0);
     // Replace the query object with sanitized version
     Object.defineProperty(req, 'query', {
       value: sanitizedQuery,

@@ -87,7 +87,7 @@ if (process.env.NODE_ENV !== 'production') {
 // Export for Vercel (Native Express)
 export default async (req, res) => {
   // Skip DB connection for health checks
-  if (req.url === '/' || req.url === '/health') {
+  if (req.url === '/' || req.url === '/health' || req.method === 'OPTIONS') {
     return app(req, res);
   }
 

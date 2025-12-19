@@ -1,21 +1,26 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import FacultyErrorBoundary from "./components/common/FacultyErrorBoundary";
-import {
-  LoginPage,
-  SignupPage,
-  VerifyEmailPage,
-  ForgotPassword,
-  Dashboard as FacultyDashboard,
-  PageNotFound
-} from "./components";
-import { ResultAnalysis } from "./components/Faculty - frontend/Analysis";
-import ReportGenerationPage from "./components/Faculty - frontend/ReportGenerationPage";
-import AdminDashboard from "./components/Admin - frontend/Dashboard/dashboard";
-import CreateFaculty from "./components/Admin - frontend/creatingPages/create-faculty";
-import SubjectManagement from "./components/Admin - frontend/creatingPages/subject-management";
-import FacultyManagement from "./components/Admin - frontend/creatingPages/faculty-management";
-import AdminHierarchyPage from "./components/AdminHierarchyPage";
+import { Suspense, lazy } from "react";
+import LoadingSpinner from "./components/common/LoadingSpinner"; // You might need to create this or use a simple fallback
+
+import { Toaster } from "react-hot-toast";
+import FacultyErrorBoundary from "./components/common/FacultyErrorBoundary";
+// Lazy load pages
+const LoginPage = lazy(() => import("./components/Faculty - frontend/auth/LoginPage"));
+const SignupPage = lazy(() => import("./components/Faculty - frontend/auth/SignupPage"));
+const VerifyEmailPage = lazy(() => import("./components/Faculty - frontend/auth/VerifyEmailPage"));
+const ForgotPassword = lazy(() => import("./components/Faculty - frontend/auth/ForgotPassword"));
+const FacultyDashboard = lazy(() => import("./components/Faculty - frontend/Dashboard/Dashboard"));
+const PageNotFound = lazy(() => import("./components/Faculty - frontend/pagenotfound/PageNotFound"));
+const ResultAnalysis = lazy(() => import("./components/Faculty - frontend/Analysis"));
+const ReportGenerationPage = lazy(() => import("./components/Faculty - frontend/ReportGenerationPage"));
+const AdminDashboard = lazy(() => import("./components/Admin - frontend/Dashboard/dashboard"));
+const CreateFaculty = lazy(() => import("./components/Admin - frontend/creatingPages/create-faculty"));
+const SubjectManagement = lazy(() => import("./components/Admin - frontend/creatingPages/subject-management"));
+const FacultyManagement = lazy(() => import("./components/Admin - frontend/creatingPages/faculty-management"));
+const AdminHierarchyPage = lazy(() => import("./components/AdminHierarchyPage"));
+// Layouts can stay static or be lazy too, but usually static is fine for layouts used immediately
 import AdminLayout from "./components/Admin - frontend/Layout/AdminLayout";
 
 
@@ -47,23 +52,29 @@ function App() {
   return (
     <Router>
       <AppLayout>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/faculty-dashboard" element={<FacultyErrorBoundary><FacultyDashboard /></FacultyErrorBoundary>} />
-          <Route path="/admin-dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
-          <Route path="/admin-dashboard/create-faculty" element={<AdminLayout><CreateFaculty /></AdminLayout>} />
-          <Route path="/admin-dashboard/subject-management" element={<AdminLayout><SubjectManagement /></AdminLayout>} />
-          <Route path="/admin-dashboard/faculty-management" element={<AdminLayout><FacultyManagement /></AdminLayout>} />
-          <Route path="/admin-dashboard/admin-hierarchy" element={<AdminLayout><AdminHierarchyPage /></AdminLayout>} />
+        <Suspense fallback={
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+          </div>
+        }>
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/faculty-dashboard" element={<FacultyErrorBoundary><FacultyDashboard /></FacultyErrorBoundary>} />
+            <Route path="/admin-dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+            <Route path="/admin-dashboard/create-faculty" element={<AdminLayout><CreateFaculty /></AdminLayout>} />
+            <Route path="/admin-dashboard/subject-management" element={<AdminLayout><SubjectManagement /></AdminLayout>} />
+            <Route path="/admin-dashboard/faculty-management" element={<AdminLayout><FacultyManagement /></AdminLayout>} />
+            <Route path="/admin-dashboard/admin-hierarchy" element={<AdminLayout><AdminHierarchyPage /></AdminLayout>} />
 
-          <Route path="/verify-email" element={<VerifyEmailPage />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/result-analysis" element={<FacultyErrorBoundary><ResultAnalysis /></FacultyErrorBoundary>} />
-          <Route path="/generate-report" element={<FacultyErrorBoundary><ReportGenerationPage /></FacultyErrorBoundary>} />
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/result-analysis" element={<FacultyErrorBoundary><ResultAnalysis /></FacultyErrorBoundary>} />
+            <Route path="/generate-report" element={<FacultyErrorBoundary><ReportGenerationPage /></FacultyErrorBoundary>} />
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </Suspense>
         <Toaster
           position="top-right"
           toastOptions={{

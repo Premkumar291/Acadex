@@ -21,10 +21,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom'],
-          charts: ['chart.js', 'react-chartjs-2'],
-          ui: ['framer-motion', 'lucide-react'],
-          utils: ['axios', 'react-hot-toast']
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          charts: ['chart.js', 'react-chartjs-2', 'recharts'],
+          ui: ['framer-motion', 'lucide-react', 'react-icons', '@heroicons/react'],
+          utils: ['axios', 'react-hot-toast', 'xlsx', 'clsx', 'tailwind-merge']
         }
       }
     },

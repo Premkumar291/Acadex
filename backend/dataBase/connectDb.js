@@ -25,6 +25,7 @@ export const connectDb = async () => {
     }
 
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      autoIndex: false, // Don't build indexes on every startup (performance)
       bufferCommands: false,
       maxPoolSize: 1, // Reduced for serverless
       serverSelectionTimeoutMS: 5000, // Reduced for faster failures
