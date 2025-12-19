@@ -4,8 +4,7 @@ import FacultyErrorBoundary from "./components/common/FacultyErrorBoundary";
 import { Suspense, lazy } from "react";
 import LoadingSpinner from "./components/common/LoadingSpinner"; // You might need to create this or use a simple fallback
 
-import { Toaster } from "react-hot-toast";
-import FacultyErrorBoundary from "./components/common/FacultyErrorBoundary";
+
 // Lazy load pages
 const LoginPage = lazy(() => import("./components/Faculty - frontend/auth/LoginPage"));
 const SignupPage = lazy(() => import("./components/Faculty - frontend/auth/SignupPage"));
